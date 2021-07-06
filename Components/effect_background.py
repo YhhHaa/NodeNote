@@ -10,7 +10,7 @@ class EffectBackground(QtSvg.QGraphicsSvgItem):
         self.view = view
         self.width = 1080
         self.height = 900
-        self.name = "Resources/Background/sea.svg"
+        self.name = "Resources/Background/soft.svg"
         self.svg = QtSvg.QSvgRenderer(self.name)
         self.setSharedRenderer(self.svg)
 
