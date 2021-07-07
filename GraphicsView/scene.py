@@ -144,41 +144,41 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
             ('attribute font family', self.attribute_style_font.family() if self.attribute_style_font else None),
             ('attribute font size', self.attribute_style_font.pointSize() if self.attribute_style_font else None),
             ('attribute font color', self.attribute_style_font_color.rgba()
-                if self.attribute_style_font_color else None),
+            if self.attribute_style_font_color else None),
             ('attribute color', self.attribute_style_background_color.rgba()
-                if self.attribute_style_background_color else None),
+            if self.attribute_style_background_color else None),
             ('attribute selected color', self.attribute_style_selected_background_color.rgba()
-                if self.attribute_style_selected_background_color else None),
+            if self.attribute_style_selected_background_color else None),
             ('attribute border color', self.attribute_style_border_color.rgba()
-                if self.attribute_style_border_color else None),
+            if self.attribute_style_border_color else None),
             ('attribute selected border color', self.attribute_style_selected_border_color.rgba()
-                if self.attribute_style_selected_border_color else None),
+            if self.attribute_style_selected_border_color else None),
             ('logic color', self.logic_style_background_color.rgba()
-                if self.logic_style_background_color else None),
+            if self.logic_style_background_color else None),
             ('logic selected color', self.logic_style_selected_background_color.rgba()
-                if self.logic_style_selected_background_color else None),
+            if self.logic_style_selected_background_color else None),
             ('logic border color', self.logic_style_border_color.rgba()
-                if self.logic_style_border_color else None),
+            if self.logic_style_border_color else None),
             ('logic selected border color', self.logic_style_selected_border_color.rgba()
-                if self.logic_style_selected_border_color else None),
+            if self.logic_style_selected_border_color else None),
             ('pipe width', self.pipe_style_width if self.pipe_style_width else None),
             ('pipe color', self.pipe_style_background_color.rgba() if self.pipe_style_background_color else None),
             ('pipe selected color', self.pipe_style_selected_background_color.rgba()
-                if self.pipe_style_selected_background_color else None),
+            if self.pipe_style_selected_background_color else None),
             ('port width', self.port_style_width if self.port_style_width else None),
             ('port color', self.port_style_color.rgba() if self.port_style_color else None),
             ('port border color', self.port_style_border_color.rgba() if self.port_style_border_color else None),
             ('port hovered color', self.port_style_hovered_color.rgba() if self.port_style_hovered_color else None),
             ('port hovered border color', self.port_style_hovered_border_color.rgba()
-                if self.port_style_hovered_border_color else None),
+            if self.port_style_hovered_border_color else None),
             ('port activated color', self.port_style_activated_color.rgba()
-                if self.port_style_activated_color else None),
+            if self.port_style_activated_color else None),
             ('port activated border color', self.port_style_activated_border_color.rgba()
-                if self.port_style_activated_border_color else None),
+            if self.port_style_activated_border_color else None),
             ('container width', self.container_style_width if self.container_style_width else None),
             ('container color', self.container_style_color.rgba() if self.container_style_color else None),
             ('container selected color', self.container_style_selected_color.rgba()
-                if self.container_style_selected_color else None)
+            if self.container_style_selected_color else None)
         ])
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
@@ -352,6 +352,9 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 if isinstance(item, attribute.AttributeWidget):
                     # deserialize attribute widgets with attribute sub widgets
                     for attribute_widget_data in data['attribute widgets']:
+                        # deserialize row and column
+                        item.current_row = attribute_widget_data['next row']
+                        item.current_column = attribute_widget_data['next column']
                         # traverse list and find right attribute
                         if item.id == attribute_widget_data['id']:
                             # deserialize sub attribute widgets
@@ -359,13 +362,17 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                                 if isinstance(attribute_sub_id, int):
                                     sub_attribute_widget = self.get_id_attribute(attribute_sub_id)
                                     item.attribute_sub_widgets.append(sub_attribute_widget)
-                                    item.attribute_layout.addItem(sub_attribute_widget)
+                                    item.attribute_layout.addItem(sub_attribute_widget,
+                                                                  sub_attribute_widget.item_row,
+                                                                  sub_attribute_widget.item_column)
                                     item.text_change_node_shape()
                                 elif isinstance(attribute_sub_id, dict):
                                     attribute_file = attribute.AttributeFile(item)
                                     attribute_file.deserialize(attribute_sub_id, hashmap, view, flag)
                                     item.attribute_sub_widgets.append(attribute_file)
-                                    item.attribute_layout.addItem(attribute_file)
+                                    item.attribute_layout.addItem(attribute_file,
+                                                                  attribute_file.item_row,
+                                                                  attribute_file.item_column)
                                     item.text_change_node_shape()
                             # deserialize attribute widgets with attribute next widgets
                             for attribute_next_id in attribute_widget_data['next attribute widgets']:

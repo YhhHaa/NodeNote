@@ -192,12 +192,13 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
         painter.save()
         # Width and color init
-        if self.scene().pipe_style_width and not self.width_flag:
-            self.width = self.scene().pipe_style_width
-        if self.scene().pipe_style_background_color and not self.color_flag:
-            self.color = self.scene().pipe_style_background_color
-        if self.scene().pipe_style_selected_background_color and not self.selected_color_flag:
-            self.selected_color = self.scene().pipe_style_selected_background_color
+        if self.scene():
+            if self.scene().pipe_style_width and not self.width_flag:
+                self.width = self.scene().pipe_style_width
+            if self.scene().pipe_style_background_color and not self.color_flag:
+                self.color = self.scene().pipe_style_background_color
+            if self.scene().pipe_style_selected_background_color and not self.selected_color_flag:
+                self.selected_color = self.scene().pipe_style_selected_background_color
         # DEFAULT PEN
         pen = QtGui.QPen(self.color if not self.isSelected() else self.selected_color)
         pen.setWidth(self.width)

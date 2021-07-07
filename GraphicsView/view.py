@@ -377,6 +377,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                                 scene_flag = iterator.value()
                                 iterator += 1
                                 if scene_flag.data(0, QtCore.Qt.ToolTipRole) is item.sub_scene:
+
                                     self.delete_sub_scene(scene_flag)
 
                         if item.parentItem():
@@ -482,7 +483,14 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def drag_pipe_press(self, event):
         if self.mode == constants.MODE_NOOP:
-            self.item = self.itemAt(event.pos())
+            items = self.items(event.pos())
+            for item_chosed in items:
+                if isinstance(item_chosed, port.Port):
+                    self.item = item_chosed
+                    break
+                if isinstance(item_chosed, pipe.Pipe):
+                    self.item = item_chosed
+
             if constants.DEBUG_DRAW_PIPE:
                 print("mouse double pressed at", self.item)
             if isinstance(self.item, port.Port):
@@ -501,7 +509,14 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 return
         if self.mode == constants.MODE_PIPE_DRAG:
             self.mode = constants.MODE_NOOP
-            item = self.itemAt(event.pos())
+            items = self.items(event.pos())
+            item = None
+            for item_chosed in items:
+                if isinstance(item_chosed, port.Port):
+                    item = item_chosed
+                    break
+                item = item_chosed
+
             if constants.DEBUG_DRAW_PIPE:
                 print("end the drag mode and set output port or not: ", item)
             self.drag_pipe_release(item)
@@ -644,7 +659,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if self.filename and not self.first_open:
             self.save_to_file()
 
-    def change_current_scene(self, sub_scene_item: TreeWidgetItem):
+    def change_current_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem):
         self.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
         self.current_scene_flag = sub_scene_item
         self.setScene(self.current_scene)
@@ -659,7 +674,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if self.filename and not self.first_open:
             self.save_to_file()
 
-    def delete_sub_scene(self, sub_scene_item: TreeWidgetItem):
+    def delete_sub_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem):
         parent_flag = sub_scene_item.parent()
 
         if parent_flag:
@@ -719,7 +734,13 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if constants.DEBUG_DRAW_PIPE:
             print("mouse press at", self.itemAt(event.pos()))
         if self.mode == constants.MODE_PIPE_DRAG:
-            item = self.itemAt(event.pos())
+            items = self.items(event.pos())
+            item = None
+            for item_chosed in items:
+                if isinstance(item_chosed, port.Port):
+                    item = item_chosed
+                    break
+                item = item_chosed
             if isinstance(item, port.Port):
                 if item is self.drag_pipe.start_port:
                     self.drag_pipe_release(None)
@@ -755,17 +776,17 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 pipe_widget.show_flag = False
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+        super(View, self).mouseReleaseEvent(event)
         if self.mode == constants.MODE_PIPE_CUT:
             self.cutline_released()
             return
         if self.mode == constants.MODE_CONTAINER:
             self.container_released()
             return
-        super(View, self).mouseReleaseEvent(event)
 
     def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent) -> None:
         super(View, self).mouseDoubleClickEvent(event)
-        if event.button() == QtCore.Qt.LeftButton:
+        if event.buttons() == QtCore.Qt.LeftButton:
             self.drag_pipe_press(event)
             item = self.itemAt(event.pos())
             if hasattr(item, 'file_url'):

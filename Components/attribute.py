@@ -1788,6 +1788,10 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         # store
         self.image_url = r"Resources/Attribute Flag/video.png"
 
+        # layout
+        self.item_row = 0
+        self.item_column = 0
+
     def paint(self, painter: QtGui.QPainter, option: 'QtWidgets.QStyleOptionGraphicsItem', widget=None) -> None:
         painter.save()
 
@@ -1822,7 +1826,9 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
             ("id", self.id),
             ("text", self.label_item.toPlainText()),
             ("cover", self.image_url),
-            ("file", self.image.file_url)
+            ("file", self.image.file_url),
+            ('row', self.item_row),
+            ('column', self.item_column)
         ])
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
@@ -1843,6 +1849,10 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.image.setPalette(palette)
         # file
         self.image.file_url = data['file']
+        # layout
+        self.item_row = data['row']
+        self.item_column = data['column']
+
         return True
 
 
@@ -1866,19 +1876,23 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.setZValue(constants.Z_VAL_NODE)
 
         # LAYOUTS
-        self.layout_ori = True
+
         #   create
         self.layout = QtWidgets.QGraphicsLinearLayout(QtCore.Qt.Horizontal)
         self.input_layout = QtWidgets.QGraphicsLinearLayout(QtCore.Qt.Vertical)
         self.output_layout = QtWidgets.QGraphicsLinearLayout(QtCore.Qt.Vertical)
         self.title_layout = QtWidgets.QGraphicsLinearLayout(QtCore.Qt.Vertical)
-        self.attribute_layout = QtWidgets.QGraphicsLinearLayout(QtCore.Qt.Vertical)
+        self.attribute_layout = QtWidgets.QGraphicsGridLayout()
+        self.current_row = 0
+        self.current_column = -1
+        self.item_row = 0
+        self.item_column = 0
         #   sapcing
         self.layout.setSpacing(0)
         self.input_layout.setSpacing(0)
         self.output_layout.setSpacing(0)
         self.title_layout.setSpacing(0)
-        self.attribute_layout.setSpacing(0)
+        self.attribute_layout.setSpacing(20)
         #   margin
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.input_layout.setContentsMargins(0, 0, 0, 0)
@@ -2081,9 +2095,26 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 pos = self.false_output_port.scenePos() + QtCore.QPointF(port.Port.width / 2, port.Port.width / 2)
         return pos
 
-    def add_new_subwidget(self):
+    def add_widget(self, widget, line=True):
+        if not line:
+            self.current_row += 1
+            self.current_column = 0
+            self.attribute_layout.addItem(widget,
+                                          self.current_row,
+                                          self.current_column)
+
+        elif line:
+            self.current_column += 1
+            self.attribute_layout.addItem(widget,
+                                          self.current_row,
+                                          self.current_column)
+
+        widget.item_row = self.current_row
+        widget.item_column = self.current_column
+
+    def add_new_subwidget(self, line=True):
         subwidget = AttributeWidget()
-        self.attribute_layout.addItem(subwidget)
+        self.add_widget(subwidget, line)
         self.attribute_sub_widgets.append(subwidget)
         self.scene().view.attribute_widgets.append(subwidget)
         self.text_change_node_shape()
@@ -2099,9 +2130,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         if self.scene().view.filename and not self.scene().view.first_open:
             self.scene().view.save_to_file()
 
-    def add_file(self):
+    def add_file(self, line=True):
         file = AttributeFile(self)
-        self.attribute_layout.addItem(file)
+        self.add_widget(file, line)
         self.attribute_sub_widgets.append(file)
 
         self.text_change_node_shape()
@@ -2119,16 +2150,37 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     def move_up_widget(self, widget):
         parent = widget.parentItem()
-        index = 0
-        for i in range(parent.attribute_layout.count()):
-            index = i
-            if widget == parent.attribute_layout.itemAt(i).graphicsItem():
-                break
-        if index == 0:
+        row = 0
+        column = 0
+        for i in range(parent.attribute_layout.rowCount()):
+            for j in range(parent.attribute_layout.columnCount()):
+                row = i
+                column = j
+                if widget == parent.attribute_layout.itemAt(row, column):
+                    break
+        if row == 0 and column == 0:
             return
         else:
-            parent.attribute_layout.removeAt(index)
-            parent.attribute_layout.insertItem(index - 1, widget)
+            if column != 0:
+                last_widget = parent.attribute_layout.itemAt(row, column - 1)
+                if last_widget:
+                    parent.attribute_layout.removeItem(last_widget)
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row, column - 1)
+                    parent.attribute_layout.addItem(last_widget, row, column)
+                else:
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row, column - 1)
+            else:
+                last_widget = parent.attribute_layout.itemAt(row - 1, parent.attribute_layout.columnCount() - 1)
+                if last_widget:
+                    parent.attribute_layout.removeItem(last_widget)
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row - 1, parent.attribute_layout.columnCount() - 1)
+                    parent.attribute_layout.addItem(last_widget, row, column)
+                else:
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row - 1, parent.attribute_layout.columnCount() - 1)
 
         self.scene().view.history.store_history("Move up widget")
         if self.scene().view.filename and not self.scene().view.first_open:
@@ -2136,23 +2188,44 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     def move_down_widget(self, widget):
         parent = widget.parentItem()
-        index = 0
-        for i in range(parent.attribute_layout.count()):
-            index = i
-            if widget == parent.attribute_layout.itemAt(i).graphicsItem():
-                break
-        if index == parent.attribute_layout.count() - 1:
+        row = 0
+        column = 0
+        for i in range(parent.attribute_layout.rowCount()):
+            for j in range(parent.attribute_layout.columnCount()):
+                row = i
+                column = j
+                if widget == parent.attribute_layout.itemAt(row, column):
+                    break
+        if row == parent.attribute_layout.rowCount() and column == parent.attribute_layout.columnCount():
             return
         else:
-            parent.attribute_layout.removeAt(index)
-            parent.attribute_layout.insertItem(index + 1, widget)
+            if column != parent.attribute_layout.columnCount():
+                last_widget = parent.attribute_layout.itemAt(row, column + 1)
+                if last_widget:
+                    parent.attribute_layout.removeItem(last_widget)
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row, column + 1)
+                    parent.attribute_layout.addItem(last_widget, row, column)
+                else:
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row, column + 1)
+            else:
+                last_widget = parent.attribute_layout.itemAt(row + 1, 0)
+                if last_widget:
+                    parent.attribute_layout.removeItem(last_widget)
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row + 1, 0)
+                    parent.attribute_layout.addItem(last_widget, row, column)
+                else:
+                    parent.attribute_layout.removeItem(widget)
+                    parent.attribute_layout.addItem(widget, row + 1, 0)
 
-        self.scene().view.history.store_history("Move up widget")
+        self.scene().view.history.store_history("Move down widget")
         if self.scene().view.filename and not self.scene().view.first_open:
             self.scene().view.save_to_file()
 
-    def add_exist_subwidget(self, subwidget):
-        self.attribute_layout.addItem(subwidget)
+    def add_exist_subwidget(self, subwidget, line=True):
+        self.add_widget(subwidget, line)
         self.attribute_sub_widgets.append(subwidget)
         subwidget.setParentItem(self)
         self.text_change_node_shape()
@@ -2165,6 +2238,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.update_pipe_position()
 
     def delete_subwidget(self, subwidget):
+        if self.attribute_layout.itemAt(self.attribute_layout.rowCount() - 1,
+                                        self.attribute_layout.columnCount() - 1) is subwidget:
+            self.current_column -= 1
         self.attribute_layout.removeItem(subwidget)
         self.attribute_sub_widgets.remove(subwidget)
         subwidget.setParentItem(None)
@@ -2484,12 +2560,16 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     pipe_item.destination_item.setVisible(True)
                     pipe_item.source_item.setSelected(True)
                     pipe_item.destination_item.setSelected(True)
+                    pipe_item.source_item.setVisible(False)
+                    pipe_item.destination_item.setVisible(False)
             elif isinstance(item, LogicWidget):
                 for pipe_item in item.input_port.pipes + item.output_port.pipes:
                     pipe_item.source_item.setVisible(True)
                     pipe_item.destination_item.setVisible(True)
                     pipe_item.source_item.setSelected(True)
                     pipe_item.destination_item.setSelected(True)
+                    pipe_item.source_item.setVisible(False)
+                    pipe_item.destination_item.setVisible(False)
 
         self.was_moved = True
         self.moving = True
@@ -2773,21 +2853,27 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def contextMenuEvent(self, event: 'QtWidgets.QGraphicsSceneContextMenuEvent') -> None:
         menu = QtWidgets.QMenu()
         menu.setStyleSheet(stylesheet.STYLE_QMENU)
+        add_line_subwidget = menu.addAction("Add Line Subwidget")
+        add_line_subwidget.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_line_widget.PNG"))
         add_subwidget = menu.addAction("Add Subwidget")
-        add_subwidget.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/ADD SUBWIDGET.PNG"))
+        add_subwidget.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_widget.png"))
+        add_line_file = menu.addAction("Add Line File")
+        add_line_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_line_video.png"))
         add_file = menu.addAction("Add File")
-        add_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/Add Video.png"))
+        add_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_video.png"))
         move_up = menu.addAction("Move Up")
         move_up.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/up.png"))
         move_down = menu.addAction("Move Down")
         move_down.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/down.png"))
-        change_layout = menu.addAction("Change Layout")
-        change_layout.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/layout.png"))
         result = menu.exec(event.screenPos())
-        if result == add_subwidget:
-            self.add_new_subwidget()
+        if result == add_line_subwidget:
+            self.add_new_subwidget(line=True)
+        elif result == add_subwidget:
+            self.add_new_subwidget(line=False)
+        elif result == add_line_file:
+            self.add_file(line=True)
         elif result == add_file:
-            self.add_file()
+            self.add_file(line=False)
         elif result == move_up and (isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()).parentItem(),
                                                AttributeWidget) or
                                     isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()),
@@ -2798,14 +2884,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                                       isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()),
                                                  AttributeFile)):
             self.move_down_widget(self.scene().itemAt(event.scenePos(), QtGui.QTransform()))
-        elif result == change_layout:
-            if self.attribute_layout.orientation() == QtCore.Qt.Vertical:
-                self.attribute_layout.setOrientation(QtCore.Qt.Horizontal)
-                self.layout_ori = False
-            else:
-                self.attribute_layout.setOrientation(QtCore.Qt.Vertical)
-                self.layout_ori = True
-            self.text_change_node_shape()
         event.setAccepted(True)
 
     def moveEvent(self, event: 'QtWidgets.QGraphicsSceneMoveEvent') -> None:
@@ -2853,7 +2931,10 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             ('attribute sub widgets', attribute_sub_widgets),
             ('sub scene', self.sub_scene.serialize() if self.sub_scene else None),
             ('highlighter', True if self.attribute_widget.label_item.pythonlighter else False),
-            ('ori', self.layout_ori),
+            ('row', self.item_row),
+            ('column', self.item_column),
+            ('next row', self.current_row),
+            ('next column', self.current_column),
 
             # style
             ('item font family', self.attribute_widget.label_item.font.family()),
@@ -2889,6 +2970,11 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.false_input_port.deserialize(data['input false port'], hashmap, view, flag=True)
             self.true_output_port.deserialize(data['output true port'], hashmap, view, flag=True)
             self.false_output_port.deserialize(data['output false port'], hashmap, view, flag=True)
+            # layout
+            self.item_row = data['row']
+            self.item_column = data['column']
+            self.current_row = data['next row']
+            self.current_column = data['next column']
             # highlighter
             if data['highlighter']:
                 self.attribute_widget.label_item.pythonlighter = \
@@ -2950,13 +3036,5 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 # restore scene and flag
                 view.current_scene = last_scene
                 view.current_scene_flag = last_scene_flag
-
-            # ori
-            if not data['ori']:
-                self.attribute_layout.setOrientation(QtCore.Qt.Horizontal)
-                self.layout_ori = False
-            else:
-                self.attribute_layout.setOrientation(QtCore.Qt.Vertical)
-                self.layout_ori = True
 
         return True
