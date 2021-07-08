@@ -293,6 +293,12 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.edit.setPos(self.path().pointAtPercent(0.5).x() - (bound_rect_width // 2),
                          self.path().pointAtPercent(0.5).y() - (bound_rect_height // 2))
 
+        # ZVALUE
+        if self.start_port and self.end_port:
+            self.setZValue(constants.Z_VAL_PIPE_DONE)
+        else:
+            self.setZValue(constants.Z_VAL_PIPE)
+
         painter.restore()
 
     def mouseMoveEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:

@@ -483,14 +483,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def drag_pipe_press(self, event):
         if self.mode == constants.MODE_NOOP:
-            items = self.items(event.pos())
-            for item_chosed in items:
-                if isinstance(item_chosed, port.Port):
-                    self.item = item_chosed
-                    break
-                if isinstance(item_chosed, pipe.Pipe):
-                    self.item = item_chosed
-
+            self.item = self.itemAt(event.pos())
             if constants.DEBUG_DRAW_PIPE:
                 print("mouse double pressed at", self.item)
             if isinstance(self.item, port.Port):
@@ -509,13 +502,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 return
         if self.mode == constants.MODE_PIPE_DRAG:
             self.mode = constants.MODE_NOOP
-            items = self.items(event.pos())
-            item = None
-            for item_chosed in items:
-                if isinstance(item_chosed, port.Port):
-                    item = item_chosed
-                    break
-                item = item_chosed
+            item = self.itemAt(event.pos())
 
             if constants.DEBUG_DRAW_PIPE:
                 print("end the drag mode and set output port or not: ", item)
@@ -734,13 +721,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if constants.DEBUG_DRAW_PIPE:
             print("mouse press at", self.itemAt(event.pos()))
         if self.mode == constants.MODE_PIPE_DRAG:
-            items = self.items(event.pos())
-            item = None
-            for item_chosed in items:
-                if isinstance(item_chosed, port.Port):
-                    item = item_chosed
-                    break
-                item = item_chosed
+            item = self.itemAt(event.pos())
             if isinstance(item, port.Port):
                 if item is self.drag_pipe.start_port:
                     self.drag_pipe_release(None)
