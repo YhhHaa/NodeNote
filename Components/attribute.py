@@ -1892,7 +1892,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.input_layout.setSpacing(0)
         self.output_layout.setSpacing(0)
         self.title_layout.setSpacing(0)
-        self.attribute_layout.setSpacing(20)
+        self.attribute_layout.setSpacing(40)
         #   margin
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.input_layout.setContentsMargins(0, 0, 0, 0)
@@ -2239,8 +2239,17 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     def delete_subwidget(self, subwidget):
         if self.attribute_layout.itemAt(self.attribute_layout.rowCount() - 1,
-                                        self.attribute_layout.columnCount() - 1) is subwidget:
+                                        self.attribute_layout.columnCount() - 1) is subwidget and \
+                self.attribute_layout.columnCount() - 1 != 0:
             self.current_column -= 1
+        else:
+            for i in range(self.attribute_layout.rowCount()):
+                for j in range(self.attribute_layout.columnCount()):
+                    if self.attribute_layout.itemAt(i, j) is subwidget and \
+                            not self.attribute_layout.itemAt(i, j + 1) and i != 0:
+                        self.current_row -= 1
+                        self.current_column = self.attribute_layout.columnCount() - 1
+                        break
         self.attribute_layout.removeItem(subwidget)
         self.attribute_sub_widgets.remove(subwidget)
         subwidget.setParentItem(None)

@@ -1,4 +1,4 @@
-__all__ = ["NoteWindow", 'TreeWidgetItem']
+__all__ = ["NoteWindow"]
 
 import time
 
