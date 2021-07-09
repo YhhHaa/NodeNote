@@ -352,10 +352,6 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 if isinstance(item, attribute.AttributeWidget):
                     # deserialize attribute widgets with attribute sub widgets
                     for attribute_widget_data in data['attribute widgets']:
-                        # deserialize row and column
-                        item.current_row = attribute_widget_data['next row']
-                        item.current_column = attribute_widget_data['next column']
-                        # traverse list and find right attribute
                         if item.id == attribute_widget_data['id']:
                             # deserialize sub attribute widgets
                             for attribute_sub_id in attribute_widget_data['attribute sub widgets']:
