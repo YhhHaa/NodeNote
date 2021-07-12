@@ -232,8 +232,9 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             self.scene().addItem(self.source_item)
             self.scene().addItem(self.destination_item)
 
-        if not self.source_item.moving and not self.destination_item.moving:
+        if not self.source_item.moving:
             self.source_item.setPos(s.x() + s_x, s.y() + s_y)
+        if not self.destination_item.moving:
             self.destination_item.setPos(d.x() + d_x, d.y() + d_y)
 
         # control show
@@ -385,6 +386,7 @@ class ControlPoint(QtWidgets.QGraphicsItem):
         self.moving = True
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
+        super(ControlPoint, self).mouseReleaseEvent(event)
         self.scene().view.history.store_history("Change Pipe Control Point")
         if self.scene().view.filename and not self.scene().view.first_open:
             self.scene().view.save_to_file()
