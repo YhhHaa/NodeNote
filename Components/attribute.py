@@ -2097,8 +2097,11 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     def add_widget(self, widget, line=True):
         if not line:
-            self.current_row += 1
-            self.current_column = 0
+            if self.current_row == 0 and self.current_column == -1:
+                self.current_column = 0
+            else:
+                self.current_row += 1
+                self.current_column = 0
             self.attribute_layout.addItem(widget,
                                           self.current_row,
                                           self.current_column)
@@ -2569,16 +2572,12 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     pipe_item.destination_item.setVisible(True)
                     pipe_item.source_item.setSelected(True)
                     pipe_item.destination_item.setSelected(True)
-                    pipe_item.source_item.setVisible(False)
-                    pipe_item.destination_item.setVisible(False)
             elif isinstance(item, LogicWidget):
                 for pipe_item in item.input_port.pipes + item.output_port.pipes:
                     pipe_item.source_item.setVisible(True)
                     pipe_item.destination_item.setVisible(True)
                     pipe_item.source_item.setSelected(True)
                     pipe_item.destination_item.setSelected(True)
-                    pipe_item.source_item.setVisible(False)
-                    pipe_item.destination_item.setVisible(False)
 
         self.was_moved = True
         self.moving = True

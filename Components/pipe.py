@@ -60,7 +60,6 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         # CONTROL
         self.choose_first = True
-        self.control = False
 
         self.source_item = ControlPoint()
         self.destination_item = ControlPoint()
@@ -230,10 +229,12 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         if not self.source_item.first_flag and not self.destination_item.first_flag:
             self.source_item.first_flag = True
             self.destination_item.first_flag = True
-            self.source_item.setPos(s.x() + s_x, s.y() + s_y)
-            self.destination_item.setPos(d.x() + d_x, d.y() + d_y)
             self.scene().addItem(self.source_item)
             self.scene().addItem(self.destination_item)
+
+        if not self.source_item.moving and not self.destination_item.moving:
+            self.source_item.setPos(s.x() + s_x, s.y() + s_y)
+            self.destination_item.setPos(d.x() + d_x, d.y() + d_y)
 
         # control show
         if self.show_flag:
@@ -301,20 +302,6 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         painter.restore()
 
-    def mouseMoveEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
-        super(Pipe, self).mouseMoveEvent(event)
-        if self.isSelected():
-            self.control = True
-            self.update()
-
-    def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
-        super(Pipe, self).mouseReleaseEvent(event)
-        if self.isSelected() and self.control and self.start_port and self.end_port:
-            self.scene().view.history.store_history("Change Pipe Control Point")
-            if self.scene().view.filename and not self.scene().view.first_open:
-                self.scene().view.save_to_file()
-            self.control = False
-
     def serialize(self):
         return OrderedDict([
             ('id', self.id),
@@ -341,6 +328,12 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         # added into current scene and view
         view.current_scene.addItem(self)
         view.pipes.append(self)
+        # control point
+        self.prepareGeometryChange()
+        self.source_item.moving = data['source moving status']
+        self.destination_item.moving = data['destination moving status']
+        self.source_item.setPos(data['start control point x'], data['start control point y'])
+        self.destination_item.setPos(data['end control point x'], data['end control point y'])
         # id and hashmap
         self.id = data['id']
         hashmap[data['id']] = self
@@ -359,16 +352,6 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.width_flag = data['width flag']
         self.color_flag = data['color flag']
         self.selected_color_flag = data['selected color flag']
-
-        # control point
-        if not self.source_item.first_flag and not self.destination_item.first_flag:
-            self.source_item = ControlPoint()
-            self.destination_item = ControlPoint()
-            self.prepareGeometryChange()
-            self.source_item.setPos(data['start control point x'], data['start control point y'])
-            self.destination_item.setPos(data['end control point x'], data['end control point y'])
-            self.source_item.moving = data['source moving status']
-            self.destination_item.moving = data['destination moving status']
 
         self.update()
         return True
@@ -400,3 +383,8 @@ class ControlPoint(QtWidgets.QGraphicsItem):
     def mouseMoveEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
         super(ControlPoint, self).mouseMoveEvent(event)
         self.moving = True
+
+    def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
+        self.scene().view.history.store_history("Change Pipe Control Point")
+        if self.scene().view.filename and not self.scene().view.first_open:
+            self.scene().view.save_to_file()
