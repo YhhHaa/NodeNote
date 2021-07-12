@@ -2099,6 +2099,20 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 pos = self.false_output_port.scenePos() + QtCore.QPointF(port.Port.width / 2, port.Port.width / 2)
         return pos
 
+    def caculate_column(self, row):
+        for i in range(self.attribute_layout.columnCount() - 1, -1, -1):
+            widget = self.attribute_layout.itemAt(row, i)
+            if widget:
+                return widget
+
+    def caculate_number(self, row):
+        number = 0
+        for i in range(self.attribute_layout.columnCount() - 1, -1, -1):
+            widget = self.attribute_layout.itemAt(row, i)
+            if widget:
+                number += 1
+        return number
+
     def add_widget(self, widget, line=True):
         if not line:
             if self.current_row == 0 and self.current_column == -1:
@@ -2156,18 +2170,16 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.scene().view.save_to_file()
 
     def move_up_widget(self, widget):
+        # find widget
         parent = widget.parentItem()
-        row = 0
-        column = 0
-        for i in range(parent.attribute_layout.rowCount()):
-            for j in range(parent.attribute_layout.columnCount()):
-                row = i
-                column = j
-                if widget == parent.attribute_layout.itemAt(row, column):
-                    break
+        row = widget.item_row
+        column = widget.item_column
+        # can't move up
         if row == 0 and column == 0:
             return
+        # can move up
         else:
+            # not at first of line
             if column != 0:
                 last_widget = parent.attribute_layout.itemAt(row, column - 1)
                 if last_widget:
@@ -2175,37 +2187,51 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     parent.attribute_layout.removeItem(widget)
                     parent.attribute_layout.addItem(widget, row, column - 1)
                     parent.attribute_layout.addItem(last_widget, row, column)
+                    widget.item_row = row
+                    widget.item_column = column - 1
+                    last_widget.item_row = row
+                    last_widget.item_column = column
                 else:
                     parent.attribute_layout.removeItem(widget)
                     parent.attribute_layout.addItem(widget, row, column - 1)
+                    widget.item_row = row
+                    widget.item_column = column - 1
+            # at first of line and row != 0
             else:
-                last_widget = parent.attribute_layout.itemAt(row - 1, parent.attribute_layout.columnCount() - 1)
+                last_widget = parent.caculate_column(row - 1)
                 if last_widget:
                     parent.attribute_layout.removeItem(last_widget)
                     parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row - 1, parent.attribute_layout.columnCount() - 1)
+                    parent.attribute_layout.addItem(widget, row - 1, last_widget.item_column)
                     parent.attribute_layout.addItem(last_widget, row, column)
+                    widget.item_row = row - 1
+                    widget.item_column = last_widget.item_column
+                    last_widget.item_row = row
+                    last_widget.item_column = column
                 else:
                     parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row - 1, parent.attribute_layout.columnCount() - 1)
+                    parent.attribute_layout.addItem(widget, row - 1, 0)
+                    widget.item_row = row - 1
+                    widget.item_column = 0
 
         self.scene().view.history.store_history("Move up widget")
         if self.scene().view.filename and not self.scene().view.first_open:
             self.scene().view.save_to_file()
 
     def move_down_widget(self, widget):
+        # find widget
         parent = widget.parentItem()
-        row = 0
-        column = 0
-        for i in range(parent.attribute_layout.rowCount()):
-            for j in range(parent.attribute_layout.columnCount()):
-                row = i
-                column = j
-                if widget == parent.attribute_layout.itemAt(row, column):
-                    break
+        row = widget.item_row
+        column = widget.item_column
+        # move down next line at last
         if row == parent.attribute_layout.rowCount() and column == parent.attribute_layout.columnCount():
-            return
+            parent.attribute_layout.removeItem(widget)
+            parent.attribute_layout.addItem(widget, row + 1, 0)
+            widget.item_row = row + 1
+            widget.item_column = 0
+        # not at last of rows
         else:
+            # not at last of line
             if column != parent.attribute_layout.columnCount():
                 last_widget = parent.attribute_layout.itemAt(row, column + 1)
                 if last_widget:
@@ -2213,9 +2239,16 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     parent.attribute_layout.removeItem(widget)
                     parent.attribute_layout.addItem(widget, row, column + 1)
                     parent.attribute_layout.addItem(last_widget, row, column)
+                    widget.item_row = row
+                    widget.item_column = column + 1
+                    last_widget.item_row = row
+                    last_widget.item_column = column
                 else:
                     parent.attribute_layout.removeItem(widget)
                     parent.attribute_layout.addItem(widget, row, column + 1)
+                    widget.item_row = row
+                    widget.item_column = column + 1
+            # at last of line
             else:
                 last_widget = parent.attribute_layout.itemAt(row + 1, 0)
                 if last_widget:
@@ -2223,9 +2256,15 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     parent.attribute_layout.removeItem(widget)
                     parent.attribute_layout.addItem(widget, row + 1, 0)
                     parent.attribute_layout.addItem(last_widget, row, column)
+                    widget.item_row = row + 1
+                    widget.item_column = 0
+                    last_widget.item_row = row
+                    last_widget.item_column = column
                 else:
                     parent.attribute_layout.removeItem(widget)
                     parent.attribute_layout.addItem(widget, row + 1, 0)
+                    widget.item_row = row + 1
+                    widget.item_column = 0
 
         self.scene().view.history.store_history("Move down widget")
         if self.scene().view.filename and not self.scene().view.first_open:
@@ -2245,18 +2284,14 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.update_pipe_position()
 
     def delete_subwidget(self, subwidget):
-        if self.attribute_layout.itemAt(self.attribute_layout.rowCount() - 1,
-                                        self.attribute_layout.columnCount() - 1) is subwidget and \
-                self.attribute_layout.columnCount() - 1 != 0:
+        # change line
+        if subwidget.item_row != 0 and self.caculate_number(subwidget.item_row) == 1:
+            self.current_row -= 1
+            last_item = self.caculate_column(subwidget.item_row - 1)
+            self.current_column = last_item.item_column if last_item else 0
+        # not change line and last widget
+        elif subwidget is self.caculate_column(subwidget.item_row):
             self.current_column -= 1
-        else:
-            for i in range(self.attribute_layout.rowCount()):
-                for j in range(self.attribute_layout.columnCount()):
-                    if self.attribute_layout.itemAt(i, j) is subwidget and \
-                            not self.attribute_layout.itemAt(i, j + 1) and i != 0:
-                        self.current_row -= 1
-                        self.current_column = self.attribute_layout.columnCount() - 1
-                        break
         self.attribute_layout.removeItem(subwidget)
         self.attribute_sub_widgets.remove(subwidget)
         subwidget.setParentItem(None)
@@ -2567,7 +2602,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         else:
             super(AttributeWidget, self).mousePressEvent(event)
 
-    def travers_subitem(self, subitem:list):
+    def travers_subitem(self, subitem: list):
         for item in subitem:
             for pipe_item in item.true_output_port.pipes + item.true_input_port.pipes + \
                              item.false_input_port.pipes + item.false_output_port.pipes:
