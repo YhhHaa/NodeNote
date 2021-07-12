@@ -2214,6 +2214,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     widget.item_row = row - 1
                     widget.item_column = 0
 
+        parent.text_change_node_shape()
+
         self.scene().view.history.store_history("Move up widget")
         if self.scene().view.filename and not self.scene().view.first_open:
             self.scene().view.save_to_file()
@@ -2232,7 +2234,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         # not at last of rows
         else:
             # not at last of line
-            if column != parent.attribute_layout.columnCount():
+            if column != parent.attribute_layout.columnCount() - 1:
                 last_widget = parent.attribute_layout.itemAt(row, column + 1)
                 if last_widget:
                     parent.attribute_layout.removeItem(last_widget)
@@ -2265,6 +2267,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     parent.attribute_layout.addItem(widget, row + 1, 0)
                     widget.item_row = row + 1
                     widget.item_column = 0
+
+        parent.text_change_node_shape()
 
         self.scene().view.history.store_history("Move down widget")
         if self.scene().view.filename and not self.scene().view.first_open:
