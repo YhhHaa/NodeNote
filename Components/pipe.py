@@ -51,7 +51,7 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.ellips_item.hide()
 
         # EDIT
-        self.edit = attribute.SimpleTextField("Deafult", self)
+        self.edit = attribute.SimpleTextField("info", self)
         self.edit.setFont(QtGui.QFont("LucidaMacBold", 8))
         self.edit.setDefaultTextColor(QtCore.Qt.black)
         bound_rect_width, bound_rect_height = self.edit.boundingRect().width(), self.edit.boundingRect().height()

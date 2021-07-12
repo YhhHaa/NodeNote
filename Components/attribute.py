@@ -234,12 +234,16 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
         self.setFlag(QtWidgets.QGraphicsWidget.ItemIsFocusable, True)
         self.setFocus()
 
+    def mousePressEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
+        self.parentItem().mousePressEvent(event)
+
     def focusInEvent(self, event) -> None:
         self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction)
         super(SimpleTextField, self).focusInEvent(event)
 
     def focusOutEvent(self, event: QtGui.QFocusEvent) -> None:
         self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.textCursor().clearSelection()
         super(SimpleTextField, self).focusOutEvent(event)
 
     def control_length(self):

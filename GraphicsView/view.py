@@ -749,6 +749,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.button() == QtCore.Qt.LeftButton and isinstance(pipe_item, pipe.Pipe):
             self.pipe_true_item = pipe_item
             self.pipe_true_item.show_flag = True
+        elif event.button() == QtCore.Qt.LeftButton and isinstance(pipe_item, attribute.SimpleTextField):
+            self.pipe_true_item = pipe_item.parentItem()
+            self.pipe_true_item.show_flag = True
         elif event.button() == QtCore.Qt.LeftButton and \
                 hasattr(pipe_item, "control_point_flag"):
             self.pipe_true_item.show_flag = True
