@@ -241,13 +241,6 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         if self.show_flag:
             self.source_item.setVisible(True)
             self.destination_item.setVisible(True)
-            painter.setPen(self.control_line_color)
-            painter.drawLine(
-                self.pos_source, self.source_item.scenePos() +
-                QtCore.QPointF(ControlPoint.control_point_radius / 2, ControlPoint.control_point_radius / 2))
-            painter.drawLine(
-                self.pos_destination, self.destination_item.scenePos() +
-                QtCore.QPointF(ControlPoint.control_point_radius / 2, ControlPoint.control_point_radius / 2))
         else:
             self.source_item.setVisible(False)
             self.destination_item.setVisible(False)
@@ -268,11 +261,12 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             painter.setPen(pen)
 
         # DRAW
-        path.cubicTo(
-            self.source_item.scenePos(),
-            self.destination_item.scenePos(),
-            self.pos_destination,
-        )
+        path.lineTo(self.source_item.scenePos())
+        path.moveTo(self.source_item.scenePos())
+        path.lineTo(self.destination_item.scenePos())
+        path.moveTo(self.destination_item.scenePos())
+        path.lineTo(self.pos_destination)
+        path.moveTo(self.pos_destination)
         self.setPath(path)
         painter.setBrush(QtCore.Qt.NoBrush)
         painter.drawPath(self.path())
