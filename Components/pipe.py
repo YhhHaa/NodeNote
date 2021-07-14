@@ -61,8 +61,8 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         # CONTROL
         self.choose_first = True
 
-        self.source_item = ControlPoint()
-        self.destination_item = ControlPoint()
+        self.source_item = ControlPoint(self)
+        self.destination_item = ControlPoint(self)
         self.show_flag = False
         self.control_line_color = QtGui.QColor(128, 205, 255)
 
@@ -232,11 +232,6 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             self.scene().addItem(self.source_item)
             self.scene().addItem(self.destination_item)
 
-        if not self.source_item.moving:
-            self.source_item.setPos(s.x() + s_x, s.y() + s_y)
-        if not self.destination_item.moving:
-            self.destination_item.setPos(d.x() + d_x, d.y() + d_y)
-
         # control show
         if self.show_flag:
             self.source_item.setVisible(True)
@@ -247,12 +242,14 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         if not self.source_item.moving:
             self.source_item.setPos(
-                s.x() + s_x,
-                s.y() + s_y)
+                s.x() + s_x, s.y() + s_y)
+        else:
+            self.source_item.setPos(self.start_port.scenePos() + self.source_item.offect)
         if not self.destination_item.moving:
             self.destination_item.setPos(
-                d.x() + d_x,
-                d.y() + d_y)
+                d.x() + d_x, d.y() + d_y)
+        else:
+            self.destination_item.setPos(self.start_port.scenePos() + self.destination_item.offect)
 
         # PEN
         if self.end_port is None or (self.start_flag == constants.INPUT_NODE_START and self.start_port is None):
@@ -310,6 +307,10 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             ('end control point y', self.destination_item.scenePos().y()),
             ('source moving status', self.source_item.moving),
             ('destination moving status', self.destination_item.moving),
+            ('start offect point x', self.source_item.offect.x()),
+            ('start offect point y', self.source_item.offect.y()),
+            ('destination offect point x', self.destination_item.offect.x()),
+            ('destination offect point y', self.destination_item.offect.y()),
             # style
             ('width', self.width),
             ('color', self.color.rgba()),
@@ -329,6 +330,9 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.destination_item.moving = data['destination moving status']
         self.source_item.setPos(data['start control point x'], data['start control point y'])
         self.destination_item.setPos(data['end control point x'], data['end control point y'])
+        self.source_item.offect = QtCore.QPointF(data['start offect point x'], data['start offect point y'])
+        self.destination_item.offect = QtCore.QPointF(data['destination offect point x'],
+                                                      data['destination offect point y'])
         # id and hashmap
         self.id = data['id']
         hashmap[data['id']] = self
@@ -357,11 +361,13 @@ class ControlPoint(QtWidgets.QGraphicsItem):
     control_point_color = QtGui.QColor(255, 129, 129)
     control_point_border_color = QtGui.QColor(0, 0, 0)
 
-    def __init__(self, parent=None):
-        super(ControlPoint, self).__init__(parent)
+    def __init__(self, pipe_item: Pipe):
+        super(ControlPoint, self).__init__()
         self.moving = False
         self.control_point_flag = True
         self.first_flag = False
+        self.pipe_item = pipe_item
+        self.offect = QtCore.QPointF()
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsSelectable |
                       QtWidgets.QGraphicsItem.ItemIsMovable)
         self.setZValue(constants.Z_VAL_PORT)
@@ -378,6 +384,7 @@ class ControlPoint(QtWidgets.QGraphicsItem):
     def mouseMoveEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
         super(ControlPoint, self).mouseMoveEvent(event)
         self.moving = True
+        self.offect = self.scenePos() - self.pipe_item.start_port.scenePos()
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
         super(ControlPoint, self).mouseReleaseEvent(event)
