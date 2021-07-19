@@ -2063,10 +2063,11 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.update_pipe_position()
         self.update_pipe_parent_position()
         # parent
-        node = self.parentItem()
-        while node:
-            node.text_change_node_shape()
+        node = self
+        while node.parentItem():
             node = node.parentItem()
+        if node is not self:
+            node.text_change_node_shape()
 
     def mouse_update_node_size(self, event):
         if event.type() == QtCore.QEvent.GraphicsSceneMousePress and not self.parentItem():
