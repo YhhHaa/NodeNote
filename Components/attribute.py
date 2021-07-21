@@ -2622,12 +2622,13 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     def travers_subitem(self, subitem: list):
         for item in subitem:
-            for pipe_item in item.true_output_port.pipes + item.true_input_port.pipes + \
-                             item.false_input_port.pipes + item.false_output_port.pipes:
-                pipe_item.source_item.setVisible(True)
-                pipe_item.destination_item.setVisible(True)
-                pipe_item.source_item.setSelected(True)
-                pipe_item.destination_item.setSelected(True)
+            if isinstance(item, AttributeWidget):
+                for pipe_item in item.true_output_port.pipes + item.true_input_port.pipes + \
+                                 item.false_input_port.pipes + item.false_output_port.pipes:
+                    pipe_item.source_item.setVisible(True)
+                    pipe_item.destination_item.setVisible(True)
+                    pipe_item.source_item.setSelected(True)
+                    pipe_item.destination_item.setSelected(True)
             self.travers_subitem(item.attribute_sub_widgets)
 
     def mouseMoveEvent(self, event) -> None:
