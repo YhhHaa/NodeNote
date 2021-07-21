@@ -2629,7 +2629,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     pipe_item.destination_item.setVisible(True)
                     pipe_item.source_item.setSelected(True)
                     pipe_item.destination_item.setSelected(True)
-            self.travers_subitem(item.attribute_sub_widgets)
+                self.travers_subitem(item.attribute_sub_widgets)
 
     def mouseMoveEvent(self, event) -> None:
         for item in self.scene().selectedItems():
