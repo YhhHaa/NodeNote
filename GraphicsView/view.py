@@ -826,6 +826,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_P and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
                 int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.print_item(part="Items")
+        if event.key() == QtCore.Qt.Key_I and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
+                int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            self.mainwindow.time_start()
 
     def contextMenuEvent(self, event) -> None:
         super(View, self).contextMenuEvent(event)

@@ -308,23 +308,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_switch_combox.currentIndexChanged.connect(self.init_style)
         self.init_style(current_index=self.style_switch_combox.currentIndex())
 
-        # Time list widget
-        self.time_list = QtWidgets.QWidget()
-        self.time_list_layout = QtWidgets.QVBoxLayout()
-        self.time_list.setLayout(self.time_list_layout)
-        self.tab_widget.addTab(self.time_list, "Time")
-
-        # time widget
-        #   init
-        self.time_day_label = QtWidgets.QLabel("today has used software: ")
-        self.time_day_button = QtWidgets.QPushButton("Start")
-        #   added
-        self.time_list_layout.addWidget(self.time_day_label)
-        self.time_list_layout.addWidget(self.time_day_button)
-        #   stylesheet
-        self.time_day_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE_TIME)
-        self.time_day_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-
         # Widget Init
         self.central_widget = QtWidgets.QWidget()  # central widget
         self.view_widget = View(self, self.central_widget)  # view widget
@@ -337,36 +320,39 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.central_widget)
 
         # time clock
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.time_update)
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.time_update)
         self.start_time = None
         self.last_time = 0
         self.timer_status = False
-        self.time_day_button.clicked.connect(lambda: self.time_start(timer))
 
-    def time_start(self, timer):
+    def time_start(self):
         if self.timer_status is False:
-            timer.start(1000)
+            self.timer.start(1000)
             self.timer_status = True
             self.start_time = time.time()
             if not self.view_widget.start_time:
                 self.view_widget.start_time = self.start_time
             self.last_time = self.view_widget.last_time
-            self.time_day_button.setText("End")
         elif self.timer_status:
-            timer.stop()
+            self.timer.stop()
             self.timer_status = False
             self.last_time += time.time() - self.start_time
             self.view_widget.last_time = self.last_time
-            self.time_day_button.setText("Start")
 
     def time_update(self):
         day_time = time.time() - self.start_time + self.last_time
         day_time_hour = int(day_time // 60 // 60)
         day_time_min = int((day_time // 60) - 60 * day_time_hour)
         day_time_sec = int(day_time - 60 * day_time_min - 60 * 60 * day_time_hour)
-        self.time_day_label.setText("today has used software: %s:%s:%s" %
-                                    (day_time_hour, day_time_min, day_time_sec))
+        if self.view_widget.filename:
+            self.setWindowTitle(self.view_widget.filename + "-Life-" + "(Current: " +
+                                time.strftime("%Y-%m-%d_%H:%M:%S  ", time.localtime(time.time())) +
+                                "Use: " + "%s:%s:%s" % (day_time_hour, day_time_min, day_time_sec) + ")")
+        else:
+            self.setWindowTitle("-Life-" + "(Current: " +
+                                time.strftime("%Y-%m-%d_%H:%M:%S  ", time.localtime(time.time())) +
+                                "Use: " + "%s:%s:%s" % (day_time_hour, day_time_min, day_time_sec) + ")")
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if self.timer_status:

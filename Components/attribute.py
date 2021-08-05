@@ -255,7 +255,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
     edit_finished = QtCore.pyqtSignal(bool)
     start_editing = QtCore.pyqtSignal()
     
-    font = QtGui.QFont("等线", 8)
+    font = QtGui.QFont("等距更纱黑体 SC", 8)
     font_color = QtGui.QColor(0, 0, 0, 255)
 
     def __init__(self, text, node, parent=None, single_line=False):
@@ -1772,7 +1772,7 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.image.setPalette(palette)
 
         self.label_item = SimpleTextField("Description", self)
-        self.label_item.setFont(QtGui.QFont("等线", 8))
+        self.label_item.setFont(QtGui.QFont("等距更纱黑体 SC", 8))
 
         self.change_image_text = ChangeImageOrVideo("Cover", self, "Cover")
         self.change_video_text = ChangeImageOrVideo("File", self, "File")
