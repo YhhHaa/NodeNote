@@ -255,7 +255,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
     edit_finished = QtCore.pyqtSignal(bool)
     start_editing = QtCore.pyqtSignal()
     
-    font = QtGui.QFont("Inconsolata", 8)
+    font = QtGui.QFont("等线", 8)
     font_color = QtGui.QColor(0, 0, 0, 255)
 
     def __init__(self, text, node, parent=None, single_line=False):
@@ -719,19 +719,12 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
     @staticmethod
     def paste(cursor):
         mime_data = QtWidgets.QApplication.clipboard().mimeData()
-        if mime_data.hasText():
-            text = mime_data.text()
-            cursor.insertText(text)
-            if constants.DEBUG_RICHTEXT:
-                print("PASTE: ", text)
-        elif mime_data.hasHtml():
-            cursor.insertHtml(mime_data.html())
         if mime_data.hasImage():
             image = QtGui.QImage(mime_data.imageData())
-            image_folder = os.getcwd() + "/Assets"
+            image_folder = os.getcwd() + r"\Assets"
             if not os.path.exists(image_folder):
                 os.makedirs(image_folder)
-            image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
+            image_name = r"%s\%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
             image.save(image_name, quality=50)
             image_format = QtGui.QTextImageFormat()
             image_format.setName(image_name)
@@ -750,13 +743,22 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                         image_folder = os.getcwd() + "//Assets//"
                         if not os.path.exists(image_folder):
                             os.makedirs(image_folder)
-                        image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
+                        image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
                         image.save(image_name, quality=50)
-                    cursor.insertImage(image)
+                    image_format = QtGui.QTextImageFormat()
+                    image_format.setName(u.toLocalFile())
+                    cursor.insertImage(image_format)
                 else:
                     break
             else:
                 return
+        elif mime_data.hasText():
+            text = mime_data.text()
+            cursor.insertText(text)
+            if constants.DEBUG_RICHTEXT:
+                print("PASTE: ", text)
+        elif mime_data.hasHtml():
+            cursor.insertHtml(mime_data.html())
 
     def keyPressEvent(self, event) -> None:
         # insert key text into text field.
@@ -1770,7 +1772,7 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.image.setPalette(palette)
 
         self.label_item = SimpleTextField("Description", self)
-        self.label_item.setFont(QtGui.QFont("LucidaMacBold", 8))
+        self.label_item.setFont(QtGui.QFont("等线", 8))
 
         self.change_image_text = ChangeImageOrVideo("Cover", self, "Cover")
         self.change_video_text = ChangeImageOrVideo("File", self, "File")
