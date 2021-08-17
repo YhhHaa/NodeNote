@@ -41,7 +41,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.gpu_format.setSamples(4)
         self.gpu_format.setSwapInterval(0)
         self.gpu_format.setRenderableType(QtGui.QSurfaceFormat.OpenGL)
-        self.gpu_format.setSwapBehavior(QtGui.QSurfaceFormat.TripleBuffer)
+        self.gpu_format.setSwapBehavior(QtGui.QSurfaceFormat.DefaultSwapBehavior)
         self.gpu = QtWidgets.QOpenGLWidget()
         self.gpu.setFormat(self.gpu_format)
         self.setViewport(self.gpu)
@@ -951,8 +951,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         day_time_hour = int(day_time // 60 // 60)
         day_time_min = int((day_time // 60) - 60 * day_time_hour)
         day_time_sec = int(day_time - 60 * day_time_min - 60 * 60 * day_time_hour)
-        self.mainwindow.time_day_label.setText("today has used software: %s:%s:%s" %
-                                               (day_time_hour, day_time_min, day_time_sec))
 
         # image path
         if data['image path']:

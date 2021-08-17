@@ -714,7 +714,12 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             mime_data = QtCore.QMimeData()
             html_data = text_cursor.selection().toHtml(bytes())
             mime_data.setHtml(html_data)
-            clipboard.setMimeData(mime_data)
+            if mime_data.hasUrls() or mime_data.hasImage():
+                clipboard.setMimeData(mime_data)
+            else:
+                text_data = text_cursor.selection().toPlainText()
+                mime_data.setText(text_data)
+                clipboard.setMimeData(mime_data)
 
     @staticmethod
     def paste(cursor):
