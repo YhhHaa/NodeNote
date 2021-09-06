@@ -11,6 +11,8 @@ you can run this software by several steps
 1. `pip install -r requirements.txt`
 2. `python main.py`
 
+>> Note that the default font is `sarasa-mono sc`, you can install it at here https://github.com/be5invis/Sarasa-Gothic
+
 # 2. Functions
 
 ## 1. You can create two basic widgets

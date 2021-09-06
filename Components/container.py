@@ -4,7 +4,7 @@ from Model import constants, serializable
 
 
 class Container(QtWidgets.QGraphicsPathItem, serializable.Serializable):
-    width = 4
+    width = 0.5
     color = QtGui.QColor(255, 128, 128, 255)
     selected_color = QtGui.QColor(128, 0, 0, 128)
 

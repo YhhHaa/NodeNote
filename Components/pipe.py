@@ -52,7 +52,7 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         # EDIT
         self.edit = attribute.SimpleTextField("info", self)
-        self.edit.setFont(QtGui.QFont("LucidaMacBold", 8))
+        self.edit.setFont(QtGui.QFont("等距更纱黑体 SC", 6))
         self.edit.setDefaultTextColor(QtCore.Qt.black)
         bound_rect_width, bound_rect_height = self.edit.boundingRect().width(), self.edit.boundingRect().height()
         self.edit.setPos(self.path().pointAtPercent(0.5).x() - (bound_rect_width // 2),
