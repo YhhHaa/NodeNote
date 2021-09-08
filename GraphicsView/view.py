@@ -148,6 +148,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         # control
         self.pipe_true_item = None
 
+        # tablet
+        self.tablet_used = False
+        self.mouse_effect = True
+        self.setAttribute(QtCore.Qt.WA_TabletTracking)
+
     def set_leftbtn_beauty(self, event):
         water_drop = effect_water.EffectWater()
         property_water_drop = QtWidgets.QGraphicsProxyWidget()
@@ -598,13 +603,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def container_pressed(self, event):
         self.mode = constants.MODE_CONTAINER
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.CrossCursor)
         self.container_widget = container.Container(self.mapToScene(event.pos()))
         self.current_scene.addItem(self.container_widget)
         self.containers.append(self.container_widget)
 
     def container_released(self):
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.ArrowCursor)
         self.mode = constants.MODE_NOOP
         self.history.store_history("Create Container")
         if self.filename and not self.first_open:
@@ -713,82 +716,108 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 if name and ok:
                     pic.save(name)
 
+    def tabletEvent(self, a0: QtGui.QTabletEvent) -> None:
+
+        self.tablet_used = True
+
+        if a0.deviceType() == QtGui.QTabletEvent.Stylus:
+
+            # change style when the pen almost enter
+            if a0.type() == QtCore.QEvent.TabletEnterProximity:
+                self.mouse_effect = False
+                self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+                cursor_style = QtGui.QPixmap('Resources/point.png').scaled(20, 20)
+                cursor = QtGui.QCursor(cursor_style, 10, 10)
+                QtWidgets.QApplication.setOverrideCursor(cursor)
+
+            # draw line when the pen is on the tablet
+            if a0.type() == QtCore.QEvent.TabletPress:
+                self.container_pressed(a0)
+            elif a0.type() == QtCore.QEvent.TabletMove and self.mode == constants.MODE_CONTAINER:
+                self.container_widget.next_point = self.mapToScene(a0.pos())
+                self.container_widget.update()
+            elif a0.type() == QtCore.QEvent.TabletRelease:
+                self.container_released()
+
+        a0.accept()
+
     def mousePressEvent(self, event) -> None:
-        try:
-            self.itemAt(event.pos()).scenePos()  # debug for scale, i don't understand but it works
-        except AttributeError:
-            pass
-        if constants.DEBUG_DRAW_PIPE:
-            print("mouse press at", self.itemAt(event.pos()))
-        if self.mode == constants.MODE_PIPE_DRAG:
-            item = self.itemAt(event.pos())
-            if isinstance(item, port.Port):
-                if item is self.drag_pipe.start_port:
+        if not self.tablet_used:
+
+            try:
+                self.itemAt(event.pos()).scenePos()  # debug for scale, i don't understand but it works
+            except AttributeError:
+                pass
+            if constants.DEBUG_DRAW_PIPE:
+                print("mouse press at", self.itemAt(event.pos()))
+            if self.mode == constants.MODE_PIPE_DRAG:
+                item = self.itemAt(event.pos())
+                if isinstance(item, port.Port):
+                    if item is self.drag_pipe.start_port:
+                        self.drag_pipe_release(None)
+                        self.mode = constants.MODE_NOOP
+                else:
                     self.drag_pipe_release(None)
                     self.mode = constants.MODE_NOOP
+
+            if event.button() == QtCore.Qt.LeftButton and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+                self.cutline_pressed()
+                return
+            if event.button() == QtCore.Qt.LeftButton and self.mouse_effect:
+                self.set_leftbtn_beauty(event)
+            item = self.itemAt(event.pos())
+            if event.button() == QtCore.Qt.LeftButton and int(event.modifiers()) & QtCore.Qt.AltModifier and \
+                    isinstance(item, attribute.AttributeWidget):
+                self.new_sub_scene(item)
+
+            # control point
+            pipe_item = self.itemAt(event.pos())
+            if event.button() == QtCore.Qt.LeftButton and isinstance(pipe_item, pipe.Pipe):
+                self.pipe_true_item = pipe_item
+                self.pipe_true_item.show_flag = True
+            elif event.button() == QtCore.Qt.LeftButton and isinstance(pipe_item, attribute.SimpleTextField):
+                self.pipe_true_item = pipe_item.parentItem()
+                self.pipe_true_item.show_flag = True
+            elif event.button() == QtCore.Qt.LeftButton and \
+                    hasattr(pipe_item, "control_point_flag"):
+                self.pipe_true_item.show_flag = True
             else:
-                self.drag_pipe_release(None)
-                self.mode = constants.MODE_NOOP
-
-        if event.button() == QtCore.Qt.LeftButton and int(event.modifiers()) & QtCore.Qt.ShiftModifier and \
-                int(event.modifiers()) & QtCore.Qt.ControlModifier:
-            self.container_pressed(event)
-            return
-        if event.button() == QtCore.Qt.LeftButton and int(event.modifiers()) & QtCore.Qt.ControlModifier:
-            self.cutline_pressed()
-            return
-        if event.button() == QtCore.Qt.LeftButton:
-            self.set_leftbtn_beauty(event)
-        item = self.itemAt(event.pos())
-        if event.button() == QtCore.Qt.LeftButton and int(event.modifiers()) & QtCore.Qt.AltModifier and \
-                isinstance(item, attribute.AttributeWidget):
-            self.new_sub_scene(item)
-
-        # control point
-        pipe_item = self.itemAt(event.pos())
-        if event.button() == QtCore.Qt.LeftButton and isinstance(pipe_item, pipe.Pipe):
-            self.pipe_true_item = pipe_item
-            self.pipe_true_item.show_flag = True
-        elif event.button() == QtCore.Qt.LeftButton and isinstance(pipe_item, attribute.SimpleTextField):
-            self.pipe_true_item = pipe_item.parentItem()
-            self.pipe_true_item.show_flag = True
-        elif event.button() == QtCore.Qt.LeftButton and \
-                hasattr(pipe_item, "control_point_flag"):
-            self.pipe_true_item.show_flag = True
-        else:
-            for pipe_widget in self.pipes:
-                pipe_widget.show_flag = False
+                for pipe_widget in self.pipes:
+                    pipe_widget.show_flag = False
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
-        super(View, self).mouseReleaseEvent(event)
-        if self.mode == constants.MODE_PIPE_CUT:
-            self.cutline_released()
-            return
-        if self.mode == constants.MODE_CONTAINER:
-            self.container_released()
-            return
+        if not self.tablet_used:
+            super(View, self).mouseReleaseEvent(event)
+            if self.mode == constants.MODE_PIPE_CUT:
+                self.cutline_released()
+                return
 
     def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent) -> None:
-        super(View, self).mouseDoubleClickEvent(event)
-        if event.buttons() == QtCore.Qt.LeftButton:
-            self.drag_pipe_press(event)
-            item = self.itemAt(event.pos())
-            if hasattr(item, 'file_url'):
-                # noinspection PyTypeChecker
-                self.open_file(item)
+        if not self.tablet_used:
+            super(View, self).mouseDoubleClickEvent(event)
+            if event.buttons() == QtCore.Qt.LeftButton:
+                self.drag_pipe_press(event)
+                item = self.itemAt(event.pos())
+                if hasattr(item, 'file_url'):
+                    # noinspection PyTypeChecker
+                    self.open_file(item)
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
-        super(View, self).mouseMoveEvent(event)
-        if self.mode == constants.MODE_PIPE_DRAG:
-            self.drag_pipe.prepareGeometryChange()
-            self.drag_pipe.update_position(self.mapToScene(event.pos()))
-        elif self.mode == constants.MODE_PIPE_CUT:
-            self.cutline.line_points.append(self.mapToScene(event.pos()))
-            self.cutline.prepareGeometryChange()
-            self.cutline.update()
-        elif self.mode == constants.MODE_CONTAINER:
-            self.container_widget.next_point = self.mapToScene(event.pos())
-            self.container_widget.update()
+        if not self.tablet_used:
+            # change style when no tablet device
+            QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.ArrowCursor)
+            self.mode = constants.MODE_NOOP
+            self.mouse_effect = True
+            self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
+
+            super(View, self).mouseMoveEvent(event)
+            if self.mode == constants.MODE_PIPE_DRAG:
+                self.drag_pipe.prepareGeometryChange()
+                self.drag_pipe.update_position(self.mapToScene(event.pos()))
+            elif self.mode == constants.MODE_PIPE_CUT:
+                self.cutline.line_points.append(self.mapToScene(event.pos()))
+                self.cutline.prepareGeometryChange()
+                self.cutline.update()
 
     def keyPressEvent(self, event) -> None:
         super(View, self).keyPressEvent(event)

@@ -121,3 +121,6 @@ you can use this widget to control the truth and logical relationship  between `
 
 ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/NodeNote/sub_scene.gif)
 
+# Update 0.1
+You can use wacom tablet on this software!!
+the line style is controlled by `container widget`
