@@ -609,9 +609,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def container_released(self):
         self.mode = constants.MODE_NOOP
-        self.history.store_history("Create Container")
-        if self.filename and not self.first_open:
-            self.save_to_file()
 
     def new_sub_scene(self, attribute_widget):
         if not attribute_widget.sub_scene:

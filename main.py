@@ -16,6 +16,12 @@ class TabletApplication(QApplication):
             if a0.type() in (QEvent.TabletEnterProximity, QEvent.TabletLeaveProximity):
                 self._window.view_widget.tabletEvent(a0)
                 self._window.view_widget.tablet_used = a0.type() == QEvent.TabletEnterProximity
+
+                if a0.type() == QEvent.TabletLeaveProximity:
+                    self._window.view_widget.history.store_history("Create Container")
+                    if self._window.view_widget.filename and not self._window.view_widget.first_open:
+                        self._window.view_widget.save_to_file()
+
                 return True
         return super(TabletApplication, self).event(a0)
 
