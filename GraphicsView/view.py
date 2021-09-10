@@ -803,7 +803,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if not self.tablet_used:
             # change style when no tablet device
             QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.ArrowCursor)
-            self.mode = constants.MODE_NOOP
             self.mouse_effect = True
             self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
 
