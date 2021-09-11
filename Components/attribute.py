@@ -270,6 +270,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         self.origMoveEvent = self.mouseMoveEvent
         self.mouseMoveEvent = self.node.mouseMoveEvent
         # DOCUMNET SETTINGS
+        self.document().setMetaInformation(QtGui.QTextDocument.DocumentUrl, r"Assets/")
         self.setDefaultTextColor(self.font_color)
         self.document().setIndentWidth(4)
         self.document().setDefaultFont(self.font)
@@ -726,7 +727,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         mime_data = QtWidgets.QApplication.clipboard().mimeData()
         if mime_data.hasImage():
             image = QtGui.QImage(mime_data.imageData())
-            image_folder = os.getcwd() + r"\Assets"
+            image_folder = r"\Assets"
             if not os.path.exists(image_folder):
                 os.makedirs(image_folder)
             image_name = r"%s\%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
@@ -745,13 +746,13 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                     first_index = url.rindex('/')
                     second_index = url[:first_index].rindex('/')
                     if url[second_index + 1: first_index] != "Assets":
-                        image_folder = os.getcwd() + "//Assets//"
+                        image_folder = "//Assets//"
                         if not os.path.exists(image_folder):
                             os.makedirs(image_folder)
                         image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
                         image.save(image_name, quality=50)
                     image_format = QtGui.QTextImageFormat()
-                    image_format.setName(u.toLocalFile())
+                    image_format.setName(image_name)
                     cursor.insertImage(image_format)
                 else:
                     break
