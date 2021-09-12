@@ -756,11 +756,11 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                     cursor.insertImage(image_format)
                 else:
                     break
-            if mime_data.hasText():
-                text = mime_data.text()
-                cursor.insertText(text)
-                if constants.DEBUG_RICHTEXT:
-                    print("PASTE: ", text)
+        elif mime_data.hasText():
+            text = mime_data.text()
+            cursor.insertText(text)
+            if constants.DEBUG_RICHTEXT:
+                print("PASTE: ", text)
         elif mime_data.hasHtml():
             cursor.insertHtml(mime_data.html())
 
