@@ -34,24 +34,33 @@ class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
 
 
 class View(QtWidgets.QGraphicsView, serializable.Serializable):
-    def __init__(self, mainwindow, parent=None):
-        super(View, self).__init__(parent)
+    def __init__(self, mainwindow, parent=None, root_flag=True):
+        self.root_flag = root_flag
         self.mainwindow = mainwindow
-        self.gpu_format = QtGui.QSurfaceFormat()
-        self.gpu_format.setSamples(4)
-        self.gpu_format.setSwapInterval(0)
-        self.gpu_format.setRenderableType(QtGui.QSurfaceFormat.OpenGL)
-        self.gpu_format.setSwapBehavior(QtGui.QSurfaceFormat.DefaultSwapBehavior)
-        self.gpu = QtWidgets.QOpenGLWidget()
-        self.gpu.setFormat(self.gpu_format)
-        self.setViewport(self.gpu)
+        super(View, self).__init__(parent)
+        if self.root_flag:
+            self.gpu_format = QtGui.QSurfaceFormat()
+            self.gpu_format.setSamples(4)
+            self.gpu_format.setSwapInterval(0)
+            self.gpu_format.setRenderableType(QtGui.QSurfaceFormat.OpenGL)
+            self.gpu_format.setSwapBehavior(QtGui.QSurfaceFormat.DefaultSwapBehavior)
+            self.gpu = QtWidgets.QOpenGLWidget()
+            self.gpu.setFormat(self.gpu_format)
+            self.setViewport(self.gpu)
         # BASIC SETTINGS
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
-        self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
+        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        if self.root_flag:
+            self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
         self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.HighQualityAntialiasing |
                             QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
-        self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
-        self.root_scene = Scene(self.mainwindow.scene_list, self)
+        if self.root_flag:
+            self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
+
+        if self.root_flag:
+            self.root_scene = Scene(self.mainwindow.scene_list, self)
+        else:
+            self.root_scene = Scene(self.mainwindow.view_widget.current_scene_flag, self)
         self.setScene(self.root_scene)
         self.background_image = self.root_scene.background_image
         self.cutline = self.root_scene.cutline
@@ -93,16 +102,23 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.container_widget = None
 
         # SUB SCENE
-        self.root_scene_flag = TreeWidgetItem(self.mainwindow.scene_list,
-                                              ("Root Scene",))
-        self.root_scene_flag.setData(0, QtCore.Qt.ToolTipRole, self.root_scene)
-        self.root_scene_flag.setExpanded(True)
+        if self.root_flag:
+            self.root_scene_flag = TreeWidgetItem(self.mainwindow.scene_list,
+                                                ("Root Scene",))
+            self.root_scene_flag.setData(0, QtCore.Qt.ToolTipRole, self.root_scene)
+            self.root_scene_flag.setExpanded(True)
+        else:
+            self.root_scene_flag = self.mainwindow.view_widget.current_scene_flag
+
         self.root_scene.sub_scene_flag = self.root_scene_flag
         self.current_scene = self.root_scene
         self.current_scene_flag = self.root_scene_flag
 
         # History
-        self.history = history.History(self)
+        if self.root_flag:
+            self.history = history.History(self)
+        else:
+            self.history = self.mainwindow.view_widget.history
 
         # Search
         self.search_widget = QtWidgets.QWidget(self)
@@ -615,28 +631,48 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             sub_scene_flag = TreeWidgetItem(self.current_scene_flag,
                                             (attribute_widget.attribute_widget.label_item.toPlainText(),))
             sub_scene = Scene(sub_scene_flag, self, attribute_widget)
-            self.background_image = sub_scene.background_image
-            self.cutline = sub_scene.cutline
+            if self.root_flag:
+                self.background_image = sub_scene.background_image
+                self.cutline = sub_scene.cutline
+            else:
+                self.mainwindow.view_widget.background_image = sub_scene.background_image
+                self.mainwindow.view_widget.cutline = sub_scene.cutline
 
             attribute_widget.set_sub_scene(sub_scene)
 
             sub_scene_flag.setData(0, QtCore.Qt.ToolTipRole, sub_scene)
             sub_scene_flag.setExpanded(True)
 
-            self.current_scene.clearSelection()
-            self.setScene(sub_scene)
-            self.current_scene = sub_scene
-            self.current_scene_flag = sub_scene.sub_scene_flag
+            if self.root_flag:
+                self.current_scene.clearSelection()
+                self.setScene(sub_scene)
+                self.current_scene = sub_scene
+                self.current_scene_flag = sub_scene.sub_scene_flag
+            else:
+                self.current_scene.clearSelection()
+                self.mainwindow.view_widget.current_scene.clearSelection()
+                self.mainwindow.view_widget.setScene(sub_scene)
+                self.mainwindow.view_widget.current_scene = sub_scene
+                self.mainwindow.view_widget.current_scene_flag = sub_scene.sub_scene_flag
         else:
 
             sub_scene = attribute_widget.sub_scene
 
-            self.current_scene.clearSelection()
-            self.setScene(sub_scene)
-            self.current_scene = sub_scene
-            self.current_scene_flag = sub_scene.sub_scene_flag
-            self.background_image = self.current_scene.background_image
-            self.cutline = self.current_scene.cutline
+            if self.root_flag:
+                self.current_scene.clearSelection()
+                self.setScene(sub_scene)
+                self.current_scene = sub_scene
+                self.current_scene_flag = sub_scene.sub_scene_flag
+                self.background_image = self.current_scene.background_image
+                self.cutline = self.current_scene.cutline
+            else:
+                self.current_scene.clearSelection()
+                self.mainwindow.view_widget.current_scene.clearSelection()
+                self.mainwindow.view_widget.setScene(sub_scene)
+                self.mainwindow.view_widget.current_scene = sub_scene
+                self.mainwindow.view_widget.current_scene_flag = sub_scene.sub_scene_flag
+                self.mainwindow.view_widget.background_image = self.mainwindow.view_widget.current_scene.background_image
+                self.mainwindow.view_widget.cutline = self.mainwindow.view_widget.current_scene.cutline
 
         # Style init
         self.mainwindow.style_switch_combox.setCurrentIndex(0)
@@ -647,11 +683,18 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.save_to_file()
 
     def change_current_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem):
-        self.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
-        self.current_scene_flag = sub_scene_item
-        self.setScene(self.current_scene)
-        self.background_image = self.current_scene.background_image
-        self.cutline = self.current_scene.cutline
+        if self.root_flag:
+            self.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
+            self.current_scene_flag = sub_scene_item
+            self.setScene(self.current_scene)
+            self.background_image = self.current_scene.background_image
+            self.cutline = self.current_scene.cutline
+        else:
+            self.mainwindow.view_widget.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
+            self.mainwindow.view_widget.current_scene_flag = sub_scene_item
+            self.mainwindow.view_widget.setScene(self.mainwindow.view_widget.current_scene)
+            self.mainwindow.view_widget.background_image = self.mainwindow.view_widget.current_scene.background_image
+            self.mainwindow.view_widget.cutline = self.mainwindow.view_widget.current_scene.cutline
 
         self.mainwindow.style_switch_combox.setCurrentIndex(0)
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
@@ -855,12 +898,14 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.mainwindow.time_start()
 
-    def contextMenuEvent(self, event) -> None:
+    def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
         super(View, self).contextMenuEvent(event)
         leftbtn_press_event = QtGui.QMouseEvent(QtCore.QEvent.MouseButtonDblClick, event.pos(), event.globalPos(),
                                                 QtCore.Qt.LeftButton, QtCore.Qt.NoButton, event.modifiers())
         self.mouseDoubleClickEvent(leftbtn_press_event)
-        if not event.isAccepted():
+        from Components.sub_view import ProxyView
+        current_item = self.itemAt(event.pos())
+        if isinstance(current_item, effect_background.EffectBackground):
             context_menu = QtWidgets.QMenu(self)
             # context list
             create_attribute_widget = context_menu.addAction("Create Attribute Widget")
@@ -881,6 +926,18 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.change_svg_image()
             elif action == change_snow_image:
                 self.change_flowing_image()
+        elif isinstance(current_item, ProxyView):
+            return
+        elif isinstance(current_item, attribute.AttributeWidget):
+            current_item.context_flag = True
+            current_item.contextMenuEvent(event)
+        elif isinstance(current_item, attribute.InputTextField):
+            current_item.node.context_flag = True
+            current_item.node.contextMenuEvent(event)
+        elif isinstance(current_item, attribute.SubConstituteWidget):
+            current_item.parentItem().context_flag = True
+            current_item.parentItem().contextMenuEvent(event)
+
 
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
         super(View, self).drawBackground(painter, rect)
@@ -888,36 +945,38 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.background_image.resize(self.size().width(), self.size().height())
 
     def save_to_file(self):
-        if not self.filename:
-            filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                 "Save serialization json file", "./", "json (*.json)")
-            if filename and ok:
-                self.filename = filename
-                with open(filename, "w", encoding='utf-8') as file:
-                    file.write(json.dumps(self.serialize(), indent=4))
-                self.mainwindow.setWindowTitle(filename + "-Life")
-        else:
-            with open(self.filename, "w", encoding='utf-8') as file:
-                file.write(json.dumps(self.serialize(), indent=4))
-            self.mainwindow.setWindowTitle(self.filename + "-Life")
-
-    def load_from_file(self):
-        if not self.filename:
-            filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                 "Open serialization json file", "./", "json (*.json)")
-            if filename and ok:
-                with open(filename, "r", encoding='utf-8') as file:
-                    data = json.loads(file.read())
-                    self.deserialize(data, {}, self, True)
+        if self.root_flag:
+            if not self.filename:
+                filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                                     "Save serialization json file", "./", "json (*.json)")
+                if filename and ok:
                     self.filename = filename
+                    with open(filename, "w", encoding='utf-8') as file:
+                        file.write(json.dumps(self.serialize(), indent=4))
                     self.mainwindow.setWindowTitle(filename + "-Life")
-        else:
-            with open(self.filename, "r", encoding='utf-8') as file:
-                data = json.loads(file.read())
-                self.deserialize(data, {}, self, True)
+            else:
+                with open(self.filename, "w", encoding='utf-8') as file:
+                    file.write(json.dumps(self.serialize(), indent=4))
                 self.mainwindow.setWindowTitle(self.filename + "-Life")
 
-        self.first_open = False
+    def load_from_file(self):
+        if self.root_flag:
+            if not self.filename:
+                filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                     "Open serialization json file", "./", "json (*.json)")
+                if filename and ok:
+                    with open(filename, "r", encoding='utf-8') as file:
+                        data = json.loads(file.read())
+                        self.deserialize(data, {}, self, True)
+                        self.filename = filename
+                        self.mainwindow.setWindowTitle(filename + "-Life")
+            else:
+                with open(self.filename, "r", encoding='utf-8') as file:
+                    data = json.loads(file.read())
+                    self.deserialize(data, {}, self, True)
+                    self.mainwindow.setWindowTitle(self.filename + "-Life")
+
+            self.first_open = False
 
     def serialize(self):
         return OrderedDict([
@@ -955,9 +1014,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         # clear all contents
         for item in self.root_scene.items():
-            if not isinstance(item, (effect_background.EffectBackground, effect_cutline.EffectCutline)):
+            from Components.sub_view import ProxyView
+            if not isinstance(item, (effect_background.EffectBackground, effect_cutline.EffectCutline, ProxyView)):
                 self.root_scene.removeItem(item)
-        self.mainwindow.scene_list.clear()
+        if self.root_flag:
+            self.mainwindow.scene_list.clear()
         self.attribute_widgets = list()
         self.logic_widgets = list()
         self.pipes = list()
@@ -983,11 +1044,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.image_path = data['image path']
 
         # set root scene
-        self.root_scene_flag = TreeWidgetItem(
-            self.mainwindow.scene_list,
-            ("Root Scene",))
-        self.root_scene_flag.setData(0, QtCore.Qt.ToolTipRole, self.root_scene)
-        self.root_scene_flag.setExpanded(True)
+        if self.root_flag:
+            self.root_scene_flag = TreeWidgetItem(
+                self.mainwindow.scene_list,
+                ("Root Scene",))
+            self.root_scene_flag.setData(0, QtCore.Qt.ToolTipRole, self.root_scene)
+            self.root_scene_flag.setExpanded(True)
         self.current_scene = self.root_scene
         self.current_scene_flag = self.root_scene_flag
         self.background_image = self.current_scene.background_image
@@ -1040,16 +1102,17 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.root_scene.deserialize(data['root scene'], hashmap, view, flag=False)
 
         # recover current scene
-        iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
-        while iterator.value():
-            scene_flag = iterator.value()
-            iterator += 1
-            if scene_flag.data(0, QtCore.Qt.ToolTipRole).id == data['current scene']:
-                self.current_scene = scene_flag.data(0, QtCore.Qt.ToolTipRole)
-                self.current_scene_flag = scene_flag
-                self.background_image = self.current_scene.background_image
-                self.cutline = self.current_scene.cutline
-                self.setScene(self.current_scene)
-                break
+        if self.root_flag:
+            iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
+            while iterator.value():
+                scene_flag = iterator.value()
+                iterator += 1
+                if scene_flag.data(0, QtCore.Qt.ToolTipRole).id == data['current scene']:
+                    self.current_scene = scene_flag.data(0, QtCore.Qt.ToolTipRole)
+                    self.current_scene_flag = scene_flag
+                    self.background_image = self.current_scene.background_image
+                    self.cutline = self.current_scene.cutline
+                    self.setScene(self.current_scene)
+                    break
 
         return True

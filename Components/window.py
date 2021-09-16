@@ -10,9 +10,10 @@ from GraphicsView.view import View
 
 
 class NoteWindow(QtWidgets.QMainWindow):
-    def __init__(self, argv):
+    def __init__(self, argv, app=None):
         super(NoteWindow, self).__init__()
         self.argv = argv
+        self.app = app
         #   Window Init
         self.setWindowIcon(QtGui.QIcon('Resources/cloudy.png'))  # set icon
         self.setWindowTitle("My Beautiful life")  # set title

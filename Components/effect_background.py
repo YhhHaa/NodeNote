@@ -13,6 +13,7 @@ class EffectBackground(QtSvg.QGraphicsSvgItem):
         self.name = "Resources/Background/soft.svg"
         self.svg = QtSvg.QSvgRenderer(self.name)
         self.setSharedRenderer(self.svg)
+        self.setCacheMode(QtWidgets.QGraphicsItem.ItemCoordinateCache)
 
     def resize(self, width, height):
         self.width = width
@@ -27,6 +28,7 @@ class EffectBackground(QtSvg.QGraphicsSvgItem):
         return QtCore.QRectF(0, 0, self.width, self.height)
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
+        super(EffectBackground, self).paint(painter, option, widget)
         painter.save()
         self.renderer().render(painter, self.boundingRect())
         painter.restore()

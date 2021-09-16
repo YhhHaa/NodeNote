@@ -361,15 +361,20 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                                     item.attribute_layout.addItem(sub_attribute_widget,
                                                                   sub_attribute_widget.item_row,
                                                                   sub_attribute_widget.item_column)
-                                    item.text_change_node_shape()
                                 elif isinstance(attribute_sub_id, dict):
-                                    attribute_file = attribute.AttributeFile(item)
-                                    attribute_file.deserialize(attribute_sub_id, hashmap, view, flag)
-                                    item.attribute_sub_widgets.append(attribute_file)
-                                    item.attribute_layout.addItem(attribute_file,
-                                                                  attribute_file.item_row,
-                                                                  attribute_file.item_column)
-                                    item.text_change_node_shape()
+                                    from Components.sub_view import ProxyView
+                                    if 'file' in attribute_sub_id:
+                                        attribute_sub = attribute.AttributeFile(item)
+                                        attribute_sub.deserialize(attribute_sub_id, hashmap, view, flag)
+                                    else:
+                                        attribute_sub = ProxyView(self.view.mainwindow)
+                                        attribute_sub.deserialize(attribute_sub_id, hashmap,
+                                                                  attribute_sub.sub_view_widget_view, flag=True)
+                                    item.attribute_sub_widgets.append(attribute_sub)
+                                    item.attribute_layout.addItem(attribute_sub,
+                                                                  attribute_sub.item_row,
+                                                                  attribute_sub.item_column)
+                            item.text_change_node_shape()
                             # deserialize attribute widgets with attribute next widgets
                             for attribute_next_id in attribute_widget_data['next attribute widgets']:
                                 next_attribute_widget = self.get_id_attribute(attribute_next_id)

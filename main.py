@@ -3,7 +3,7 @@ import sys
 from Components.window import NoteWindow
 from PyQt5.QtWidgets import QApplication, QSplashScreen
 from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt, QEvent, QObject
+from PyQt5.QtCore import Qt, QEvent
 
 
 class TabletApplication(QApplication):
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     app.processEvents()
 
     # main
-    window = NoteWindow(sys.argv)
+    window = NoteWindow(sys.argv, app)
     window.load_data(splash)
     window.show()
     splash.finish(window)

@@ -227,7 +227,6 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
     def __init__(self, text, parent):
         super(SimpleTextField, self).__init__(text, parent)
         self.setFlags(QtWidgets.QGraphicsWidget.ItemSendsGeometryChanges | QtWidgets.QGraphicsWidget.ItemIsSelectable)
-        self.document().contentsChanged.connect(self.control_length)
 
     def mouseDoubleClickEvent(self, event) -> None:
         super(SimpleTextField, self).mouseDoubleClickEvent(event)
@@ -245,10 +244,6 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
         self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.textCursor().clearSelection()
         super(SimpleTextField, self).focusOutEvent(event)
-
-    def control_length(self):
-        if len(self.document().toPlainText()) >= 18:
-            self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
 
 
 class InputTextField(QtWidgets.QGraphicsTextItem):
@@ -926,7 +921,11 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         self.setFlag(QtWidgets.QGraphicsWidget.ItemIsFocusable, True)
         self.editing_state = True
         self.start_editing.emit()
-        self.setFocus()
+        self.setFocus(QtCore.Qt.MouseFocusReason)
+        if not self.hasFocus():
+            activate = QtCore.QEvent(QtCore.QEvent.WindowActivate)
+            self.scene().view.mainwindow.app.sendEvent(self.scene(), activate)
+            self.setFocus(QtCore.Qt.MouseFocusReason)
 
     def focusInEvent(self, event) -> None:
         self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse)
@@ -1933,9 +1932,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         #   layout
         self.setLayout(self.layout)
         self.layout.addItem(self.input_layout)
-        self.layout.addStretch(1)
         self.layout.addItem(self.title_layout)
-        self.layout.addStretch(1)
         self.layout.addItem(self.output_layout)
         #  input layout
         self.input_layout.addItem(self.true_input_port)
@@ -1989,6 +1986,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.selected_color_flag = False
         self.border_flag = False
         self.selected_border_flag = False
+
+        # context
+        self.context_flag = False
 
     def paint(self, painter, option, widget=None) -> None:
         painter.save()
@@ -2143,8 +2143,11 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         widget.item_row = self.current_row
         widget.item_column = self.current_column
 
-    def add_new_subwidget(self, line=True):
-        subwidget = AttributeWidget()
+    def add_new_subwidget(self, line=True, view_flag=None):
+        if not view_flag:
+            subwidget = AttributeWidget()
+        else:
+            subwidget = view_flag
         self.add_widget(subwidget, line)
         self.attribute_sub_widgets.append(subwidget)
         self.scene().view.attribute_widgets.append(subwidget)
@@ -2358,7 +2361,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             if pipe_widget is item:
                 return True
         for sub_widget in attribute_widget.attribute_sub_widgets:
-            if sub_widget.colliding_judge_pipe(sub_widget, item):
+            from Components.sub_view import ProxyView
+            if not isinstance(sub_widget, (AttributeFile, ProxyView)) and \
+                    sub_widget.colliding_judge_pipe(sub_widget, item):
                 return True
         return False
 
@@ -2933,37 +2938,43 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         else:
             super(AttributeWidget, self).mouseReleaseEvent(event)
 
-    def contextMenuEvent(self, event: 'QtWidgets.QGraphicsSceneContextMenuEvent') -> None:
-        menu = QtWidgets.QMenu()
-        menu.setStyleSheet(stylesheet.STYLE_QMENU)
-        add_line_subwidget = menu.addAction("Add Line Subwidget")
-        add_line_subwidget.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_line_widget.PNG"))
-        add_subwidget = menu.addAction("Add Subwidget")
-        add_subwidget.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_widget.png"))
-        add_line_file = menu.addAction("Add Line File")
-        add_line_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_line_video.png"))
-        add_file = menu.addAction("Add File")
-        add_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_video.png"))
-        move_up = menu.addAction("Move Up")
-        move_up.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/up.png"))
-        move_down = menu.addAction("Move Down")
-        move_down.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/down.png"))
-        result = menu.exec(event.screenPos())
-        if result == add_line_subwidget:
-            self.add_new_subwidget(line=True)
-        elif result == add_subwidget:
-            self.add_new_subwidget(line=False)
-        elif result == add_line_file:
-            self.add_file(line=True)
-        elif result == add_file:
-            self.add_file(line=False)
-        elif result == move_up and (isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()).parentItem(),
-                                               (AttributeWidget, AttributeFile, SubConstituteWidget, SimpleTextField))):
-            self.move_up_widget(self.scene().itemAt(event.scenePos(), QtGui.QTransform()))
-        elif result == move_down and (isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()).parentItem(),
-                                        (AttributeWidget, AttributeFile, SubConstituteWidget, SimpleTextField))):
-            self.move_down_widget(self.scene().itemAt(event.scenePos(), QtGui.QTransform()))
-        event.setAccepted(True)
+    def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
+        if self.context_flag:
+            menu = QtWidgets.QMenu()
+            menu.setStyleSheet(stylesheet.STYLE_QMENU)
+            add_line_subwidget = menu.addAction("Add Line Subwidget")
+            add_line_subwidget.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_line_widget.PNG"))
+            add_subwidget = menu.addAction("Add Subwidget")
+            add_subwidget.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_widget.png"))
+            add_line_file = menu.addAction("Add Line File")
+            add_line_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_line_video.png"))
+            add_file = menu.addAction("Add File")
+            add_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_video.png"))
+            add_view = menu.addAction("Add View")
+            add_view.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/sub view.png"))
+            move_up = menu.addAction("Move Up")
+            move_up.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/up.png"))
+            move_down = menu.addAction("Move Down")
+            move_down.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/down.png"))
+            result = menu.exec(event.globalPos())
+            if result == add_line_subwidget:
+                self.add_new_subwidget(line=True)
+            elif result == add_subwidget:
+                self.add_new_subwidget(line=False)
+            elif result == add_line_file:
+                self.add_file(line=True)
+            elif result == add_file:
+                self.add_file(line=False)
+            elif result == move_up and (isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()).parentItem(),
+                                                   (AttributeWidget, AttributeFile, SubConstituteWidget, SimpleTextField))):
+                self.move_up_widget(self.scene().itemAt(event.scenePos(), QtGui.QTransform()))
+            elif result == move_down and (isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()).parentItem(),
+                                            (AttributeWidget, AttributeFile, SubConstituteWidget, SimpleTextField))):
+                self.move_down_widget(self.scene().itemAt(event.scenePos(), QtGui.QTransform()))
+            elif result == add_view:
+                from Components.sub_view import ProxyView
+                self.add_new_subwidget(True, ProxyView(self.scene().view.mainwindow))
+            self.context_flag = False
 
     def moveEvent(self, event: 'QtWidgets.QGraphicsSceneMoveEvent') -> None:
         super(AttributeWidget, self).moveEvent(event)
@@ -2987,9 +2998,10 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             last_logic_widgets.append(last_logic_widget.id)
         for i in range(len(self.attribute_sub_widgets)):
             attribute_sub_widget = self.attribute_layout.itemAt(i)
+            from Components.sub_view import ProxyView
             if isinstance(attribute_sub_widget, AttributeWidget):
                 attribute_sub_widgets.append(attribute_sub_widget.id)
-            elif isinstance(attribute_sub_widget, AttributeFile):
+            elif isinstance(attribute_sub_widget, (AttributeFile, ProxyView)):
                 attribute_sub_widgets.append(attribute_sub_widget.serialize())
 
         return OrderedDict([
