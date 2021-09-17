@@ -112,8 +112,6 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
 
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
         super(Scene, self).drawBackground(painter, rect)
-        if painter.paintEngine().type() != QtGui.QPaintEngine.OpenGL:
-            warnings.warn("OpenGLScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view")
 
     def serialize(self):
         attribute_widgets = list()
