@@ -374,6 +374,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.pipes.remove(pipe_widget)
 
     def delete_widgets(self, event):
+        from Components.todo import Todo
         if event.key() == QtCore.Qt.Key_Delete:
             for item in self.current_scene.selectedItems():
                 if item in self.current_scene.selectedItems():
@@ -424,7 +425,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     elif isinstance(item, container.Container):
                         self.current_scene.removeItem(item)
                         self.containers.remove(item)
-                    elif isinstance(item, attribute.AttributeFile):
+                    elif isinstance(item, (attribute.AttributeFile, Todo)):
                         item.parent_item.attribute_layout.removeItem(item)
                         item.parent_item.attribute_sub_widgets.remove(item)
                         sip.delete(item)

@@ -363,8 +363,12 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                                                                   sub_attribute_widget.item_column)
                                 elif isinstance(attribute_sub_id, dict):
                                     from Components.sub_view import ProxyView
+                                    from Components.todo import Todo
                                     if 'file' in attribute_sub_id:
                                         attribute_sub = attribute.AttributeFile(item)
+                                        attribute_sub.deserialize(attribute_sub_id, hashmap, view, flag)
+                                    elif 'task' in attribute_sub_id:
+                                        attribute_sub = Todo(item)
                                         attribute_sub.deserialize(attribute_sub_id, hashmap, view, flag)
                                     else:
                                         attribute_sub = ProxyView(self.view.mainwindow)

@@ -2362,7 +2362,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 return True
         for sub_widget in attribute_widget.attribute_sub_widgets:
             from Components.sub_view import ProxyView
-            if not isinstance(sub_widget, (AttributeFile, ProxyView)) and \
+            from Components.todo import Todo
+            if not isinstance(sub_widget, (AttributeFile, ProxyView, Todo)) and \
                     sub_widget.colliding_judge_pipe(sub_widget, item):
                 return True
         return False
@@ -2952,6 +2953,10 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             add_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_video.png"))
             add_view = menu.addAction("Add View")
             add_view.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/sub view.png"))
+            add_todo_line = menu.addAction("Add Todo Inline")
+            add_todo_line.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/Todo.png"))
+            add_todo = menu.addAction("Add Todo")
+            add_todo.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/Todo.png"))
             move_up = menu.addAction("Move Up")
             move_up.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/up.png"))
             move_down = menu.addAction("Move Down")
@@ -2974,6 +2979,12 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             elif result == add_view:
                 from Components.sub_view import ProxyView
                 self.add_new_subwidget(True, ProxyView(self.scene().view.mainwindow))
+            elif result == add_todo_line:
+                from Components.todo import Todo
+                self.add_new_subwidget(True, Todo(self))
+            elif result == add_todo:
+                from Components.todo import Todo
+                self.add_new_subwidget(False, Todo(self))
             self.context_flag = False
 
     def moveEvent(self, event: 'QtWidgets.QGraphicsSceneMoveEvent') -> None:
@@ -2999,9 +3010,10 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         for i in range(len(self.attribute_sub_widgets)):
             attribute_sub_widget = self.attribute_layout.itemAt(i)
             from Components.sub_view import ProxyView
+            from Components.todo import Todo
             if isinstance(attribute_sub_widget, AttributeWidget):
                 attribute_sub_widgets.append(attribute_sub_widget.id)
-            elif isinstance(attribute_sub_widget, (AttributeFile, ProxyView)):
+            elif isinstance(attribute_sub_widget, (AttributeFile, ProxyView, Todo)):
                 attribute_sub_widgets.append(attribute_sub_widget.serialize())
 
         return OrderedDict([
