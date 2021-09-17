@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui
 from GraphicsView import view
 from Model import constants, serializable
 
@@ -7,6 +7,12 @@ from Model import constants, serializable
 class ProxyView(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
     def __init__(self, root_window, parent=None):
         super(ProxyView, self).__init__(parent)
+
+        # input method
+        self.setAttribute(QtCore.Qt.WA_InputMethodEnabled, True)
+        self.setAttribute(QtCore.Qt.WA_KeyCompression, True)
+        self.setFocusPolicy(QtCore.Qt.WheelFocus)
+
         # new widgets
         self.root_window = root_window
         self.sub_view_widget = QtWidgets.QWidget()

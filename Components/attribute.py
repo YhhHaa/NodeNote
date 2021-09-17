@@ -232,6 +232,10 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
         super(SimpleTextField, self).mouseDoubleClickEvent(event)
         self.setFlag(QtWidgets.QGraphicsWidget.ItemIsFocusable, True)
         self.setFocus()
+        if not self.hasFocus():
+            activate = QtCore.QEvent(QtCore.QEvent.WindowActivate)
+            self.scene().view.mainwindow.app.sendEvent(self.scene(), activate)
+            self.setFocus(QtCore.Qt.MouseFocusReason)
 
     def mousePressEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
         self.parentItem().mousePressEvent(event)
@@ -1904,7 +1908,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.input_layout.setSpacing(0)
         self.output_layout.setSpacing(0)
         self.title_layout.setSpacing(0)
-        self.attribute_layout.setSpacing(40)
+        self.attribute_layout.setSpacing(10)
         #   margin
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.input_layout.setContentsMargins(0, 0, 0, 0)
