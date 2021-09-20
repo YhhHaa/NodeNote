@@ -17,8 +17,7 @@ class ProxyView(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
         self.root_window = root_window
         self.sub_view_widget = QtWidgets.QWidget()
         self.sub_view_widget_layout = QtWidgets.QVBoxLayout()
-        self.sub_view_widget_view = view.View(self.root_window, None, False)
-
+        self.sub_view_widget_view = view.View(self.root_window, None, False, self)
         # connections
         # init layout
         self.sub_view_widget_layout.setContentsMargins(0, 0, 0, 0)

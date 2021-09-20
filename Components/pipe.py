@@ -362,7 +362,7 @@ class ControlPoint(QtWidgets.QGraphicsItem):
     control_point_border_color = QtGui.QColor(0, 0, 0)
 
     def __init__(self, pipe_item: Pipe):
-        super(ControlPoint, self).__init__()
+        super(ControlPoint, self).__init__(pipe_item)
         self.moving = False
         self.control_point_flag = True
         self.first_flag = False

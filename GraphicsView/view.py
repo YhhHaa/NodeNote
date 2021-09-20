@@ -34,9 +34,10 @@ class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
 
 
 class View(QtWidgets.QGraphicsView, serializable.Serializable):
-    def __init__(self, mainwindow, parent=None, root_flag=True):
+    def __init__(self, mainwindow, parent=None, root_flag=True, proxy_widget = None):
         self.root_flag = root_flag
         self.mainwindow = mainwindow
+        self.proxy_widget = proxy_widget
         super(View, self).__init__(parent)
         if self.root_flag:
             self.gpu_format = QtGui.QSurfaceFormat()

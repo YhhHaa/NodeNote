@@ -259,6 +259,10 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
 
     def __init__(self, text, node, parent=None, single_line=False):
         super(InputTextField, self).__init__(text, parent)
+        # input
+        self.past_scene = None
+        self.last_pos = QtCore.QPointF()
+        self.setZValue(constants.Z_VAL_NODE + 1)
         # BASIC SETTINGS
         self.setFlags(QtWidgets.QGraphicsWidget.ItemSendsGeometryChanges | QtWidgets.QGraphicsWidget.ItemIsSelectable)
         self.setOpenExternalLinks(True)
@@ -894,11 +898,9 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                     self.indent()
                     return False
             else:
-                super(InputTextField, self).sceneEvent(event)
-                return False
+                return super(InputTextField, self).sceneEvent(event)
         else:
-            super(InputTextField, self).sceneEvent(event)
-            return False
+            return super(InputTextField, self).sceneEvent(event)
 
     def mousePressEvent(self, event) -> None:
         # change focus into node
@@ -932,13 +934,44 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             self.setFocus(QtCore.Qt.MouseFocusReason)
 
     def focusInEvent(self, event) -> None:
+        # remove from past scene and added into root scene
+        if not self.scene().view.root_flag:
+            self.past_scene = self.node.scene()
+
+            # calculate pos
+            root_view = self.scene().view.mainwindow.view_widget
+            node_subview_pos = self.scene().view.mapFromScene(self.scenePos())
+            subview_pos = root_view.mapFromScene(self.scene().view.proxy_widget.scenePos())
+            node_pos = node_subview_pos + subview_pos
+
+            # remove from past scene
+            for item in self.node.attribute_widget.childItems():
+                item.setParentItem(None)
+                item.setParent(None)
+
+            # add into root scene
+            self.last_pos = self.scenePos()
+            self.node.attribute_widget.layout.removeAt(0)
+            root_view.root_scene.addItem(self)
+            self.setPos(root_view.mapToScene(node_pos))
+
         self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse)
         self.setObjectName("MouseLocked")
         self.text_before_editing = self.toHtml()
-        self.mouseMoveEvent = self.origMoveEvent
+        self.mouseMoveEvent = self.node.mouseMoveEvent
         super(InputTextField, self).focusInEvent(event)
 
     def focusOutEvent(self, event) -> None:
+        if self.past_scene:
+            # added into past scene
+            self.past_scene.addItem(self)
+            graphics_widget = QtWidgets.QGraphicsWidget()
+            graphics_widget.setGraphicsItem(self)
+            self.setParentItem(self.node.attribute_widget)
+            self.setParent(self.node.attribute_widget)
+            self.setPos(self.last_pos)
+            self.node.attribute_widget.layout.addItem(graphics_widget)
+
         super(InputTextField, self).focusOutEvent(event)
         self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.setObjectName("Nothing")
