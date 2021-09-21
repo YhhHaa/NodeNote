@@ -862,6 +862,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def keyPressEvent(self, event) -> None:
         super(View, self).keyPressEvent(event)
+        from Components.attribute import InputTextField
+        if event.key() == QtCore.Qt.Key_Delete and isinstance(self.scene().focusItem(), InputTextField):
+            if self.scene().focusItem().objectName() == 'MouseLocked':
+                return
         if self.mode == constants.MODE_PIPE_DRAG and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.drag_pipe_release(None)
             self.mode = constants.MODE_NOOP
