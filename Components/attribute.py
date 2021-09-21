@@ -6,6 +6,7 @@ from collections import OrderedDict
 import validators
 import matplotlib.pyplot as plt
 import pylab
+from PIL import Image, ImageOps, ImageQt
 import numpy as np
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Model import constants, stylesheet, serializable
@@ -557,31 +558,34 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
 
     @staticmethod
     def latex_formula(str_latex):
-        font_size = 8
-        dpi = 300
-        fig = pylab.figure()
-        text = fig.text(0, 0, str_latex, fontsize=font_size)
+        fig = plt.figure()
+        t = plt.text(0.001, 0.001, str_latex, fontsize=50)
 
-        buff = io.BytesIO()
-        fig.savefig(buff, format="png", dpi=dpi)
-        bbox = text.get_window_extent()
-        width, height = bbox.size / float(dpi) + 0.005
-        fig.set_size_inches((width, height))
-        dy = (bbox.ymin / float(dpi)) / height
-        text.set_position((0, -dy))
-        buff = io.BytesIO()
-        fig.savefig(buff, format="png", dpi=dpi)
+        fig.patch.set_facecolor('white')
+        plt.axis('off')
+        plt.tight_layout()
 
-        buff.seek(0)
-        img = plt.imread(buff)
-        im = img.mean(axis=2)
-        im = ((im - im.min()) / (im.ptp() / 255.0)).astype(np.uint8)
-        temp_img = QtGui.QImage(im, im.shape[1], im.shape[0], im.shape[1], QtGui.QImage.Format_Indexed8)
-        image = QtGui.QPixmap(temp_img).toImage()
-        size = image.size()
-        image = image.scaled(size.width() * 0.5, size.height() * 0.5,
-                             QtCore.Qt.IgnoreAspectRatio, QtCore.Qt.SmoothTransformation)
-        return image
+        with io.BytesIO() as png_buf:
+            plt.savefig(png_buf, bbox_inches='tight', pad_inches=0)
+            png_buf.seek(0)
+
+            img = plt.imread(png_buf)
+            im = img.mean(axis=2)
+            im = ((im - im.min()) / (im.ptp() / 255.0)).astype(np.uint8)
+            temp_img = QtGui.QImage(im, im.shape[1], im.shape[0], im.shape[1], QtGui.QImage.Format_Indexed8)
+
+            image = QtGui.QPixmap(temp_img).toImage()
+            size = image.size()
+            image = image.scaled(size.width() * 0.5, size.height() * 0.5,
+                                 QtCore.Qt.IgnoreAspectRatio, QtCore.Qt.SmoothTransformation)
+
+            image = Image.open(png_buf)
+            image.load()
+            inverted_image = ImageOps.invert(image.convert("RGB"))
+
+            cropped = image.crop(inverted_image.getbbox())
+
+            return ImageQt.ImageQt(cropped)
 
     @staticmethod
     def hyper_link(hyperlink):
