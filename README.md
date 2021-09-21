@@ -31,6 +31,10 @@
 > `Attribute Widget`: 
 - 输入与输出: 四个连线端口
 - 文本信息: 中间的输入框允许输入富文本
+- 扩大与缩小: 按住`Shift`与鼠标左键, 扩大与缩小结点
+
+    ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.17.gif)
+
 - 右键允许无限嵌套内容:
 
     ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.13.png)
