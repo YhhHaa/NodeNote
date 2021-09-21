@@ -670,14 +670,16 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             str_latex = cursor.selection().toPlainText()
             if str_latex.startswith("$") and str_latex.endswith("$") and str_latex.count("$") == 2:
                 image = self.latex_formula(str_latex)
-                image_folder = os.getcwd() + "//Assets//"
+                image_folder = r"\Assets"
                 if not os.path.exists(image_folder):
                     os.makedirs(image_folder)
-                image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
+                image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
                 image.save(image_name, quality=50)
                 cursor.clearSelection()
                 cursor.insertText("\n")
-                cursor.insertImage(image_name)
+                image_format = QtGui.QTextImageFormat()
+                image_format.setName(image_name)
+                cursor.insertImage(image_format)
                 self.editing_state = False
         elif font_type == "Clear":
             cursor.setCharFormat(text_format)
