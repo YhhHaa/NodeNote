@@ -2226,115 +2226,120 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             widget = widget.parentItem()
         elif isinstance(widget, InputTextField):
             widget = widget.node
-        # find widget
+        elif isinstance(widget, AttributeFile):
+            widget = widget.parent_item
         parent = widget.parentItem()
-        row = widget.item_row
-        column = widget.item_column
-        # can't move up
-        if row == 0 and column == 0:
-            return
-        # can move up
-        else:
-            # not at first of line
-            if column != 0:
-                last_widget = parent.attribute_layout.itemAt(row, column - 1)
-                if last_widget:
-                    parent.attribute_layout.removeItem(last_widget)
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row, column - 1)
-                    parent.attribute_layout.addItem(last_widget, row, column)
-                    widget.item_row = row
-                    widget.item_column = column - 1
-                    last_widget.item_row = row
-                    last_widget.item_column = column
-                else:
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row, column - 1)
-                    widget.item_row = row
-                    widget.item_column = column - 1
-            # at first of line and row != 0
+        if parent:
+            row = widget.item_row
+            column = widget.item_column
+            # can't move up
+            if row == 0 and column == 0:
+                return
+            # can move up
             else:
-                last_widget = parent.caculate_column(row - 1)
-                if last_widget:
-                    parent.attribute_layout.removeItem(last_widget)
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row - 1, last_widget.item_column)
-                    parent.attribute_layout.addItem(last_widget, row, column)
-                    widget.item_row = row - 1
-                    widget.item_column = last_widget.item_column
-                    last_widget.item_row = row
-                    last_widget.item_column = column
+                # not at first of line
+                if column != 0:
+                    last_widget = parent.attribute_layout.itemAt(row, column - 1)
+                    if last_widget:
+                        parent.attribute_layout.removeItem(last_widget)
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row, column - 1)
+                        parent.attribute_layout.addItem(last_widget, row, column)
+                        widget.item_row = row
+                        widget.item_column = column - 1
+                        last_widget.item_row = row
+                        last_widget.item_column = column
+                    else:
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row, column - 1)
+                        widget.item_row = row
+                        widget.item_column = column - 1
+                # at first of line and row != 0
                 else:
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row - 1, 0)
-                    widget.item_row = row - 1
-                    widget.item_column = 0
+                    last_widget = parent.caculate_column(row - 1)
+                    if last_widget:
+                        parent.attribute_layout.removeItem(last_widget)
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row - 1, last_widget.item_column)
+                        parent.attribute_layout.addItem(last_widget, row, column)
+                        widget.item_row = row - 1
+                        widget.item_column = last_widget.item_column
+                        last_widget.item_row = row
+                        last_widget.item_column = column
+                    else:
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row - 1, 0)
+                        widget.item_row = row - 1
+                        widget.item_column = 0
 
-        parent.text_change_node_shape()
+            parent.text_change_node_shape()
 
-        self.scene().view.history.store_history("Move up widget")
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
+            self.scene().view.history.store_history("Move up widget")
+            if self.scene().view.filename and not self.scene().view.first_open:
+                self.scene().view.save_to_file()
 
     def move_down_widget(self, widget):
         if isinstance(widget, SubConstituteWidget):
             widget = widget.parentItem()
         elif isinstance(widget, InputTextField):
             widget = widget.node
+        elif isinstance(widget, AttributeFile):
+            widget = widget.parent_item
         # find widget
         parent = widget.parentItem()
-        row = widget.item_row
-        column = widget.item_column
-        # move down next line at last
-        if row == parent.attribute_layout.rowCount() - 1 and column == parent.attribute_layout.columnCount() - 1:
-            parent.attribute_layout.removeItem(widget)
-            parent.attribute_layout.addItem(widget, row + 1, 0)
-            widget.item_row = row + 1
-            widget.item_column = 0
-            parent.current_row += 1
-            parent.current_column = 0
-        # not at last of rows
-        else:
-            # not at last of line
-            if column != parent.attribute_layout.columnCount() - 1:
-                last_widget = parent.attribute_layout.itemAt(row, column + 1)
-                if last_widget:
-                    parent.attribute_layout.removeItem(last_widget)
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row, column + 1)
-                    parent.attribute_layout.addItem(last_widget, row, column)
-                    widget.item_row = row
-                    widget.item_column = column + 1
-                    last_widget.item_row = row
-                    last_widget.item_column = column
-                else:
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row, column + 1)
-                    widget.item_row = row
-                    widget.item_column = column + 1
-            # at last of line
+        if parent:
+            row = widget.item_row
+            column = widget.item_column
+            # move down next line at last
+            if row == parent.attribute_layout.rowCount() - 1 and column == parent.attribute_layout.columnCount() - 1:
+                parent.attribute_layout.removeItem(widget)
+                parent.attribute_layout.addItem(widget, row + 1, 0)
+                widget.item_row = row + 1
+                widget.item_column = 0
+                parent.current_row += 1
+                parent.current_column = 0
+            # not at last of rows
             else:
-                last_widget = parent.attribute_layout.itemAt(row + 1, 0)
-                if last_widget:
-                    parent.attribute_layout.removeItem(last_widget)
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row + 1, 0)
-                    parent.attribute_layout.addItem(last_widget, row, column)
-                    widget.item_row = row + 1
-                    widget.item_column = 0
-                    last_widget.item_row = row
-                    last_widget.item_column = column
+                # not at last of line
+                if column != parent.attribute_layout.columnCount() - 1:
+                    last_widget = parent.attribute_layout.itemAt(row, column + 1)
+                    if last_widget:
+                        parent.attribute_layout.removeItem(last_widget)
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row, column + 1)
+                        parent.attribute_layout.addItem(last_widget, row, column)
+                        widget.item_row = row
+                        widget.item_column = column + 1
+                        last_widget.item_row = row
+                        last_widget.item_column = column
+                    else:
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row, column + 1)
+                        widget.item_row = row
+                        widget.item_column = column + 1
+                # at last of line
                 else:
-                    parent.attribute_layout.removeItem(widget)
-                    parent.attribute_layout.addItem(widget, row + 1, 0)
-                    widget.item_row = row + 1
-                    widget.item_column = 0
+                    last_widget = parent.attribute_layout.itemAt(row + 1, 0)
+                    if last_widget:
+                        parent.attribute_layout.removeItem(last_widget)
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row + 1, 0)
+                        parent.attribute_layout.addItem(last_widget, row, column)
+                        widget.item_row = row + 1
+                        widget.item_column = 0
+                        last_widget.item_row = row
+                        last_widget.item_column = column
+                    else:
+                        parent.attribute_layout.removeItem(widget)
+                        parent.attribute_layout.addItem(widget, row + 1, 0)
+                        widget.item_row = row + 1
+                        widget.item_column = 0
 
-        parent.text_change_node_shape()
+            parent.text_change_node_shape()
 
-        self.scene().view.history.store_history("Move down widget")
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
+            self.scene().view.history.store_history("Move down widget")
+            if self.scene().view.filename and not self.scene().view.first_open:
+                self.scene().view.save_to_file()
 
     def add_exist_subwidget(self, subwidget, line=True):
         self.add_widget(subwidget, line)
@@ -3011,12 +3016,12 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             elif result == add_file:
                 self.add_file(line=False)
             elif result == move_up and (isinstance(self.scene().itemAt(self.scene().view.mapToScene(event.pos()),
-                                                                       QtGui.QTransform()).parentItem(),
+                                                                       QtGui.QTransform()),
                                                    (AttributeWidget, AttributeFile, SubConstituteWidget,
                                                     SimpleTextField))):
                 self.move_up_widget(self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
             elif result == move_down and (isinstance(self.scene().itemAt(self.scene().view.mapToScene(event.pos()),
-                                                                       QtGui.QTransform()).parentItem(),
+                                                                       QtGui.QTransform()),
                                                    (AttributeWidget, AttributeFile, SubConstituteWidget,
                                                     SimpleTextField))):
                 self.move_down_widget(self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
