@@ -3001,6 +3001,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             move_down = menu.addAction("Move Down")
             move_down.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/down.png"))
             result = menu.exec(event.globalPos())
+
             if result == add_line_subwidget:
                 self.add_new_subwidget(line=True)
             elif result == add_subwidget:
@@ -3009,12 +3010,16 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 self.add_file(line=True)
             elif result == add_file:
                 self.add_file(line=False)
-            elif result == move_up and (isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()).parentItem(),
-                                                   (AttributeWidget, AttributeFile, SubConstituteWidget, SimpleTextField))):
-                self.move_up_widget(self.scene().itemAt(event.scenePos(), QtGui.QTransform()))
-            elif result == move_down and (isinstance(self.scene().itemAt(event.scenePos(), QtGui.QTransform()).parentItem(),
-                                            (AttributeWidget, AttributeFile, SubConstituteWidget, SimpleTextField))):
-                self.move_down_widget(self.scene().itemAt(event.scenePos(), QtGui.QTransform()))
+            elif result == move_up and (isinstance(self.scene().itemAt(self.scene().view.mapToScene(event.pos()),
+                                                                       QtGui.QTransform()).parentItem(),
+                                                   (AttributeWidget, AttributeFile, SubConstituteWidget,
+                                                    SimpleTextField))):
+                self.move_up_widget(self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
+            elif result == move_down and (isinstance(self.scene().itemAt(self.scene().view.mapToScene(event.pos()),
+                                                                       QtGui.QTransform()).parentItem(),
+                                                   (AttributeWidget, AttributeFile, SubConstituteWidget,
+                                                    SimpleTextField))):
+                self.move_down_widget(self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
             elif result == add_view:
                 from Components.sub_view import ProxyView
                 self.add_new_subwidget(True, ProxyView(self.scene().view.mainwindow))

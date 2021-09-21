@@ -38,7 +38,6 @@ class ProxyView(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
         self.root_window.view_widget.current_scene.clearSelection()
         self.scene().clearSelection()
 
-
     def serialize(self):
         return OrderedDict([
             ('id', self.id),
