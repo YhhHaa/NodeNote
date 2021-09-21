@@ -960,7 +960,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse)
         self.setObjectName("MouseLocked")
         self.text_before_editing = self.toHtml()
-        self.mouseMoveEvent = self.node.mouseMoveEvent
+        self.mouseMoveEvent = self.origMoveEvent
         super(InputTextField, self).focusInEvent(event)
 
     def focusOutEvent(self, event) -> None:
