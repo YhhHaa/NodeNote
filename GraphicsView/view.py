@@ -274,37 +274,39 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         if search_text:
             for item in self.attribute_widgets:
-                text = item.attribute_widget.label_item.toPlainText()
-                cursor = item.attribute_widget.label_item.textCursor()
+                from Components.sub_view import ProxyView
+                if not isinstance(item, ProxyView):
+                    text = item.attribute_widget.label_item.toPlainText()
+                    cursor = item.attribute_widget.label_item.textCursor()
 
-                text_format = QtGui.QTextCharFormat()
-                text_format.setBackground(QtGui.QBrush(QtGui.QColor(255, 153, 153, 200)))
+                    text_format = QtGui.QTextCharFormat()
+                    text_format.setBackground(QtGui.QBrush(QtGui.QColor(255, 153, 153, 200)))
 
-                regex = QtCore.QRegExp(search_text)
-                pos = 0
-                index = regex.indexIn(text, pos)
-                while index != -1:
-                    cursor.setPosition(index)
-                    cursor.movePosition(QtGui.QTextCursor.EndOfWord, 1)
-                    last_format = cursor.charFormat()
-                    cursor.mergeCharFormat(text_format)
-
-                    if item.id not in self.text_format:
-                        self.text_format[item.id] = list()
-                        self.text_format[item.id].append((index, last_format))
-
-                    pos = index + regex.matchedLength()
+                    regex = QtCore.QRegExp(search_text)
+                    pos = 0
                     index = regex.indexIn(text, pos)
-                    self.search_result = True
+                    while index != -1:
+                        cursor.setPosition(index)
+                        cursor.movePosition(QtGui.QTextCursor.EndOfWord, 1)
+                        last_format = cursor.charFormat()
+                        cursor.mergeCharFormat(text_format)
 
-                if self.search_result:
-                    self.search_list.append(item)
-                self.search_result = False
+                        if item.id not in self.text_format:
+                            self.text_format[item.id] = list()
+                            self.text_format[item.id].append((index, last_format))
 
-            self.next_search(label_widget)
+                        pos = index + regex.matchedLength()
+                        index = regex.indexIn(text, pos)
+                        self.search_result = True
 
-            if not self.search_list:
-                self.label_widget.setText("Result 0/0")
+                    if self.search_result:
+                        self.search_list.append(item)
+                    self.search_result = False
+
+                self.next_search(label_widget)
+
+                if not self.search_list:
+                    self.label_widget.setText("Result 0/0")
 
         else:
             self.label_widget.setText("Result 0/0")
