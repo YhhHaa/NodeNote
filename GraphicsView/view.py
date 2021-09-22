@@ -275,7 +275,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if search_text:
             for item in self.attribute_widgets:
                 from Components.sub_view import ProxyView
-                if not isinstance(item, ProxyView):
+                from Components.todo import Todo
+                if not isinstance(item, (ProxyView, Todo)):
                     text = item.attribute_widget.label_item.toPlainText()
                     cursor = item.attribute_widget.label_item.textCursor()
 
