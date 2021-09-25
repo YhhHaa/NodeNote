@@ -1,5 +1,5 @@
 import sys
-
+import os
 from Components.window import NoteWindow
 from PyQt5.QtWidgets import QApplication, QSplashScreen
 from PyQt5.QtGui import QPixmap, QFont
@@ -28,6 +28,7 @@ class TabletApplication(QApplication):
 
 if __name__ == '__main__':
     app = TabletApplication([])
+    os.chdir(os.path.dirname(os.path.realpath(sys.executable)))
 
     # slash
     splash = QSplashScreen(QPixmap("Resources/splash.jpg"))
