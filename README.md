@@ -9,12 +9,16 @@
 
 ### 1. Windows系统
 - 直接运行`NodeNote.exe`即可
-- 资源文件会自动保存在`C://Assets`
+- 资源文件会自动保存在当前目录的`Assets`
 
 ### 2. Linux系统
 - 安装qt插件支持: `sudo apt install libxcb-xinerama0`
-- 以管理员权限运行: `sudo ./NodeNote`
-- 资源文件会自动保存在: `/Assets`
+- 运行: `./NodeNote`
+- 资源文件会自动保存在当前目录的`Assets`
+
+### 3. Mac系统
+- 直接运行 `main`即可
+- 资源文件会自动保存在当前目录的`Assets`
 
 # 2. 如何使用
 
