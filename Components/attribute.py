@@ -674,10 +674,10 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             str_latex = cursor.selection().toPlainText()
             if str_latex.startswith("$") and str_latex.endswith("$") and str_latex.count("$") == 2:
                 image = self.latex_formula(str_latex)
-                image_folder = r"\Assets"
+                image_folder = "Assets"
                 if not os.path.exists(image_folder):
                     os.makedirs(image_folder)
-                image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
+                image_name = os.path.join(image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
                 image.save(image_name, quality=50)
                 cursor.clearSelection()
                 cursor.insertText("\n")
@@ -736,10 +736,10 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         mime_data = QtWidgets.QApplication.clipboard().mimeData()
         if mime_data.hasImage():
             image = QtGui.QImage(mime_data.imageData())
-            image_folder = r"\Assets"
+            image_folder = "Assets"
             if not os.path.exists(image_folder):
                 os.makedirs(image_folder)
-            image_name = r"%s\%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
+            image_name = os.path.join(image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
             image.save(image_name, quality=50)
             image_format = QtGui.QTextImageFormat()
             image_format.setName(image_name)
@@ -751,14 +751,16 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                     print(file_ext, u.isLocalFile())
                 if u.isLocalFile() and file_ext in ('.jpg', '.png', '.bmp', '.icon', '.jpeg', 'gif'):
                     image = QtGui.QImage(u.toLocalFile())
+                    image_name = u.toLocalFile()
                     url = u.url()
                     first_index = url.rindex('/')
                     second_index = url[:first_index].rindex('/')
                     if url[second_index + 1: first_index] != "Assets":
-                        image_folder = "//Assets//"
+                        image_folder = "Assets"
                         if not os.path.exists(image_folder):
                             os.makedirs(image_folder)
-                        image_name = "%s/%s.png" % (image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()))
+                        image_name = os.path.join(image_folder,
+                                                  time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
                         image.save(image_name, quality=50)
                     image_format = QtGui.QTextImageFormat()
                     image_format.setName(image_name)
