@@ -1,0 +1,7 @@
+.idea
+*.json
+Assets
+__pycache__
+main.spec
+dist
+build
