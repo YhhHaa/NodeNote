@@ -1,20 +1,26 @@
-# 1. 如何安装
+视频演示 [video tutorial](https://www.bilibili.com/video/BV1s34y1D7gE/)
 
-## 1. 通过脚本运行
-- 安装`Python3`
-- 安装依赖: `pip install -r requirements.txt`
-- 启动程序: `python main.py (your saved json path)`
+# 1. 如何安装(How to install)
 
-## 2. 直接运行可执行文件
+## 1. 通过脚本运行(Run through python script)
+- 安装(Install python): `Python3`
+- 安装依赖(Install dependence): `pip install -r requirements.txt`  ()
+- 启动程序(Run): `python main.py (your saved json path)`
 
-### 1. Windows系统
-- 直接运行`NodeNote.exe`即可
-- 资源文件会自动保存在`C://Assets`
+## 2. 直接运行可执行文件(Run through executable files)
 
-### 2. Linux系统
+### 1. Windows系统(Windows System)
+- 直接运行`NodeNote.exe`即可(Run `NodeNote.exe`)
+- 资源文件会自动保存在当前目录的`Assets`(Resource file will be saved in `Assets` in the current directory)
+
+### 2. Linux系统(Linux System)
 - 安装qt插件支持: `sudo apt install libxcb-xinerama0`
-- 以管理员权限运行: `sudo ./NodeNote`
-- 资源文件会自动保存在: `/Assets`
+- 运行: `./NodeNote`
+- 资源文件会自动保存在当前目录的`Assets`
+
+### 3. Mac系统
+- 直接运行 `main`即可
+- 资源文件会自动保存在当前目录的`Assets`
 
 # 2. 如何使用
 
