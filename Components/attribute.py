@@ -958,9 +958,8 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                 item.setParent(None)
 
             # add into root scene
-            self.last_pos = self.scenePos()
             self.node.attribute_widget.layout.removeAt(0)
-            root_view.root_scene.addItem(self)
+            root_view.current_scene.addItem(self)
             self.setPos(root_view.mapToScene(node_pos))
 
         self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse)
@@ -977,7 +976,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             graphics_widget.setGraphicsItem(self)
             self.setParentItem(self.node.attribute_widget)
             self.setParent(self.node.attribute_widget)
-            self.setPos(self.last_pos)
+            self.setPos(QtCore.QPointF())
             self.node.attribute_widget.layout.addItem(graphics_widget)
 
         super(InputTextField, self).focusOutEvent(event)
