@@ -992,8 +992,6 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             self.font_size_editing = False
         self.mouseMoveEvent = self.node.mouseMoveEvent
         self.node.scene().view.history.store_history("Editing")
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
 
 
 class SubConstituteWidget(QtWidgets.QGraphicsWidget):
@@ -1221,9 +1219,6 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.border_color_flag = False
         self.selected_border_color_flag = False
 
-        self.logic_combobox_input.currentIndexChanged.connect(self.save_to_file)
-        self.logic_combobox_output.currentIndexChanged.connect(self.save_to_file)
-
     def get_port_position(self, port_type, port_truth):
         self.layout.activate()
         if port_truth:
@@ -1366,8 +1361,6 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.colliding_co = False
 
         self.scene().view.history.store_history("Colliding Release")
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
 
     def paint(self, painter, option, widget=None) -> None:
         super(LogicWidget, self).paint(painter, option, widget)
@@ -1674,8 +1667,6 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         if self.was_moved:
             self.was_moved = False
             self.scene().view.history.store_history("Logic Widget Position Changed")
-            if self.scene().view.filename and not self.scene().view.first_open:
-                self.scene().view.save_to_file()
         if self.scene().view.mode == constants.MODE_NOOP:
             self.colliding_release()
 
@@ -1693,8 +1684,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.update_pipe_position()
 
     def save_to_file(self):
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
+        pass
 
     def serialize(self):
         next_attribute_widgets = list()
@@ -2205,8 +2195,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.update_pipe_position()
 
         self.scene().view.history.store_history("Add New Subwidget")
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
 
     def add_file(self, line=True):
         file = AttributeFile(self)
@@ -2223,8 +2211,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.update_pipe_position()
 
         self.scene().view.history.store_history("Add New FIle")
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
 
     def move_up_widget(self, widget):
         if isinstance(widget, SubConstituteWidget):
@@ -2280,8 +2266,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.text_change_node_shape()
 
             self.scene().view.history.store_history("Move up widget")
-            if self.scene().view.filename and not self.scene().view.first_open:
-                self.scene().view.save_to_file()
 
     def move_down_widget(self, widget):
         if isinstance(widget, SubConstituteWidget):
@@ -2343,8 +2327,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.text_change_node_shape()
 
             self.scene().view.history.store_history("Move down widget")
-            if self.scene().view.filename and not self.scene().view.first_open:
-                self.scene().view.save_to_file()
 
     def add_exist_subwidget(self, subwidget, line=True):
         self.add_widget(subwidget, line)
@@ -2481,22 +2463,16 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 item.add_exist_subwidget(self)
                 if self.scene().view.mode == constants.MODE_NOOP:
                     self.scene().view.history.store_history("Colliding Add Subwidget")
-                    if self.scene().view.filename and not self.scene().view.first_open:
-                        self.scene().view.save_to_file()
             elif not self.colliding_co and self.colliding_parent and not self.colliding_inside:
                 self.parentItem().delete_subwidget(self)
                 self.setPos(event.scenePos())
                 self.scene().view.history.store_history("Colliding Delete Subwidget")
-                if self.scene().view.filename and not self.scene().view.first_open:
-                    self.scene().view.save_to_file()
             elif not self.colliding_co and self.colliding_parent and self.colliding_inside:
                 self.parentItem().text_change_node_shape()
             elif self.colliding_co and not self.colliding_parent:
                 self.colliding_detection().add_exist_subwidget(self)
                 if self.scene().view.mode == constants.MODE_NOOP:
                     self.scene().view.history.store_history("Colliding Add Subwidget")
-                    if self.scene().view.filename and not self.scene().view.first_open:
-                        self.scene().view.save_to_file()
             self.colliding_co = False
             self.colliding_parent = False
             self.colliding_child = False
@@ -2561,8 +2537,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
             pipe_widget.update_position()
             self.scene().view.history.store_history("Colliding Add Second Pipe")
-            if self.scene().view.filename and not self.scene().view.first_open:
-                self.scene().view.save_to_file()
 
     def update_scene_rect(self):
         self.scene().setSceneRect(self.scene().itemsBoundingRect())
@@ -2970,8 +2944,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.was_moved = False
             if self.scene().view.mode == constants.MODE_NOOP:
                 self.scene().view.history.store_history("Attribute Widget Moved")
-                if self.scene().view.filename and not self.scene().view.first_open:
-                    self.scene().view.save_to_file()
         self.colliding_release(event)
 
         if self.vpath and self.vpath in self.scene().items():
@@ -2983,8 +2955,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.mouse_update_node_size(event)
             if self.scene().view.mode == constants.MODE_NOOP:
                 self.scene().view.history.store_history("Attribute Widget Size Changed")
-                if self.scene().view.filename and not self.scene().view.first_open:
-                    self.scene().view.save_to_file()
         else:
             super(AttributeWidget, self).mouseReleaseEvent(event)
 

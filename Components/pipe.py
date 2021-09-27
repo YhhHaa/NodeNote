@@ -389,5 +389,3 @@ class ControlPoint(QtWidgets.QGraphicsItem):
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
         super(ControlPoint, self).mouseReleaseEvent(event)
         self.scene().view.history.store_history("Change Pipe Control Point")
-        if self.scene().view.filename and not self.scene().view.first_open:
-            self.scene().view.save_to_file()
