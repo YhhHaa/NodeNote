@@ -361,7 +361,7 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.last_time += time.time() - self.start_time
             self.view_widget.last_time = self.last_time
 
-        if self.view_widget.filename and not self.view_widget.first_open:
+        if self.view_widget.filename:
             self.view_widget.save_to_file()
 
     @staticmethod

@@ -952,17 +952,23 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def load_from_file(self):
         if self.root_flag:
+            if not self.first_open:
+                filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                     "Open serialization json file", "./", "json (*.json)")
+                if filename and ok:
+                    with open(filename, "r", encoding='utf-8') as file:
+                        data = json.loads(file.read())
+                        self.deserialize(data, {}, self, True)
+                        self.filename = filename
+                        self.mainwindow.setWindowTitle(filename + "-Life")
+                        self.first_open = False
 
-            filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                 "Open serialization json file", "./", "json (*.json)")
-            if filename and ok:
-                with open(filename, "r", encoding='utf-8') as file:
+            elif self.first_open and self.filename:
+                with open(self.filename, "r", encoding='utf-8') as file:
                     data = json.loads(file.read())
                     self.deserialize(data, {}, self, True)
-                    self.filename = filename
-                    self.mainwindow.setWindowTitle(filename + "-Life")
-
-            self.first_open = False
+                    self.mainwindow.setWindowTitle(self.filename + "-Life")
+                    self.first_open = False
 
     def serialize(self):
         return OrderedDict([
