@@ -50,7 +50,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.setViewport(self.gpu)
         # BASIC SETTINGS
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
-        QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_CompressHighFrequencyEvents)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         if self.root_flag:
             self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
@@ -613,15 +612,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def container_pressed(self, event):
         self.mode = constants.MODE_CONTAINER
-
-        # Add the container widget into scene
-        last_point = {'pos': QtCore.QPointF(), 'pressure': 0, 'rotation': 0}
-        # Save the last point
-        last_point['pos'] = self.mapToScene(event.pos())
-        last_point['pressure'] = event.pressure()
-        last_point['rotation'] = event.rotation()
-
-        self.container_widget = container.Container(last_point)
+        self.container_widget = container.Container(self.mapToScene(event.pos()))
         self.current_scene.addItem(self.container_widget)
         self.containers.append(self.container_widget)
 
@@ -764,24 +755,16 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if a0.type() == QtCore.QEvent.TabletEnterProximity:
                 self.mouse_effect = False
                 self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-                cursor_style = QtGui.QPixmap('Resources/point.png').scaled(20, 20)
-                cursor = QtGui.QCursor(cursor_style, 10, 10)
+                cursor_style = QtGui.QPixmap('Resources/point.png').scaled(10, 10)
+                cursor = QtGui.QCursor(cursor_style, 5, 5)
                 QtWidgets.QApplication.setOverrideCursor(cursor)
 
             # draw line when the pen is on the tablet
             if a0.type() == QtCore.QEvent.TabletPress:
                 self.container_pressed(a0)
-
             elif a0.type() == QtCore.QEvent.TabletMove and self.mode == constants.MODE_CONTAINER:
-
-                # Update the brush according to the stylus
-                self.container_widget.update_brush(self.mapToScene(a0.pos()), a0.pressure(), a0.rotation())
-
-                # Save the last point
-                self.container_widget.last_point['pos'] = self.mapToScene(a0.pos())
-                self.container_widget.last_point['pressure'] = a0.pressure()
-                self.container_widget.last_point['rotation'] = a0.rotation()
-
+                self.container_widget.update_brush((self.mapToScene(a0.pos()).x(), self.mapToScene(a0.pos()).y()),
+                                                   a0.pressure())
             elif a0.type() == QtCore.QEvent.TabletRelease:
                 self.container_released()
 
@@ -969,22 +952,14 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def load_from_file(self):
         if self.root_flag:
-            if not self.first_open:
-                filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                     "Open serialization json file", "./", "json (*.json)")
-                if filename and ok:
-                    with open(filename, "r", encoding='utf-8') as file:
-                        data = json.loads(file.read())
-                        self.deserialize(data, {}, self, True)
-                        self.filename = filename
-                        self.mainwindow.setWindowTitle(filename + "-Life")
-                        self.first_open = False
-
-            elif self.first_open and self.filename:
-                with open(self.filename, "r", encoding='utf-8') as file:
+            filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                 "Open serialization json file", "./", "json (*.json)")
+            if filename and ok:
+                with open(filename, "r", encoding='utf-8') as file:
                     data = json.loads(file.read())
                     self.deserialize(data, {}, self, True)
-                    self.mainwindow.setWindowTitle(self.filename + "-Life")
+                    self.filename = filename
+                    self.mainwindow.setWindowTitle(filename + "-Life")
                     self.first_open = False
 
     def serialize(self):
