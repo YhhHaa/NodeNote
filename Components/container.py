@@ -121,7 +121,8 @@ class Container(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.id = data['id']
         # draw point
         self.points = data['points']
-        self.pressures = data['pressures']
+        if 'pressures' in data:
+            self.pressures = data['pressures']
         self.deserialize_flag = True
         # style
         self.width = data['width']
