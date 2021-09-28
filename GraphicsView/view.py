@@ -50,6 +50,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.setViewport(self.gpu)
         # BASIC SETTINGS
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_CompressHighFrequencyEvents)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         if self.root_flag:
             self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
@@ -612,7 +613,15 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
     def container_pressed(self, event):
         self.mode = constants.MODE_CONTAINER
-        self.container_widget = container.Container(self.mapToScene(event.pos()))
+
+        # Add the container widget into scene
+        last_point = {'pos': QtCore.QPointF(), 'pressure': 0, 'rotation': 0}
+        # Save the last point
+        last_point['pos'] = self.mapToScene(event.pos())
+        last_point['pressure'] = event.pressure()
+        last_point['rotation'] = event.rotation()
+
+        self.container_widget = container.Container(last_point)
         self.current_scene.addItem(self.container_widget)
         self.containers.append(self.container_widget)
 
@@ -762,9 +771,17 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             # draw line when the pen is on the tablet
             if a0.type() == QtCore.QEvent.TabletPress:
                 self.container_pressed(a0)
+
             elif a0.type() == QtCore.QEvent.TabletMove and self.mode == constants.MODE_CONTAINER:
-                self.container_widget.next_point = self.mapToScene(a0.pos())
-                self.container_widget.update()
+
+                # Update the brush according to the stylus
+                self.container_widget.update_brush(self.mapToScene(a0.pos()), a0.pressure(), a0.rotation())
+
+                # Save the last point
+                self.container_widget.last_point['pos'] = self.mapToScene(a0.pos())
+                self.container_widget.last_point['pressure'] = a0.pressure()
+                self.container_widget.last_point['rotation'] = a0.rotation()
+
             elif a0.type() == QtCore.QEvent.TabletRelease:
                 self.container_released()
 

@@ -1,99 +1,74 @@
+import math
+
 from collections import OrderedDict
 from PyQt5 import QtWidgets, QtGui, QtCore
 from Model import constants, serializable
 
 
 class Container(QtWidgets.QGraphicsPathItem, serializable.Serializable):
-    width = 0.5
-    color = QtGui.QColor(255, 128, 128, 255)
+    width = 1
+    color = QtGui.QColor(0, 51, 102, 255)
     selected_color = QtGui.QColor(128, 0, 0, 128)
 
-    def __init__(self, pos, parent=None):
+    def __init__(self, last_point, parent=None):
         super(Container, self).__init__(parent)
-        self.start_point = pos
-        self.next_point = QtCore.QPointF()
-        self.points = list()
-        self.points.append((pos.x(), pos.y()))
-        self.draw_path = QtGui.QPainterPath(self.start_point)
+        self.last_point = last_point
+        self.current_point = {}
+        self.draw_line = QtGui.QPainterPath(self.last_point['pos'])
 
-        self.pen = QtGui.QPen(self.color, self.width)
-        self.pen.setDashPattern([1, 1])
-        self.selected_pen = QtGui.QPen(self.selected_color, self.width)
+        self._brush = QtGui.QBrush(self.color)
+        self._pen = QtGui.QPen(self._brush, self.width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+        self._selected_pen = QtGui.QPen(self.selected_color, self.width)
+
+        self.update_flag = False
 
         self.setZValue(constants.Z_VAL_CONTAINERS)
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsSelectable)
 
         self.deserialize_flag = False
 
-        # Style
-        self.width_flag = False
-        self.color_flag = False
-        self.selected_color_flag = False
-
     def boundingRect(self) -> QtCore.QRectF:
-        left_x = float("+inf")
-        up_y = float("+inf")
-        right_x = float("-inf")
-        down_y = float("-inf")
+        return self.draw_line.boundingRect()
 
-        for point in self.points:
-            if point[0] <= left_x:
-                left_x = point[0]
-            if point[1] <= up_y:
-                up_y = point[1]
-            if point[0] >= right_x:
-                right_x = point[0]
-            if point[1] >= down_y:
-                down_y = point[1]
+    def update_brush(self, *args):
+        self.current_point['pos'] = args[0]
+        self.current_point['pressure'] = args[1]
+        self.current_point['rotation'] = args[2]
 
-        return QtCore.QRectF(QtCore.QPointF(left_x, up_y), QtCore.QPointF(right_x, down_y))
+        hue, saturation, value, alpha = self.color.getHsv()
+
+        self.color.setAlphaF(self.current_point['pressure'])
+        self.color.setHsv(hue, int(self.current_point['pressure'] * 255.0), value, alpha)
+
+        self._pen.setWidthF(self.width * self.current_point['pressure'])
+        self._pen.setColor(self.color)
+
+        self._brush.setStyle(QtCore.Qt.SolidPattern)
+        self._brush.setColor(self.color)
+
+        self.draw_line.lineTo(self.current_point['pos'])
+        self.draw_line.moveTo(self.current_point['pos'])
+
+        self.update()
 
     def paint(self, painter, option, widget=None) -> None:
         painter.save()
 
-        #   Width and color init
-        if self.scene().container_style_width and not self.width_flag:
-            self.width = self.scene().container_style_width
-        if self.scene().container_style_color and not self.color_flag:
-            self.color = self.scene().container_style_selected_color
-        if self.scene().container_style_selected_color and not self.selected_color_flag:
-            self.selected_color = self.scene().container_style_selected_color
-
-        self.pen = QtGui.QPen(self.color, self.width)
-        self.pen.setDashPattern([1, 1])
-        self.selected_pen = QtGui.QPen(self.selected_color, self.width)
-
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.setBrush(QtCore.Qt.NoBrush)
-        painter.setPen(self.pen if not self.isSelected() else self.selected_pen)
+        painter.setPen(self._pen)
+        painter.setBrush(self._brush)
 
-        if not self.deserialize_flag:
-            if self.next_point:
-                self.points.append((self.next_point.x(), self.next_point.y()))
-                self.draw_path.lineTo(self.next_point)
-                self.draw_path.moveTo(self.next_point)
-            self.setPath(self.draw_path)
-            painter.drawPath(self.path())
-        else:
-            for point in self.points:
-                self.draw_path.lineTo(QtCore.QPointF(point[0], point[1]))
-                self.draw_path.moveTo(QtCore.QPointF(point[0], point[1]))
-            self.setPath(self.draw_path)
-            painter.drawPath(self.path())
-            self.deserialize_flag = False
+        self.setPath(self.draw_line)
+        painter.drawPath(self.path())
 
         painter.restore()
 
     def serialize(self):
         return OrderedDict([
             ('id', self.id),
-            ('points', self.points),
             ('width', self.width),
             ('color', self.color.rgba()),
             ('selected color', self.selected_color.rgba()),
-            ('width flag', self.width_flag),
-            ('color flag', self.color_flag),
-            ('selected color flag', self.selected_color_flag)
         ])
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
@@ -120,3 +95,16 @@ class Container(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.selected_color_flag = data['selected color flag']
 
         return True
+
+
+#         half_width = self.last_point['pressure']
+#         brush_adjust = QtCore.QPointF(math.sin(math.radians(-self.last_point['rotation'])) * half_width,
+#                                       math.cos(math.radians(-self.last_point['rotation'])) * half_width)
+#         self.poly.append(self.last_point['pos'] + brush_adjust)
+#         self.poly.append(self.last_point['pos'] - brush_adjust)
+#
+#         half_width = self._pen.widthF()
+#         brush_adjust = QtCore.QPointF(math.sin(math.radians(-self.current_point['rotation'])) * half_width,
+#                                       math.cos(math.radians(-self.current_point['rotation'])) * half_width)
+#         self.poly.append(self.current_point['pos'] - brush_adjust)
+#         self.poly.append(self.current_point['pos'] + brush_adjust)
