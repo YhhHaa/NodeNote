@@ -105,7 +105,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.root_scene_flag = TreeWidgetItem(self.mainwindow.scene_list,
                                                 ("Root Scene",))
             self.root_scene_flag.setData(0, QtCore.Qt.ToolTipRole, self.root_scene)
-            self.root_scene_flag.setExpanded(True)
         else:
             self.root_scene_flag = self.mainwindow.view_widget.current_scene_flag
 
@@ -632,7 +631,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             attribute_widget.set_sub_scene(sub_scene)
 
             sub_scene_flag.setData(0, QtCore.Qt.ToolTipRole, sub_scene)
-            sub_scene_flag.setExpanded(True)
 
             if self.root_flag:
                 self.current_scene.clearSelection()
@@ -1037,7 +1035,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.mainwindow.scene_list,
                 ("Root Scene",))
             self.root_scene_flag.setData(0, QtCore.Qt.ToolTipRole, self.root_scene)
-            self.root_scene_flag.setExpanded(True)
         self.current_scene = self.root_scene
         self.current_scene_flag = self.root_scene_flag
         self.background_image = self.current_scene.background_image

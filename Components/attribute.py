@@ -3152,7 +3152,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 sub_scene = Scene(sub_scene_flag, view, self)
                 self.set_sub_scene(sub_scene)
                 sub_scene_flag.setData(0, QtCore.Qt.ToolTipRole, sub_scene)
-                sub_scene_flag.setExpanded(True)
 
                 view.current_scene = sub_scene
                 view.current_scene_flag = sub_scene_flag
