@@ -22,9 +22,9 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.edit = QtWidgets.QLineEdit("task")
         self.edit.setStyleSheet(stylesheet.STYLE_QLINEEDIT)
 
-        self.time_show = QtWidgets.QLabel("Total: 0:0:0 + Current: 0:0:0")
+        self.time_show = QtWidgets.QLabel("0:0:0 + 0:0:0")
         self.time_show.setStyleSheet(stylesheet.STYLE_QLABEL)
-        self.time_show.setMinimumWidth(300)
+        self.time_show.setMinimumWidth(120)
 
         self.start_png = QtGui.QIcon(QtGui.QPixmap('Resources/TodoList/start.png'))
         self.pause_png = QtGui.QIcon(QtGui.QPixmap('Resources/TodoList/pause.png'))
@@ -95,8 +95,8 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
         use_time_min = int((self.use_time // 60) - 60 * use_time_hour)
         use_time_sec = int(self.use_time - 60 * 60 * use_time_hour - 60 * use_time_min)
 
-        self.time_show.setText('Total: %s:%s:%s' % (total_time_hour, total_time_min, total_time_sec) +
-                               ' + Current: %s:%s:%s' % (use_time_hour, use_time_min, use_time_sec))
+        self.time_show.setText('%s:%s:%s' % (total_time_hour, total_time_min, total_time_sec) +
+                               ' + %s:%s:%s' % (use_time_hour, use_time_min, use_time_sec))
 
     def serialize(self):
         return OrderedDict([
