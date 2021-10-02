@@ -51,8 +51,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         # BASIC SETTINGS
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        if self.root_flag:
-            self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
         self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.HighQualityAntialiasing |
                             QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
         if self.root_flag:
