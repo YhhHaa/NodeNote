@@ -24,7 +24,7 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
         self.time_show = QtWidgets.QLabel("0:0:0 + 0:0:0")
         self.time_show.setStyleSheet(stylesheet.STYLE_QLABEL)
-        self.time_show.setMinimumWidth(120)
+        self.time_show.setMinimumWidth(135)
 
         self.start_png = QtGui.QIcon(QtGui.QPixmap('Resources/TodoList/start.png'))
         self.pause_png = QtGui.QIcon(QtGui.QPixmap('Resources/TodoList/pause.png'))
