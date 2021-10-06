@@ -1685,45 +1685,39 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def save_to_file(self):
         pass
 
-    def serialize(self):
-        next_attribute_widgets = list()
-        next_logic_widgets = list()
-        last_attribute_widgets = list()
-        last_logic_widgets = list()
+    def serialize(self, logic_serialization=None):
+        # logic widget
+        logic_serialization.attr_id = self.id
+        logic_serialization.logic_position.append(self.scenePos().x())
+        logic_serialization.logic_position.append(self.scenePos().y())
+        logic_serialization.logic_truth.append(self.logic_combobox_input.currentIndex())
+        logic_serialization.logic_truth.append(self.logic_combobox_output.currentIndex())
+
+        # port
+        self.input_port.serialize(logic_serialization.logic_port.add())
+        self.output_port.serialize(logic_serialization.logic_port.add())
+
+        # connections
         for next_attribute_widget in self.next_attribute:
-            next_attribute_widgets.append(next_attribute_widget.id)
+            logic_serialization.logic_next_attr.append(next_attribute_widget.id)
         for next_logic_widget in self.next_logic:
-            next_logic_widgets.append(next_logic_widget.id)
+            logic_serialization.logic_next_logic.append(next_logic_widget.id)
         for last_attribute_widget in self.last_attribute:
-            last_attribute_widgets.append(last_attribute_widget.id)
+            logic_serialization.logic_last_attr.append(last_attribute_widget.id)
         for last_logic_widget in self.last_logic:
-            last_logic_widgets.append(last_logic_widget.id)
+            logic_serialization.logic_last_logic.append(last_logic_widget.id)
 
-        return OrderedDict([
-            ('id', self.id),
-            ('x', self.scenePos().x()),
-            ('y', self.scenePos().y()),
-            ('input truth', self.logic_combobox_input.currentIndex()),
-            ('output truth', self.logic_combobox_output.currentIndex()),
-            ('input port', self.input_port.serialize()),
-            ('output port', self.output_port.serialize()),
-            ('next attribute widgets', next_attribute_widgets),
-            ('next logic widgets', next_logic_widgets),
-            ('last attribute widgets', last_attribute_widgets),
-            ('last logic widgets', last_logic_widgets),
+        # ui
+        logic_serialization.logic_color.append(self.background_color.rgba())
+        logic_serialization.logic_color.append(self.selected_border_color.rgba())
+        logic_serialization.logic_color.append(self.border_color.rgba())
+        logic_serialization.logic_color.append(self.selected_border_color.rgba())
 
-            # style
-            ('item color', self.background_color.rgba()),
-            ('item selected color', self.selected_border_color.rgba()),
-            ('item border color', self.border_color.rgba()),
-            ('item selected border color', self.selected_border_color.rgba()),
-
-            # flag
-            ('color flag', self.background_color_flag),
-            ('selected color flag', self.selected_background_color_flag),
-            ('border color flag', self.border_color_flag),
-            ('selected border color flag', self.selected_border_color_flag)
-        ])
+        # flag
+        logic_serialization.logic_flag.append(self.background_color_flag)
+        logic_serialization.logic_flag.append(self.selected_background_color_flag)
+        logic_serialization.logic_flag.append(self.border_color_flag)
+        logic_serialization.logic_flag.append(self.selected_border_color_flag)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         if flag:
@@ -1731,33 +1725,33 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             view.current_scene.addItem(self)
             view.logic_widgets.append(self)
             # id and hashmap
-            self.id = data['id']
-            hashmap[data['id']] = self
+            self.id = data.logic_id
+            hashmap[data.logic_id] = self
             # geometry and contents
-            self.setPos(data['x'], data['y'])
-            self.logic_combobox_input.setCurrentIndex(data['input truth'])
-            self.logic_combobox_output.setCurrentIndex(data['output truth'])
+            self.setPos(data.logic_position[0], data.logic_position[1])
+            self.logic_combobox_input.setCurrentIndex(data.logic_truth[0])
+            self.logic_combobox_output.setCurrentIndex(data.logic_truth[1])
             # ports
-            self.input_port.deserialize(data['input port'], hashmap, view, flag=True)
-            self.output_port.deserialize(data['output port'], hashmap, view, flag=True)
+            self.input_port.deserialize(data.logic_port[0], hashmap, view, flag=True)
+            self.output_port.deserialize(data.logic_port[1], hashmap, view, flag=True)
             # style
             self.background_color = QtGui.QColor()
-            self.background_color.setRgba(data['item color'])
+            self.background_color.setRgba(data.logic_color[0])
 
             self.selected_border_color = QtGui.QColor()
-            self.selected_border_color.setRgba(data['item selected color'])
+            self.selected_border_color.setRgba(data.logic_color[1])
 
             self.border_color = QtGui.QColor()
-            self.border_color.setRgba(data['item border color'])
+            self.border_color.setRgba(data.logic_color[2])
 
             self.selected_border_color = QtGui.QColor()
-            self.selected_border_color.setRgba(data['item selected border color'])
+            self.selected_border_color.setRgba(data.logic_color[3])
 
             # flag
-            self.background_color_flag = data['color flag']
-            self.selected_background_color_flag = data['selected color flag']
-            self.border_color_flag = data['border color flag']
-            self.selected_border_color_flag = data['selected border color flag']
+            self.background_color_flag = data.logic_flag[0]
+            self.selected_background_color_flag = data.logic_flag[1]
+            self.border_color_flag = data.logic_flag[2]
+            self.selected_border_color_flag = data.logic_flag[3]
 
             return True
         else:
@@ -1866,24 +1860,23 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         if file_url:
             self.image.file_url = file_url
 
-    def serialize(self):
-        return OrderedDict([
-            ("id", self.id),
-            ("text", self.label_item.toPlainText()),
-            ("cover", self.image_url),
-            ("file", self.image.file_url),
-            ('row', self.item_row),
-            ('column', self.item_column)
-        ])
+    def serialize(self, file_serialization=None):
+        file_serialization.file_id = self.id
+        file_serialization.text = self.label_item.toPlainText()
+        file_serialization.cover = self.image_url
+        if self.image.file_url:
+            file_serialization.file = self.image.file_url
+        file_serialization.file_location.append(self.item_row)
+        file_serialization.file_location.append(self.item_column)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         # id and hashmap
-        self.id = data['id']
-        hashmap[data['id']] = self
+        self.id = data.file_id
+        hashmap[data.file_id] = self
         # text
-        self.label_item.setPlainText(data['text'])
+        self.label_item.setPlainText(data.text)
         # image
-        self.image_url = data['cover']
+        self.image_url = data.cover
         palette = self.image.palette()
         palette.setBrush(QtGui.QPalette.Window, QtGui.QBrush(QtGui.QPixmap(self.image_url).scaled(
             self.image.size().width(),
@@ -1893,10 +1886,11 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         )))
         self.image.setPalette(palette)
         # file
-        self.image.file_url = data['file']
+        if data.file:
+            self.image.file_url = data.file
         # layout
-        self.item_row = data['row']
-        self.item_column = data['column']
+        self.item_row = data.file_location[0]
+        self.item_column = data.file_location[1]
 
         return True
 
@@ -3016,69 +3010,77 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.colliding_detection()
         self.update_pipe_position()
 
-    def serialize(self):
-        next_attribute_widgets = list()
-        next_logic_widgets = list()
-        last_attribute_widgets = list()
-        last_logic_widgets = list()
-        attribute_sub_widgets = list()
+    def serialize(self, attr_serialization=None):
+
+        # attribute widget id
+        attr_serialization.attr_id = self.id
+
+        # geometry
+        attr_serialization.size.append(self.size().width())
+        attr_serialization.size.append(self.size().height())
+        attr_serialization.position.append(self.scenePos().x())
+        attr_serialization.position.append(self.scenePos().y())
+
+        # contents
+        attr_serialization.contents = self.attribute_widget.label_item.toHtml()
+
+        # port
+        self.true_input_port.serialize(attr_serialization.attr_port.add())
+        self.false_input_port.serialize(attr_serialization.attr_port.add())
+        self.true_output_port.serialize(attr_serialization.attr_port.add())
+        self.false_output_port.serialize(attr_serialization.attr_port.add())
+
+        # connections
         for next_attribute_widget in self.next_attribute:
-            next_attribute_widgets.append(next_attribute_widget.id)
+            attr_serialization.next_attr_id.append(next_attribute_widget.id)
         for next_logic_widget in self.next_logic:
-            next_logic_widgets.append(next_logic_widget.id)
+            attr_serialization.next_logic_id.append(next_logic_widget.id)
         for last_attribute_widget in self.last_attribute:
-            last_attribute_widgets.append(last_attribute_widget.id)
+            attr_serialization.last_attr_id.append(last_attribute_widget.id)
         for last_logic_widget in self.last_logic:
-            last_logic_widgets.append(last_logic_widget.id)
+            attr_serialization.last_logic_id.append(last_logic_widget.id)
         for i in range(len(self.attribute_sub_widgets)):
             attribute_sub_widget = self.attribute_layout.itemAt(i)
             from Components.sub_view import ProxyView
             from Components.todo import Todo
             if isinstance(attribute_sub_widget, AttributeWidget):
-                attribute_sub_widgets.append(attribute_sub_widget.id)
-            elif isinstance(attribute_sub_widget, (AttributeFile, ProxyView, Todo)):
-                attribute_sub_widgets.append(attribute_sub_widget.serialize())
+                attr_serialization.sub_attr.append(attribute_sub_widget.id)
+            elif isinstance(attribute_sub_widget, AttributeFile):
+                attribute_sub_widget.serialize(attr_serialization.file_serialization.add())
+            elif isinstance(attribute_sub_widget, ProxyView):
+                attribute_sub_widget.serialize(attr_serialization.subview_serialization.add())
+            elif isinstance(attribute_sub_widget, Todo):
+                attribute_sub_widget.serialize(attr_serialization.todo_serialization.add())
 
-        return OrderedDict([
-            ('id', self.id),
-            ('width', self.size().width()),
-            ('height', self.size().height()),
-            ('x', self.scenePos().x()),
-            ('y', self.scenePos().y()),
-            ('contents', self.attribute_widget.label_item.toHtml()),
-            ('input true port', self.true_input_port.serialize()),
-            ('input false port', self.false_input_port.serialize()),
-            ('output true port', self.true_output_port.serialize()),
-            ('output false port', self.false_output_port.serialize()),
-            ('next attribute widgets', next_attribute_widgets),
-            ('next logic widgets', next_logic_widgets),
-            ('last attribute widgets', last_attribute_widgets),
-            ('last logic widgets', last_logic_widgets),
-            ('attribute sub widgets', attribute_sub_widgets),
-            ('sub scene', self.sub_scene.serialize() if self.sub_scene else None),
-            ('highlighter', True if self.attribute_widget.label_item.pythonlighter else False),
-            ('row', self.item_row),
-            ('column', self.item_column),
-            ('next row', self.current_row),
-            ('next column', self.current_column),
+        # sub scene
+        if self.sub_scene:
+            self.sub_scene.serialize(attr_serialization.sub_scene_serialization.add())
 
-            # style
-            ('item font family', self.attribute_widget.label_item.font.family()),
-            ('item font size', self.attribute_widget.label_item.font.pointSize()),
-            ('item font color', self.attribute_widget.label_item.font_color.rgba()),
-            ('item color', self.color.rgba()),
-            ('item selected color', self.selected_color.rgba()),
-            ('item border color', self.border_color.rgba()),
-            ('item selected border color', self.selected_border_color.rgba()),
+        # highlighter
+        attr_serialization.highlighter = True if self.attribute_widget.label_item.pythonlighter else False
 
-            # flag
-            ('font flag', self.attribute_widget.label_item.font_flag),
-            ('font color flag', self.attribute_widget.label_item.font_color_flag),
-            ('color flag', self.color_flag),
-            ('selected color flag', self.selected_color_flag),
-            ('border flag', self.border_flag),
-            ('selected border flag', self.selected_border_flag)
-        ])
+        # location
+        attr_serialization.attr_location.append(self.item_row)
+        attr_serialization.attr_location.append(self.item_column)
+        attr_serialization.next_location.append(self.current_row)
+        attr_serialization.next_location.append(self.current_column)
+
+        # ui
+        attr_serialization.self_attr_font_family = self.attribute_widget.label_item.font.family()
+        attr_serialization.self_attr_font_size = self.attribute_widget.label_item.font.pointSize()
+        attr_serialization.self_attr_color.append(self.attribute_widget.label_item.font_color.rgba())
+        attr_serialization.self_attr_color.append(self.color.rgba())
+        attr_serialization.self_attr_color.append(self.selected_color.rgba())
+        attr_serialization.self_attr_color.append(self.border_color.rgba())
+        attr_serialization.self_attr_color.append(self.selected_border_color.rgba())
+
+        # flag
+        attr_serialization.attr_flag.append(self.attribute_widget.label_item.font_flag)
+        attr_serialization.attr_flag.append(self.attribute_widget.label_item.font_color_flag)
+        attr_serialization.attr_flag.append(self.color_flag)
+        attr_serialization.attr_flag.append(self.selected_color_flag)
+        attr_serialization.attr_flag.append(self.border_flag)
+        attr_serialization.attr_flag.append(self.selected_border_flag)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         if flag:
@@ -3086,58 +3088,58 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             view.current_scene.addItem(self)
             view.attribute_widgets.append(self)
             # id and hashmap
-            self.id = data['id']
-            hashmap[data['id']] = self
+            self.id = data.attr_id
+            hashmap[data.attr_id] = self
             # geometry and contents
-            self.setGeometry(data['x'], data['y'], data['width'], data['height'])
-            self.attribute_widget.label_item.setHtml(data['contents'])
+            self.setGeometry(data.position[0], data.position[1], data.size[0], data.size[1])
+            self.attribute_widget.label_item.setHtml(data.contents)
             # ports
-            self.true_input_port.deserialize(data['input true port'], hashmap, view, flag=True)
-            self.false_input_port.deserialize(data['input false port'], hashmap, view, flag=True)
-            self.true_output_port.deserialize(data['output true port'], hashmap, view, flag=True)
-            self.false_output_port.deserialize(data['output false port'], hashmap, view, flag=True)
+            self.true_input_port.deserialize(data.attr_port[0], hashmap, view, flag=True)
+            self.false_input_port.deserialize(data.attr_port[1], hashmap, view, flag=True)
+            self.true_output_port.deserialize(data.attr_port[2], hashmap, view, flag=True)
+            self.false_output_port.deserialize(data.attr_port[3], hashmap, view, flag=True)
             # layout
-            self.item_row = data['row']
-            self.item_column = data['column']
-            self.current_row = data['next row']
-            self.current_column = data['next column']
+            self.item_row = data.attr_location[0]
+            self.item_column = data.attr_location[1]
+            self.current_row = data.next_location[0]
+            self.current_column = data.next_location[1]
             # highlighter
-            if data['highlighter']:
+            if data.highlighter:
                 self.attribute_widget.label_item.pythonlighter = \
                     PythonHighlighter(self.attribute_widget.label_item.document())
             # style
             font = QtGui.QFont()
-            font.setFamily(data['item font family'])
-            font.setPointSize(data['item font size'])
+            font.setFamily(data.self_attr_font_family)
+            font.setPointSize(data.self_attr_font_size)
             self.attribute_widget.label_item.font = font
             self.attribute_widget.label_item.document().setDefaultFont(font)
 
             self.attribute_widget.label_item.font_color = QtGui.QColor()
-            self.attribute_widget.label_item.font_color.setRgba(data['item font color'])
+            self.attribute_widget.label_item.font_color.setRgba(data.self_attr_color[0])
             self.attribute_widget.label_item.setDefaultTextColor(self.attribute_widget.label_item.font_color)
 
             self.color = QtGui.QColor()
-            self.color.setRgba(data['item color'])
+            self.color.setRgba(data.self_attr_color[1])
 
             self.selected_color = QtGui.QColor()
-            self.selected_color.setRgba(data['item selected color'])
+            self.selected_color.setRgba(data.self_attr_color[2])
 
             self.border_color = QtGui.QColor()
-            self.border_color.setRgba(data['item border color'])
+            self.border_color.setRgba(data.self_attr_color[3])
 
             self.selected_border_color = QtGui.QColor()
-            self.selected_border_color.setRgba(data['item selected border color'])
+            self.selected_border_color.setRgba(data.self_attr_color[4])
 
-            self.attribute_widget.label_item.font_flag = data['font flag']
-            self.attribute_widget.label_item.font_color_flag = data['font color flag']
+            self.attribute_widget.label_item.font_flag = data.attr_flag[0]
+            self.attribute_widget.label_item.font_color_flag = data.attr_flag[1]
 
-            self.color_flag = data['color flag']
-            self.selected_color_flag = data['selected color flag']
-            self.border_flag = data['border flag']
-            self.selected_border_flag = data['selected border flag']
+            self.color_flag = data.attr_flag[2]
+            self.selected_color_flag = data.attr_flag[3]
+            self.border_flag = data.attr_flag[4]
+            self.selected_border_flag = data.attr_flag[5]
 
             # sub scene
-            if data['sub scene']:
+            if data.sub_scene_serialization:
                 # save scene and flag
                 last_scene_flag = view.current_scene_flag
                 last_scene = view.current_scene
@@ -3155,8 +3157,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 view.current_scene = sub_scene
                 view.current_scene_flag = sub_scene_flag
 
-                sub_scene.deserialize(data['sub scene'], hashmap, view, True)
-                sub_scene.deserialize(data['sub scene'], hashmap, view, False)
+                sub_scene.deserialize(data.sub_scene_serialization[0], hashmap, view, True)
+                sub_scene.deserialize(data.sub_scene_serialization[0], hashmap, view, False)
 
                 # restore scene and flag
                 view.current_scene = last_scene

@@ -98,21 +98,19 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.time_show.setText('%s:%s:%s' % (total_time_hour, total_time_min, total_time_sec) +
                                ' + %s:%s:%s' % (use_time_hour, use_time_min, use_time_sec))
 
-    def serialize(self):
-        return OrderedDict([
-            ('id', self.id),
-            ('task', self.edit.text()),
-            ('Total time', self.total_time),
-            ('row', self.item_row),
-            ('column', self.item_column)
-        ])
+    def serialize(self, todo_serialization=None):
+        todo_serialization.todo_id = self.id
+        todo_serialization.task = self.edit.text()
+        todo_serialization.time = self.total_time
+        todo_serialization.todo_location.append(self.item_row)
+        todo_serialization.todo_location.append(self.item_column)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
-        self.id = data['id']
-        self.edit.setText(data['task'])
-        self.total_time = data['Total time']
-        self.item_row = data['row']
-        self.item_column = data['column']
+        self.id = data.todo_id
+        self.edit.setText(data.task)
+        self.total_time = data.time
+        self.item_row = data.todo_location[0]
+        self.item_column = data.todo_location[1]
 
         self.start_time = time.time()
         self.time_update()

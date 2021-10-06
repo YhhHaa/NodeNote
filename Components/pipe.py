@@ -294,31 +294,33 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         painter.restore()
 
-    def serialize(self):
-        return OrderedDict([
-            ('id', self.id),
-            ('start port', self.start_port.id),
-            ('end port', self.end_port.id if self.end_port else None),
-            ("text", self.edit.toPlainText()),
-            # control point
-            ('start control point x', self.source_item.scenePos().x()),
-            ('start control point y', self.source_item.scenePos().y()),
-            ('end control point x', self.destination_item.scenePos().x()),
-            ('end control point y', self.destination_item.scenePos().y()),
-            ('source moving status', self.source_item.moving),
-            ('destination moving status', self.destination_item.moving),
-            ('start offect point x', self.source_item.offect.x()),
-            ('start offect point y', self.source_item.offect.y()),
-            ('destination offect point x', self.destination_item.offect.x()),
-            ('destination offect point y', self.destination_item.offect.y()),
-            # style
-            ('width', self.width),
-            ('color', self.color.rgba()),
-            ('selected color', self.selected_color.rgba()),
-            ('width flag', self.width_flag),
-            ('color flag', self.color_flag),
-            ('selected color flag', self.selected_color_flag)
-        ])
+    def serialize(self, pipe_serialization=None):
+        pipe_serialization.pipe_id = self.id
+        pipe_serialization.pipe_port_id.append(self.start_port.id)
+        pipe_serialization.pipe_port_id.append(self.end_port.id)
+        pipe_serialization.pipe_text = self.edit.toPlainText()
+
+        # control point
+        pipe_serialization.start_point.append(self.source_item.scenePos().x())
+        pipe_serialization.start_point.append(self.source_item.scenePos().y())
+        pipe_serialization.end_point.append(self.destination_item.scenePos().x())
+        pipe_serialization.end_point.append(self.destination_item.scenePos().y())
+        pipe_serialization.source_move_status = self.source_item.moving
+        pipe_serialization.destination_move_status = self.destination_item.moving
+        pipe_serialization.offset_start_point.append(self.source_item.offect.x())
+        pipe_serialization.offset_start_point.append(self.source_item.offect.y())
+        pipe_serialization.offset_destination_point.append(self.destination_item.offect.x())
+        pipe_serialization.offset_destination_point.append(self.destination_item.offect.y())
+
+        # ui
+        pipe_serialization.self_pipe_width = self.width
+        pipe_serialization.self_pipe_color.append(self.color.rgba())
+        pipe_serialization.self_pipe_color.append(self.selected_color.rgba())
+
+        # flag
+        pipe_serialization.pipe_flag.append(self.width_flag)
+        pipe_serialization.pipe_flag.append(self.color_flag)
+        pipe_serialization.pipe_flag.append(self.selected_color_flag)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         # added into current scene and view
@@ -326,31 +328,31 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         view.pipes.append(self)
         # control point
         self.prepareGeometryChange()
-        self.source_item.moving = data['source moving status']
-        self.destination_item.moving = data['destination moving status']
-        self.source_item.setPos(data['start control point x'], data['start control point y'])
-        self.destination_item.setPos(data['end control point x'], data['end control point y'])
-        self.source_item.offect = QtCore.QPointF(data['start offect point x'], data['start offect point y'])
-        self.destination_item.offect = QtCore.QPointF(data['destination offect point x'],
-                                                      data['destination offect point y'])
+        self.source_item.moving = data.source_move_status
+        self.destination_item.moving = data.destination_move_status
+        self.source_item.setPos(data.start_point[0], data.start_point[1])
+        self.destination_item.setPos(data.end_point[0], data.end_point[1])
+        self.source_item.offect = QtCore.QPointF(data.offset_start_point[0], data.offset_start_point[1])
+        self.destination_item.offect = QtCore.QPointF(data.offset_destination_point[0],
+                                                      data.offset_destination_point[1])
         # id and hashmap
-        self.id = data['id']
-        hashmap[data['id']] = self
+        self.id = data.pipe_id
+        hashmap[data.pipe_id] = self
         # text
-        self.edit.setPlainText(data['text'])
+        self.edit.setPlainText(data.pipe_text)
         # style
-        self.width = data['width']
+        self.width = data.self_pipe_width
 
         self.color = QtGui.QColor()
-        self.color.setRgba(data['color'])
+        self.color.setRgba(data.self_pipe_color[0])
 
         self.selected_color = QtGui.QColor()
-        self.selected_color.setRgba(data['selected color'])
+        self.selected_color.setRgba(data.self_pipe_color[1])
 
         # flag
-        self.width_flag = data['width flag']
-        self.color_flag = data['color flag']
-        self.selected_color_flag = data['selected color flag']
+        self.width_flag = data.pipe_flag[0]
+        self.color_flag = data.pipe_flag[1]
+        self.selected_color_flag = data.pipe_flag[2]
 
         self.update()
         return True

@@ -5,7 +5,7 @@ from collections import OrderedDict
 from PyQt5 import QtGui, QtCore, QtWidgets, sip
 from GraphicsView.scene import Scene
 from Components import effect_water, attribute, port, pipe, container, effect_cutline, effect_background, effect_snow
-from Model import constants, stylesheet, history, serializable
+from Model import constants, stylesheet, history, serializable, serialize_pb2
 
 __all__ = ["View", "TreeWidgetItem"]
 
@@ -930,72 +930,96 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.background_image.resize(self.size().width(), self.size().height())
 
     def save_to_file(self):
-        def _save_to_file(file_name, json_data):
-                with open(file_name, 'w', encoding='utf-8') as file:
-                    file.write(json_data)
+        def _save_to_file(file_name, protobuf_data):
+                with open(file_name, 'wb') as file:
+                    file.write(protobuf_data)
 
         if self.root_flag:
             if not self.filename:
                 filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                     "Save serialization json file", "./", "json (*.json)")
+                                                                     "Save serialization note file", "./", "note (*.note)")
                 if filename and ok:
                     self.filename = filename
                     self.first_open = False
 
             if self.filename:
-                _save_to_file(self.filename, json.dumps(self.serialize(), indent=4))
+                _save_to_file(self.filename, self.serialize())
                 self.mainwindow.setWindowTitle(self.filename)
 
     def load_from_file(self):
         if self.root_flag:
             if len(self.mainwindow.argv) == 2:
-                with open(self.filename, "r", encoding='utf-8') as file:
-                    data = json.loads(file.read())
-                    self.deserialize(data, {}, self, True)
+                with open(self.filename, "rb") as file:
+                    view_serialization = serialize_pb2.ViewSerialization()
+                    view_serialization.ParseFromString(file.read())
+                    self.deserialize(view_serialization, {}, self, True)
                     self.mainwindow.setWindowTitle(self.filename + "-Life")
 
             else:
                 filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                     "Open serialization json file", "./", "json (*.json)")
+                                                                     "Open serialization json file", "./", "note (*.note)")
                 if filename and ok:
-                    with open(filename, "r", encoding='utf-8') as file:
-                        data = json.loads(file.read())
-                        self.deserialize(data, {}, self, True)
+                    with open(filename, "rb") as file:
+                        view_serialization = serialize_pb2.ViewSerialization()
+                        view_serialization.ParseFromString(file.read())
+                        self.deserialize(view_serialization, {}, self, True)
                         self.filename = filename
                         self.mainwindow.setWindowTitle(filename + "-Life")
 
-    def serialize(self):
-        return OrderedDict([
-            ('root scene', self.root_scene.serialize()),
-            ('current scene', self.current_scene.id),
-            ('use time', self.start_time),
-            ('last time', self.last_time),
-            ('image path', self.image_path),
-            ('attribute font family', attribute.InputTextField.font.family()),
-            ('attribute font size', attribute.InputTextField.font.pointSize()),
-            ('attribute font color', attribute.InputTextField.font_color.rgba()),
-            ('attribute color', attribute.AttributeWidget.color.rgba()),
-            ('attribute selected color', attribute.AttributeWidget.selected_color.rgba()),
-            ('attribute border color', attribute.AttributeWidget.border_color.rgba()),
-            ('attribute selected border color', attribute.AttributeWidget.selected_border_color.rgba()),
-            ('logic color', attribute.LogicWidget.background_color.rgba()),
-            ('logic selected color', attribute.LogicWidget.selected_background_color.rgba()),
-            ('logic border color', attribute.LogicWidget.border_color.rgba()),
-            ('logic selected border color', attribute.LogicWidget.selected_border_color.rgba()),
-            ('pipe width', pipe.Pipe.width),
-            ('pipe color', pipe.Pipe.color.rgba()),
-            ('pipe selected color', pipe.Pipe.selected_color.rgba()),
-            ('port width', port.Port.width),
-            ('port color', port.Port.color.rgba()),
-            ('port border color', port.Port.border_color.rgba()),
-            ('port hovered color', port.Port.hovered_color.rgba()),
-            ('port hovered border color', port.Port.hovered_border_color.rgba()),
-            ('port activated color', port.Port.activated_color.rgba()),
-            ('port activated border color', port.Port.activated_border_color.rgba()),
-            ('container width', container.Container.width),
-            ('container color', container.Container.color.rgba()),
-            ('container selected color', container.Container.selected_color.rgba())
-        ])
+    def serialize(self, view_serialization=None):
+        # root view
+        if not view_serialization:
+            view_serialization = serialize_pb2.ViewSerialization()
+        # root scene
+        self.root_scene.serialize(view_serialization.scene_serialization.add())
+        view_serialization.current_scene_id = self.current_scene.id
+
+        # used time
+        if self.start_time:
+            view_serialization.use_time = self.start_time
+        if self.last_time:
+            view_serialization.last_time = self.last_time
+
+        # ui serialization
+        if self.image_path:
+            view_serialization.image_path = self.image_path
+
+        # attribute widget ui
+        view_serialization.all_attr_font_family = attribute.InputTextField.font.family()
+        view_serialization.all_attr_font_size = attribute.InputTextField.font.pointSize()
+        view_serialization.all_attr_color.append(attribute.InputTextField.font_color.rgba())
+        view_serialization.all_attr_color.append(attribute.AttributeWidget.color.rgba())
+        view_serialization.all_attr_color.append(attribute.AttributeWidget.selected_color.rgba())
+        view_serialization.all_attr_color.append(attribute.AttributeWidget.border_color.rgba())
+        view_serialization.all_attr_color.append(attribute.AttributeWidget.selected_border_color.rgba())
+
+        # logic widget ui
+        view_serialization.all_logic_color.append(attribute.LogicWidget.background_color.rgba())
+        view_serialization.all_logic_color.append(attribute.LogicWidget.selected_background_color.rgba())
+        view_serialization.all_logic_color.append(attribute.LogicWidget.border_color.rgba())
+        view_serialization.all_logic_color.append(attribute.LogicWidget.selected_border_color.rgba())
+
+        # pipe widget ui
+        view_serialization.all_pipe_width = pipe.Pipe.width
+        view_serialization.all_pipe_color.append(pipe.Pipe.color.rgba())
+        view_serialization.all_pipe_color.append(pipe.Pipe.selected_color.rgba())
+
+        # port widget ui
+        view_serialization.all_port_width = port.Port.width
+        view_serialization.all_port_color.append(port.Port.color.rgba())
+        view_serialization.all_port_color.append(port.Port.border_color.rgba())
+        view_serialization.all_port_color.append(port.Port.hovered_color.rgba())
+        view_serialization.all_port_color.append(port.Port.hovered_border_color.rgba())
+        view_serialization.all_port_color.append(port.Port.activated_color.rgba())
+        view_serialization.all_port_color.append(port.Port.activated_border_color.rgba())
+
+        # container widget ui
+        view_serialization.all_container_width = container.Container.width
+        view_serialization.all_container_color.append(container.Container.color.rgba())
+        view_serialization.all_container_color.append(container.Container.selected_color.rgba())
+
+
+        return view_serialization.SerializeToString()
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         # clear all contents
@@ -1012,10 +1036,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         # use time
         current_day = time.strftime("%Y/%m/%d", time.localtime(time.time()))
-        last_day = time.strftime("%Y/%m/%d", time.localtime(data['use time']))
+        last_day = time.strftime("%Y/%m/%d", time.localtime(data.use_time))
         if current_day == last_day:
-            self.start_time = data['use time']
-            self.last_time = data['last time']
+            self.start_time = data.use_time
+            self.last_time = data.last_time
         else:
             self.start_time = None
             self.last_time = 0
@@ -1025,9 +1049,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         day_time_sec = int(day_time - 60 * day_time_min - 60 * 60 * day_time_hour)
 
         # image path
-        if data['image path']:
-            effect_snow.SnowWidget.image_path = data['image path']
-            self.image_path = data['image path']
+        if data.image_path:
+            effect_snow.SnowWidget.image_path = data.image_path
+            self.image_path = data.image_path
 
         # set root scene
         if self.root_flag:
@@ -1044,47 +1068,47 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         # style
         #   attribute widget
         attribute.InputTextField.font = QtGui.QFont()
-        attribute.InputTextField.font.setFamily(data['attribute font family'])
-        attribute.InputTextField.font.setPointSize(data['attribute font size'])
-        attribute.InputTextField.font_color.setRgba(data['attribute font color'])
+        attribute.InputTextField.font.setFamily(data.all_attr_font_family)
+        attribute.InputTextField.font.setPointSize(data.all_attr_font_size)
+        attribute.InputTextField.font_color.setRgba(data.all_attr_color[0])
 
-        attribute.AttributeWidget.color.setRgba(data['attribute color'])
-        attribute.AttributeWidget.selected_color.setRgba(data['attribute selected color'])
-        attribute.AttributeWidget.border_color.setRgba(data['attribute border color'])
-        attribute.AttributeWidget.selected_border_color.setRgba(data['attribute selected border color'])
+        attribute.AttributeWidget.color.setRgba(data.all_attr_color[1])
+        attribute.AttributeWidget.selected_color.setRgba(data.all_attr_color[2])
+        attribute.AttributeWidget.border_color.setRgba(data.all_attr_color[3])
+        attribute.AttributeWidget.selected_border_color.setRgba(data.all_attr_color[4])
 
         #   logic widget
-        attribute.LogicWidget.background_color.setRgba(data['logic color'])
-        attribute.LogicWidget.selected_background_color.setRgba(data['logic selected color'])
-        attribute.LogicWidget.border_color.setRgba(data['logic border color'])
-        attribute.LogicWidget.selected_border_color.setRgba(data['logic selected border color'])
+        attribute.LogicWidget.background_color.setRgba(data.all_logic_color[0])
+        attribute.LogicWidget.selected_background_color.setRgba(data.all_logic_color[1])
+        attribute.LogicWidget.border_color.setRgba(data.all_logic_color[2])
+        attribute.LogicWidget.selected_border_color.setRgba(data.all_logic_color[3])
 
         #   pipe widget
-        pipe.Pipe.width = data['pipe width']
-        pipe.Pipe.color.setRgba(data['pipe color'])
-        pipe.Pipe.selected_color.setRgba(data['pipe selected color'])
+        pipe.Pipe.width = data.all_pipe_width
+        pipe.Pipe.color.setRgba(data.all_pipe_color[0])
+        pipe.Pipe.selected_color.setRgba(data.all_pipe_color[1])
 
         #   port widget
-        port.Port.width = data['port width']
-        port.Port.color.setRgba(data['port color'])
-        port.Port.border_color.setRgba(data['port border color'])
-        port.Port.hovered_color.setRgba(data['port hovered color'])
-        port.Port.hovered_border_color.setRgba(data['port hovered border color'])
-        port.Port.activated_color.setRgba(data['port activated color'])
-        port.Port.activated_border_color.setRgba(data['port activated border color'])
+        port.Port.width = data.all_port_width
+        port.Port.color.setRgba(data.all_port_color[0])
+        port.Port.border_color.setRgba(data.all_port_color[1])
+        port.Port.hovered_color.setRgba(data.all_port_color[2])
+        port.Port.hovered_border_color.setRgba(data.all_port_color[3])
+        port.Port.activated_color.setRgba(data.all_port_color[4])
+        port.Port.activated_border_color.setRgba(data.all_port_color[5])
 
         #   container widget
-        container.Container.width = data['container width']
-        container.Container.color.setRgba(data['container color'])
-        container.Container.selected_color.setRgba(data['container selected color'])
+        container.Container.width = data.all_container_width
+        container.Container.color.setRgba(data.all_container_color[0])
+        container.Container.selected_color.setRgba(data.all_container_color[1])
 
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
         self.mainwindow.style_switch_combox.setCurrentIndex(0)
 
         # create contents
         hashmap = {}
-        self.root_scene.deserialize(data['root scene'], hashmap, view, flag=True)
-        self.root_scene.deserialize(data['root scene'], hashmap, view, flag=False)
+        self.root_scene.deserialize(data.scene_serialization[0], hashmap, view, flag=True)
+        self.root_scene.deserialize(data.scene_serialization[0], hashmap, view, flag=False)
 
         # recover current scene
         if self.root_flag:
@@ -1092,7 +1116,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             while iterator.value():
                 scene_flag = iterator.value()
                 iterator += 1
-                if scene_flag.data(0, QtCore.Qt.ToolTipRole).id == data['current scene']:
+                if scene_flag.data(0, QtCore.Qt.ToolTipRole).id == data.current_scene_id:
                     self.current_scene = scene_flag.data(0, QtCore.Qt.ToolTipRole)
                     self.current_scene_flag = scene_flag
                     self.background_image = self.current_scene.background_image

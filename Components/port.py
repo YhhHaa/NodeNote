@@ -144,69 +144,69 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.hovered = False
         super(Port, self).hoverLeaveEvent(event)
 
-    def serialize(self):
-        pipes = list()
-        for pipe_widget in self.pipes:
-            pipes.append(pipe_widget.id)
+    def serialize(self, port_serialization=None):
+        # port
+        port_serialization.port_id = self.id
+        port_serialization.port_type = self.port_type
+        port_serialization.port_truth = self.port_truth
 
-        return OrderedDict([
-            ('id', self.id),
-            ('port type', self.port_type),
-            ('port truth', self.port_truth),
-            ('pipes', pipes),
-            # style
-            ('width', self.width),
-            ('color', self.color.rgba()),
-            ('border color', self.border_color.rgba()),
-            ('hovered color', self.hovered_color.rgba()),
-            ('hovered border color', self.hovered_border_color.rgba()),
-            ('activated color', self.activated_color.rgba()),
-            ('activated border color', self.activated_border_color.rgba()),
-            # flag
-            ('width flag', self.width_flag),
-            ('color flag', self.color_flag),
-            ('border color flag', self.border_color_flag),
-            ('hovered color flag', self.hovered_color_flag),
-            ('hovered border color flag', self.hovered_border_color_flag),
-            ('activated color flag', self.activated_color_flag),
-            ('activated border color flag', self.activated_border_color_flag)
-        ])
+        # pipes
+        for pipe_widget in self.pipes:
+            port_serialization.pipes_id.append(pipe_widget.id)
+
+        # ui
+        port_serialization.port_width = self.width
+        port_serialization.port_color.append(self.color.rgba())
+        port_serialization.port_color.append(self.border_color.rgba())
+        port_serialization.port_color.append(self.hovered_color.rgba())
+        port_serialization.port_color.append(self.hovered_border_color.rgba())
+        port_serialization.port_color.append(self.activated_color.rgba())
+        port_serialization.port_color.append(self.activated_border_color.rgba())
+
+        # flag
+        port_serialization.port_flag.append(self.width_flag)
+        port_serialization.port_flag.append(self.color_flag)
+        port_serialization.port_flag.append(self.border_color_flag)
+        port_serialization.port_flag.append(self.hovered_color_flag)
+        port_serialization.port_flag.append(self.hovered_border_color_flag)
+        port_serialization.port_flag.append(self.activated_color_flag)
+        port_serialization.port_flag.append(self.activated_border_color_flag)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         if flag:
             # id and hashmap
-            self.id = data['id']
-            hashmap[data['id']] = self
+            self.id = data.port_id
+            hashmap[data.port_id] = self
 
             # style
-            self.width = data['width']
+            self.width = data.port_width
 
             self.color = QtGui.QColor()
-            self.color.setRgba(data['color'])
+            self.color.setRgba(data.port_color[0])
 
             self.border_color = QtGui.QColor()
-            self.border_color.setRgba(data['border color'])
+            self.border_color.setRgba(data.port_color[1])
 
             self.hovered_color = QtGui.QColor()
-            self.hovered_color.setRgba(data['hovered color'])
+            self.hovered_color.setRgba(data.port_color[2])
 
             self.hovered_border_color = QtGui.QColor()
-            self.hovered_border_color.setRgba(data['hovered border color'])
+            self.hovered_border_color.setRgba(data.port_color[3])
 
             self.activated_color = QtGui.QColor()
-            self.activated_color.setRgba(data['activated color'])
+            self.activated_color.setRgba(data.port_color[4])
 
             self.activated_border_color = QtGui.QColor()
-            self.activated_border_color.setRgba(data['activated border color'])
+            self.activated_border_color.setRgba(data.port_color[5])
 
             # flag
-            self.width_flag = data['width flag']
-            self.color_flag = data['color flag']
-            self.border_color_flag = data['border color flag']
-            self.hovered_color_flag = data['hovered color flag']
-            self.hovered_border_color_flag = data['hovered border color flag']
-            self.activated_color_flag = data['activated color flag']
-            self.activated_border_color_flag = data['activated border color flag']
+            self.width_flag = data.port_flag[0]
+            self.color_flag = data.port_flag[1]
+            self.border_color_flag = data.port_flag[2]
+            self.hovered_color_flag = data.port_flag[3]
+            self.hovered_border_color_flag = data.port_flag[4]
+            self.activated_color_flag = data.port_flag[5]
+            self.activated_border_color_flag = data.port_flag[6]
 
         else:
             # deserialize pipes

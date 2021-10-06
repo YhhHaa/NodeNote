@@ -100,42 +100,50 @@ class Container(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         painter.restore()
 
-    def serialize(self):
-        return OrderedDict([
-            ('id', self.id),
-            ('points', self.points),
-            ('pressures', self.pressures),
-            ('width', self.width),
-            ('color', self.color.rgba()),
-            ('selected color', self.selected_color.rgba()),
-            ('width flag', self.width_flag),
-            ('color flag', self.color_flag),
-            ('selected color flag', self.selected_color_flag)
-        ])
+    def serialize(self, container_serialization=None):
+        container_serialization.container_id = self.id
+        for point in self.points:
+            point_data = container_serialization.points.add()
+            point_data.x = point[0]
+            point_data.y = point[1]
+        for pressure in self.pressures:
+            container_serialization.pressures.append(pressure)
+
+        # ui
+        container_serialization.self_container_width = self.width
+        container_serialization.self_container_color.append(self.color.rgba())
+        container_serialization.self_container_color.append(self.selected_color.rgba())
+
+        # flag
+        container_serialization.self_container_flag.append(self.width_flag)
+        container_serialization.self_container_flag.append(self.color_flag)
+        container_serialization.self_container_flag.append(self.selected_color_flag)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         # added into scene and view
         view.current_scene.addItem(self)
         view.containers.append(self)
         # id
-        self.id = data['id']
+        self.id = data.container_id
         # draw point
-        self.points = data['points']
-        if 'pressures' in data:
-            self.pressures = data['pressures']
+        self.points = []
+        for point in data.points:
+            self.points.append((point.x, point.y))
+        for pressure in data.pressures:
+            self.pressures.append(pressure)
         self.deserialize_flag = True
         # style
-        self.width = data['width']
+        self.width = data.self_container_width
 
         self.color = QtGui.QColor()
-        self.color.setRgba(data['color'])
+        self.color.setRgba(data.self_container_color[0])
 
         self.selected_color = QtGui.QColor()
-        self.selected_color.setRgba(data['selected color'])
+        self.selected_color.setRgba(data.self_container_color[1])
 
         # flag
-        self.width_flag = data['width flag']
-        self.color_flag = data['color flag']
-        self.selected_color_flag = data['selected color flag']
+        self.width_flag = data.self_container_flag[0]
+        self.color_flag = data.self_container_flag[1]
+        self.selected_color_flag = data.self_container_flag[2]
 
         return True

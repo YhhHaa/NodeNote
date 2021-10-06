@@ -38,18 +38,17 @@ class ProxyView(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
         self.root_window.view_widget.current_scene.clearSelection()
         self.scene().clearSelection()
 
-    def serialize(self):
-        return OrderedDict([
-            ('id', self.id),
-            ('size', (self.size().width(), self.size().height())),
-            ('row', self.item_row),
-            ('column', self.item_column),
-            ('sub view', self.sub_view_widget_view.serialize())
-        ])
+    def serialize(self, subview_serialization=None):
+        subview_serialization.subview_id = self.id
+        subview_serialization.size.append(self.size().width())
+        subview_serialization.size.append(self.size().height())
+        subview_serialization.subview_location.append(self.item_row)
+        subview_serialization.subview_location.append(self.item_column)
+        self.sub_view_widget_view.serialize(subview_serialization.subview.add())
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
-        self.id = data['id']
-        self.resize(data['size'][0], data['size'][1])
-        self.item_row = data['row']
-        self.item_column = data['column']
-        self.sub_view_widget_view.deserialize(data['sub view'], hashmap, view, flag)
+        self.id = data.subview_id
+        self.resize(data.size[0], data.size[1])
+        self.item_row = data.subview_location[0]
+        self.item_column = data.subview_location[1]
+        self.sub_view_widget_view.deserialize(data.subview[0], hashmap, view, flag)
