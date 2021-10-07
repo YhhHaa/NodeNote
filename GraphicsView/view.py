@@ -914,14 +914,17 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         elif isinstance(current_item, ProxyView):
             return
         elif isinstance(current_item, attribute.AttributeWidget):
-            current_item.context_flag = True
-            current_item.contextMenuEvent(event)
+            if self.root_flag:
+                current_item.context_flag = True
+                current_item.contextMenuEvent(event)
         elif isinstance(current_item, attribute.InputTextField):
-            current_item.node.context_flag = True
-            current_item.node.contextMenuEvent(event)
+            if self.root_flag:
+                current_item.node.context_flag = True
+                current_item.node.contextMenuEvent(event)
         elif isinstance(current_item, attribute.SubConstituteWidget):
-            current_item.parentItem().context_flag = True
-            current_item.parentItem().contextMenuEvent(event)
+            if self.root_flag:
+                current_item.parentItem().context_flag = True
+                current_item.parentItem().contextMenuEvent(event)
 
 
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
