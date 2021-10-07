@@ -878,6 +878,12 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.width_flag = True
                             self.width_label_changed(self.port_style_width_label, width)
 
+                for item in self.view_widget.current_scene.items():
+                    if isinstance(item, port.Port):
+                        item.setMaximumSize(width, width)
+                        item.updateGeometry()
+                        item.update()
+
         elif widget_type == "Container_width":
             width, ok = QtWidgets.QInputDialog.getDouble(self, "Get Double Width",
                                                          "Width", 2, 0.1, 15.0, 2, QtCore.Qt.WindowFlags(), 0.5)

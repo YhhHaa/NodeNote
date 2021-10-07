@@ -64,8 +64,9 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     def sizeHint(self, which: QtCore.Qt.SizeHint, constraint: QtCore.QSizeF = ...) -> QtCore.QSizeF:
         # Width init
-        if self.scene().port_style_width and not self.width_flag:
-            self.width = self.scene().port_style_width
+        if self.scene():
+            if self.scene().port_style_width and not self.width_flag:
+                self.width = self.scene().port_style_width
         return QtCore.QSizeF(self.width, self.width)
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
@@ -82,6 +83,13 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.activated_color = self.scene().port_style_activated_color
         if self.scene().port_style_activated_border_color and not self.activated_border_color_flag:
             self.activated_border_color = self.scene().port_style_activated_border_color
+
+        # Size init
+        if self.scene().port_style_width and not self.width_flag:
+            self.width = self.scene().port_style_width
+            self.setMaximumSize(self.width, self.width)
+            self.updateGeometry()
+
         # SIZE
         rect_width = self.width / 1.8
         rect_height = self.width / 1.8
