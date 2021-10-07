@@ -2,7 +2,6 @@ import re
 import os
 import io
 import time
-from collections import OrderedDict
 import validators
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps, ImageQt
@@ -1035,7 +1034,7 @@ class SubConstituteWidget(QtWidgets.QGraphicsWidget):
 
     def sizeHint(self, which=None, constraint=None) -> QtCore.QSizeF:
         width = self.label_item.boundingRect().width()
-        height = self.label_item.boundingRect().height() + 5
+        height = self.label_item.boundingRect().height() + 2
         return QtCore.QSizeF(width, height)
 
 
@@ -1173,16 +1172,18 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.logic_combobox_output.addItems(("And", "Or", "Not"))
         self.logic_combobox_output.clearFocus()
 
-        group = GroupWidget("Logical Controller")
-        group.add_node_widget(self.logic_combobox_input)
-        group.add_node_widget(self.logic_combobox_output)
-        proxywidget = QtWidgets.QGraphicsProxyWidget()
-        proxywidget.setWidget(group)
+        self.group = GroupWidget("Logical Controller")
+        self.group.add_node_widget(self.logic_combobox_input)
+        self.group.add_node_widget(self.logic_combobox_output)
+        self.proxywidget = QtWidgets.QGraphicsProxyWidget()
+        self.proxywidget.setWidget(self.group)
         self.layout = QtWidgets.QGraphicsLinearLayout(QtCore.Qt.Horizontal)
         self.layout.addItem(self.input_port)
-        self.layout.addItem(proxywidget)
+        self.layout.addItem(self.proxywidget)
         self.layout.addItem(self.output_port)
         self.layout.setSpacing(0)
+        self.layout.setAlignment(self.input_port, QtCore.Qt.AlignLeft)
+        self.layout.setAlignment(self.output_port, QtCore.Qt.AlignRight)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
@@ -1218,9 +1219,10 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.layout.activate()
         if port_truth:
             if port_type == constants.INPUT_NODE_TYPE:
-                return self.input_port.scenePos() + QtCore.QPointF(0, port.Port.width / 2)
+                return self.input_port.scenePos() + QtCore.QPointF(0, self.input_port.width / 2)
             else:
-                return self.output_port.scenePos() + QtCore.QPointF(port.Port.width / 2, port.Port.width / 2)
+                return self.output_port.scenePos() + QtCore.QPointF(self.output_port.width / 2,
+                                                                    self.output_port.width / 2)
 
     def update_pipe_position(self):
         self.input_port.update_pipes_position()
@@ -1385,7 +1387,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
         painter.setPen(pen)
         painter.setBrush(brush)
-        painter.drawRoundedRect(0, 0, self.size().width(), self.size().height(), 2, 2)
+        painter.drawRoundedRect(0, 0, self.boundingRect().width(), self.boundingRect().height(), 2, 2)
 
         painter.restore()
 
@@ -1933,7 +1935,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.input_layout.setContentsMargins(0, 0, 0, 0)
         self.output_layout.setContentsMargins(0, 0, 0, 0)
         self.title_layout.setContentsMargins(0, 0, 0, 0)
-        self.attribute_layout.setContentsMargins(0, 0, 0, 5)
+        self.attribute_layout.setContentsMargins(0, 0, 0, 2)
 
         # WIDGETS
         #   title name widget
@@ -1953,6 +1955,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.input_layout.addItem(self.true_input_port)
         self.input_layout.addStretch(1)
         self.input_layout.addItem(self.false_input_port)
+        self.input_layout.setAlignment(self.true_input_port, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.input_layout.setAlignment(self.false_input_port, QtCore.Qt.AlignLeft | QtCore.Qt.AlignBottom)
         # title layout
         self.title_layout.addItem(self.attribute_widget)
         self.title_layout.addItem(self.attribute_layout)
@@ -1962,6 +1966,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.output_layout.addItem(self.true_output_port)
         self.output_layout.addStretch(1)
         self.output_layout.addItem(self.false_output_port)
+        self.output_layout.setAlignment(self.true_output_port, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
+        self.output_layout.setAlignment(self.false_output_port, QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
 
         # RESIZE
         self.resizing = False
@@ -2054,16 +2060,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                        QtGui.QPen(QtGui.QColor(230, 0, 0, 100), 2))
         painter.drawPath(path)
 
-        # port width
-        self.true_input_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.true_input_port.setMinimumSize(port.Port.width, port.Port.width)
-        self.true_output_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.true_output_port.setMinimumSize(port.Port.width, port.Port.width)
-        self.false_input_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.false_input_port.setMinimumSize(port.Port.width, port.Port.width)
-        self.false_output_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.false_output_port.setMinimumSize(port.Port.width, port.Port.width)
-
         painter.restore()
 
     def text_change_node_shape(self):
@@ -2114,14 +2110,16 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         pos = QtCore.QPointF(0, 0)
         if port_type == constants.INPUT_NODE_TYPE:
             if port_truth:
-                pos = self.true_input_port.scenePos() + QtCore.QPointF(0, port.Port.width / 2)
+                pos = self.true_input_port.scenePos() + QtCore.QPointF(0, self.true_input_port.width / 2)
             else:
-                pos = self.false_input_port.scenePos() + QtCore.QPointF(0, port.Port.width / 2)
+                pos = self.false_input_port.scenePos() + QtCore.QPointF(0, self.false_input_port.width / 2)
         elif port_type == constants.OUTPUT_NODE_TYPE:
             if port_truth:
-                pos = self.true_output_port.scenePos() + QtCore.QPointF(port.Port.width / 2, port.Port.width / 2)
+                pos = self.true_output_port.scenePos() + QtCore.QPointF(self.true_output_port.width / 2,
+                                                                        self.true_output_port.width / 2)
             else:
-                pos = self.false_output_port.scenePos() + QtCore.QPointF(port.Port.width / 2, port.Port.width / 2)
+                pos = self.false_output_port.scenePos() + QtCore.QPointF(self.false_output_port.width / 2,
+                                                                         self.false_output_port.width / 2)
         return pos
 
     def caculate_column(self, row):

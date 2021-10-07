@@ -1,7 +1,6 @@
-from collections import OrderedDict
 from PyQt5 import QtGui, QtCore, QtWidgets
 from Model import constants, serializable
-from Components import attribute, port
+from Components import attribute
 
 __all__ = ["Pipe", "ControlPoint"]
 
@@ -274,10 +273,10 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         target_rectf = QtCore.QRectF(0, 0, 0, 0)
         if self.start_flag == constants.OUTPUT_NODE_START or (self.start_flag == constants.INPUT_NODE_START and
                                                               self.start_port is None):
-            target_rectf = QtCore.QRectF(d.x() - port.Port.width / 2, d.y() - port.Port.width / 2,
+            target_rectf = QtCore.QRectF(d.x() - image.width() / 2, d.y() - image.height() / 2,
                                          image.width(), image.height())
         elif self.start_flag == constants.INPUT_NODE_START:
-            target_rectf = QtCore.QRectF(s.x() - port.Port.width / 2, s.y() - port.Port.width / 2,
+            target_rectf = QtCore.QRectF(s.x() - image.width() / 2, s.y() - image.height() / 2,
                                          image.width(), image.height())
         painter.drawPixmap(target_rectf, image, image_rectf)
 

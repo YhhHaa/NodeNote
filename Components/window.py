@@ -1114,6 +1114,10 @@ class NoteWindow(QtWidgets.QMainWindow):
 
     def init_pipe(self, current_index):
         if current_index == 0:
+            #   change current parameters
+            self.width_label_changed(self.pipe_style_width_label, pipe.Pipe.width)
+            self.color_label_changed(self.pipe_style_background_color_label, pipe.Pipe.color)
+            self.color_label_changed(self.pipe_style_selected_background_color_label, pipe.Pipe.selected_color)
             #   change slots
             #       width
             self.pipe_style_width_button.disconnect()

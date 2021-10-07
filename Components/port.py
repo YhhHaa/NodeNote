@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from PyQt5 import QtGui, QtCore, QtWidgets
 from Model import constants, serializable
 
@@ -7,7 +6,7 @@ __all__ = ["Port"]
 
 class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
-    width = 16.0
+    width = 12.0
     color = QtGui.QColor(49, 115, 100, 255)
     border_color = QtGui.QColor(29, 202, 151, 255)
     hovered_color = QtGui.QColor(17, 43, 82, 255)
@@ -63,12 +62,11 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
         for pipe in self.pipes:
             pipe.end_evaluation_feedback()
 
-    def boundingRect(self) -> QtCore.QRectF:
+    def sizeHint(self, which: QtCore.Qt.SizeHint, constraint: QtCore.QSizeF = ...) -> QtCore.QSizeF:
         # Width init
         if self.scene().port_style_width and not self.width_flag:
             self.width = self.scene().port_style_width
-        self.resize(self.width, self.width)
-        return QtCore.QRectF(0.0, 0.0, self.width, self.width)
+        return QtCore.QSizeF(self.width, self.width)
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
         # Color init
