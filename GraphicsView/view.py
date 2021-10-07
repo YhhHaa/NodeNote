@@ -1,7 +1,5 @@
-import json
 import time
 import re
-from collections import OrderedDict
 from PyQt5 import QtGui, QtCore, QtWidgets, sip
 from GraphicsView.scene import Scene
 from Components import effect_water, attribute, port, pipe, container, effect_cutline, effect_background, effect_snow
@@ -113,10 +111,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene_flag = self.root_scene_flag
 
         # History
-        if self.root_flag:
-            self.history = history.History(self)
-        else:
-            self.history = self.mainwindow.view_widget.history
+        # Todo: 替换视图内所有的history为场景history(完成)
+        # Todo: 进行场景的deserialization(完成)
+        # Todo: 异步序列化
 
         # Search
         self.search_widget = QtWidgets.QWidget(self)
@@ -220,7 +217,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     elif item.timeline.state() == QtCore.QTimeLine.Running:
                         item.end_evaluation_feedback()
 
-        self.history.store_history("update pipe animation")
+        self.current_scene.history.store_history("update pipe animation")
 
     def python_highlighter(self):
         for item in self.current_scene.selectedItems():
@@ -372,7 +369,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.current_scene.removeItem(pipe_widget)
                 self.pipes.remove(pipe_widget)
 
-    def delete_widgets(self, event):
+    def delete_widgets(self, event, history_flag=False):
         from Components.todo import Todo
         if event.key() == QtCore.Qt.Key_Delete:
             for item in self.current_scene.selectedItems():
@@ -432,7 +429,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         item.parent_item.text_change_node_shape()
                         item.parent_item.update_pipe_position()
 
-            self.history.store_history("Delete Widgets")
+            if not history_flag:
+                self.current_scene.history.store_history("Delete Widgets")
 
     def delete_pipe(self, item):
         end_node = item.get_input_node()
@@ -459,21 +457,21 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene.addItem(basic_widget)
         basic_widget.setPos(self.mapToScene(event.pos()))
         self.attribute_widgets.append(basic_widget)
-        self.history.store_history("Add Attribute Widget")
+        self.current_scene.history.store_history("Add Attribute Widget")
 
     def add_truth_widget(self, event):
         basic_widget = attribute.LogicWidget()
         self.current_scene.addItem(basic_widget)
         basic_widget.setPos(self.mapToScene(event.pos()))
         self.logic_widgets.append(basic_widget)
-        self.history.store_history("Add Truth Widget")
+        self.current_scene.history.store_history("Add Truth Widget")
 
     def open_file(self, item):
         if not item.file_url:
             item.file_url, _ = QtWidgets.QFileDialog.getOpenFileName(self, "select files", "",
                                                                      "any file (*.*)")
         QtGui.QDesktopServices.openUrl(QtCore.QUrl(item.file_url))
-        self.history.store_history("Add File")
+        self.current_scene.history.store_history("Add File")
 
     def add_drag_pipe(self, port_widget, pipe_widget):
         port_widget.add_pipes(pipe_widget)
@@ -565,7 +563,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     input_node.start_pipe_animation()
                     output_node.start_pipe_animation()
 
-                self.history.store_history("Create Pipe")
+                self.current_scene.history.store_history("Create Pipe")
             else:
                 if constants.DEBUG_DRAW_PIPE:
                     print("delete drag pipe case 1")
@@ -667,7 +665,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.mainwindow.style_switch_combox.setCurrentIndex(0)
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
 
-        self.history.store_history("Create Sub Scene")
+        self.current_scene.history.store_history("Create Sub Scene")
 
     def change_current_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem):
         if self.root_flag:
@@ -865,10 +863,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.search_text()
         if event.key() == QtCore.Qt.Key_Z and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             if not event.isAccepted():
-                self.history.undo()
+                self.current_scene.history.undo()
         if event.key() == QtCore.Qt.Key_Y and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             if not event.isAccepted():
-                self.history.redo()
+                self.current_scene.history.redo()
         if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.save_to_file()
         if event.key() == QtCore.Qt.Key_O and int(event.modifiers()) & QtCore.Qt.ControlModifier:

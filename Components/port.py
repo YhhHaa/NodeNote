@@ -65,7 +65,7 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def sizeHint(self, which: QtCore.Qt.SizeHint, constraint: QtCore.QSizeF = ...) -> QtCore.QSizeF:
         # Width init
         if self.scene():
-            if self.scene().port_style_width and not self.width_flag:
+            if hasattr(self.scene(), "port_style_width") and self.scene().port_style_width and not self.width_flag:
                 self.width = self.scene().port_style_width
         return QtCore.QSizeF(self.width, self.width)
 

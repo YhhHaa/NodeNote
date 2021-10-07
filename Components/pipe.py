@@ -389,4 +389,4 @@ class ControlPoint(QtWidgets.QGraphicsItem):
 
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
         super(ControlPoint, self).mouseReleaseEvent(event)
-        self.scene().view.history.store_history("Change Pipe Control Point")
+        self.scene().history.store_history("Change Pipe Control Point")

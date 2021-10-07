@@ -1,8 +1,6 @@
-import warnings
-from collections import OrderedDict
 from PyQt5 import QtWidgets, QtCore, QtGui
 from Components import effect_background, effect_cutline, attribute, pipe, container, port
-from Model import serializable, constants
+from Model import serializable, constants, history
 
 __all__ = ["Scene"]
 
@@ -14,6 +12,9 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.attribute_widget = attribute_widget
         self.setSceneRect(QtCore.QRectF())
         self.sub_scene_flag = sub_scene_flag
+
+        # History
+        self.history = history.History(self.view)
 
         # background image
         self.background_image = effect_background.EffectBackground(self.view)

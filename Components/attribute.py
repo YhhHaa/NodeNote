@@ -989,7 +989,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             self.setTextCursor(cursor)
             self.font_size_editing = False
         self.mouseMoveEvent = self.node.mouseMoveEvent
-        self.node.scene().view.history.store_history("Editing")
+        self.node.scene().history.store_history("Editing")
 
 
 class SubConstituteWidget(QtWidgets.QGraphicsWidget):
@@ -1357,7 +1357,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.moving = False
         self.colliding_co = False
 
-        self.scene().view.history.store_history("Colliding Release")
+        self.scene().history.store_history("Colliding Release")
 
     def paint(self, painter, option, widget=None) -> None:
         super(LogicWidget, self).paint(painter, option, widget)
@@ -1663,7 +1663,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def mouseReleaseEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
         if self.was_moved:
             self.was_moved = False
-            self.scene().view.history.store_history("Logic Widget Position Changed")
+            self.scene().history.store_history("Logic Widget Position Changed")
         if self.scene().view.mode == constants.MODE_NOOP:
             self.colliding_release()
 
@@ -2178,7 +2178,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.text_change_node_shape()
             parent.update_pipe_position()
 
-        self.scene().view.history.store_history("Add New Subwidget")
+        self.scene().history.store_history("Add New Subwidget")
 
     def add_file(self, line=True):
         file = AttributeFile(self)
@@ -2194,7 +2194,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.text_change_node_shape()
             parent.update_pipe_position()
 
-        self.scene().view.history.store_history("Add New FIle")
+        self.scene().history.store_history("Add New FIle")
 
     def move_up_widget(self, widget):
         if isinstance(widget, SubConstituteWidget):
@@ -2249,7 +2249,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
             parent.text_change_node_shape()
 
-            self.scene().view.history.store_history("Move up widget")
+            self.scene().history.store_history("Move up widget")
 
     def move_down_widget(self, widget):
         if isinstance(widget, SubConstituteWidget):
@@ -2310,7 +2310,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
             parent.text_change_node_shape()
 
-            self.scene().view.history.store_history("Move down widget")
+            self.scene().history.store_history("Move down widget")
 
     def add_exist_subwidget(self, subwidget, line=True):
         self.add_widget(subwidget, line)
@@ -2446,17 +2446,17 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 self.parentItem().delete_subwidget(self)
                 item.add_exist_subwidget(self)
                 if self.scene().view.mode == constants.MODE_NOOP:
-                    self.scene().view.history.store_history("Colliding Add Subwidget")
+                    self.scene().history.store_history("Colliding Add Subwidget")
             elif not self.colliding_co and self.colliding_parent and not self.colliding_inside:
                 self.parentItem().delete_subwidget(self)
                 self.setPos(event.scenePos())
-                self.scene().view.history.store_history("Colliding Delete Subwidget")
+                self.scene().history.store_history("Colliding Delete Subwidget")
             elif not self.colliding_co and self.colliding_parent and self.colliding_inside:
                 self.parentItem().text_change_node_shape()
             elif self.colliding_co and not self.colliding_parent:
                 self.colliding_detection().add_exist_subwidget(self)
                 if self.scene().view.mode == constants.MODE_NOOP:
-                    self.scene().view.history.store_history("Colliding Add Subwidget")
+                    self.scene().history.store_history("Colliding Add Subwidget")
             self.colliding_co = False
             self.colliding_parent = False
             self.colliding_child = False
@@ -2520,7 +2520,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 self.start_pipe_animation()
 
             pipe_widget.update_position()
-            self.scene().view.history.store_history("Colliding Add Second Pipe")
+            self.scene().history.store_history("Colliding Add Second Pipe")
 
     def update_scene_rect(self):
         self.scene().setSceneRect(self.scene().itemsBoundingRect())
@@ -2927,7 +2927,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         if self.was_moved:
             self.was_moved = False
             if self.scene().view.mode == constants.MODE_NOOP:
-                self.scene().view.history.store_history("Attribute Widget Moved")
+                self.scene().history.store_history("Attribute Widget Moved")
         self.colliding_release(event)
 
         if self.vpath and self.vpath in self.scene().items():
@@ -2938,7 +2938,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         if self.resizing:
             self.mouse_update_node_size(event)
             if self.scene().view.mode == constants.MODE_NOOP:
-                self.scene().view.history.store_history("Attribute Widget Size Changed")
+                self.scene().history.store_history("Attribute Widget Size Changed")
         else:
             super(AttributeWidget, self).mouseReleaseEvent(event)
 
