@@ -1184,10 +1184,6 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.layout.addItem(self.output_port)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.input_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.input_port.setMinimumSize(port.Port.width, port.Port.width)
-        self.output_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.output_port.setMinimumSize(port.Port.width, port.Port.width)
         self.setLayout(self.layout)
 
         # Animation
@@ -1687,7 +1683,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     def serialize(self, logic_serialization=None):
         # logic widget
-        logic_serialization.attr_id = self.id
+        logic_serialization.logic_id = self.id
         logic_serialization.logic_position.append(self.scenePos().x())
         logic_serialization.logic_position.append(self.scenePos().y())
         logic_serialization.logic_truth.append(self.logic_combobox_input.currentIndex())
@@ -1947,14 +1943,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.true_output_port = port.Port(constants.OUTPUT_NODE_TYPE, True, self)
         self.false_input_port = port.Port(constants.INPUT_NODE_TYPE, False, self)
         self.false_output_port = port.Port(constants.OUTPUT_NODE_TYPE, False, self)
-        self.true_input_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.true_input_port.setMinimumSize(port.Port.width, port.Port.width)
-        self.true_output_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.true_output_port.setMinimumSize(port.Port.width, port.Port.width)
-        self.false_input_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.false_input_port.setMinimumSize(port.Port.width, port.Port.width)
-        self.false_output_port.setMaximumSize(port.Port.width, port.Port.width)
-        self.false_output_port.setMinimumSize(port.Port.width, port.Port.width)
         # IMPLEMENT WIDGETS
         #   layout
         self.setLayout(self.layout)

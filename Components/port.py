@@ -67,6 +67,7 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
         # Width init
         if self.scene().port_style_width and not self.width_flag:
             self.width = self.scene().port_style_width
+        self.resize(self.width, self.width)
         return QtCore.QRectF(0.0, 0.0, self.width, self.width)
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
