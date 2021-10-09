@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0fserialize.proto\x12\x08NodeNote\"\x98\x01\n\x11PortSerialization\x12\x0f\n\x07port_id\x18\x01 \x01(\x03\x12\x11\n\tport_type\x18\x02 \x01(\x05\x12\x12\n\nport_truth\x18\x03 \x01(\x08\x12\x10\n\x08pipes_id\x18\x04 \x03(\x03\x12\x12\n\nport_width\x18\x05 \x01(\x02\x12\x12\n\nport_color\x18\x06 \x03(\x03\x12\x11\n\tport_flag\x18\x07 \x03(\x08\"\x88#\n\x11ViewSerialization\x12K\n\x13scene_serialization\x18\x01 \x03(\x0b\x32..NodeNote.ViewSerialization.SceneSerialization\x12\x18\n\x10\x63urrent_scene_id\x18\x02 \x01(\x03\x12\x15\n\x08use_time\x18\x03 \x01(\x03H\x00\x88\x01\x01\x12\x16\n\tlast_time\x18\x04 \x01(\x03H\x01\x88\x01\x01\x12\x17\n\nimage_path\x18\x05 \x01(\tH\x02\x88\x01\x01\x12\x1c\n\x14\x61ll_attr_font_family\x18\x06 \x01(\t\x12\x1a\n\x12\x61ll_attr_font_size\x18\x07 \x01(\x05\x12\x16\n\x0e\x61ll_attr_color\x18\x08 \x03(\x03\x12\x17\n\x0f\x61ll_logic_color\x18\t \x03(\x03\x12\x16\n\x0e\x61ll_pipe_width\x18\n \x01(\x02\x12\x16\n\x0e\x61ll_pipe_color\x18\x0b \x03(\x03\x12\x16\n\x0e\x61ll_port_width\x18\x0c \x01(\x02\x12\x16\n\x0e\x61ll_port_color\x18\r \x03(\x03\x12\x16\n\x0e\x61ll_draw_width\x18\x0e \x01(\x02\x12\x16\n\x0e\x61ll_draw_color\x18\x0f \x01(\x03\x1a\x9e\x1f\n\x12SceneSerialization\x12\x10\n\x08scene_id\x18\x01 \x01(\x03\x12\\\n\x12\x61ttr_serialization\x18\x02 \x03(\x0b\x32@.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization\x12^\n\x13logic_serialization\x18\x03 \x03(\x0b\x32\x41.NodeNote.ViewSerialization.SceneSerialization.LogicSerialization\x12\\\n\x12pipe_serialization\x18\x04 \x03(\x0b\x32@.NodeNote.ViewSerialization.SceneSerialization.PipeSerialization\x12\\\n\x12\x64raw_serialization\x18\x05 \x03(\x0b\x32@.NodeNote.ViewSerialization.SceneSerialization.DrawSerialization\x12\x18\n\x10\x62\x61\x63kground_image\x18\x06 \x01(\t\x12#\n\x16scene_attr_font_family\x18\x07 \x01(\tH\x00\x88\x01\x01\x12!\n\x14scene_attr_font_size\x18\x08 \x01(\x05H\x01\x88\x01\x01\x12(\n\x1bscene_attr_style_font_color\x18\t \x01(\x03H\x02\x88\x01\x01\x12.\n!scene_attr_style_background_color\x18\n \x01(\x03H\x03\x88\x01\x01\x12\x37\n*scene_attr_style_selected_background_color\x18\x0b \x01(\x03H\x04\x88\x01\x01\x12*\n\x1dscene_attr_style_border_color\x18\x0c \x01(\x03H\x05\x88\x01\x01\x12\x33\n&scene_attr_style_selected_border_color\x18\r \x01(\x03H\x06\x88\x01\x01\x12/\n\"scene_logic_style_background_color\x18\x0e \x01(\x03H\x07\x88\x01\x01\x12\x38\n+scene_logic_style_selected_background_color\x18\x0f \x01(\x03H\x08\x88\x01\x01\x12+\n\x1escene_logic_style_border_color\x18\x10 \x01(\x03H\t\x88\x01\x01\x12\x34\n\'scene_logic_style_selected_border_color\x18\x11 \x01(\x03H\n\x88\x01\x01\x12\x1d\n\x10scene_pipe_width\x18\x12 \x01(\x02H\x0b\x88\x01\x01\x12.\n!scene_pipe_style_background_color\x18\x13 \x01(\x03H\x0c\x88\x01\x01\x12\x37\n*scene_pipe_style_selected_background_color\x18\x14 \x01(\x03H\r\x88\x01\x01\x12\x18\n\x10scene_port_width\x18\x15 \x01(\x02\x12#\n\x16scene_port_style_color\x18\x16 \x01(\x03H\x0e\x88\x01\x01\x12*\n\x1dscene_port_style_border_color\x18\x17 \x01(\x03H\x0f\x88\x01\x01\x12+\n\x1escene_port_style_hovered_color\x18\x18 \x01(\x03H\x10\x88\x01\x01\x12\x32\n%scene_port_style_hovered_border_color\x18\x19 \x01(\x03H\x11\x88\x01\x01\x12-\n scene_port_style_activated_color\x18\x1a \x01(\x03H\x12\x88\x01\x01\x12\x34\n\'scene_port_style_activated_border_color\x18\x1b \x01(\x03H\x13\x88\x01\x01\x1a\x96\t\n\x11\x41ttrSerialization\x12\x0f\n\x07\x61ttr_id\x18\x01 \x01(\x03\x12\x0c\n\x04size\x18\x02 \x03(\x02\x12\x10\n\x08position\x18\x03 \x03(\x02\x12\x10\n\x08\x63ontents\x18\x04 \x01(\t\x12.\n\tattr_port\x18\x05 \x03(\x0b\x32\x1b.NodeNote.PortSerialization\x12\x14\n\x0cnext_attr_id\x18\x06 \x03(\x03\x12\x15\n\rnext_logic_id\x18\x07 \x03(\x03\x12\x14\n\x0clast_attr_id\x18\x08 \x03(\x03\x12\x15\n\rlast_logic_id\x18\t \x03(\x03\x12\x10\n\x08sub_attr\x18\n \x03(\x03\x12n\n\x12\x66ile_serialization\x18\x0b \x03(\x0b\x32R.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.FileSerialization\x12t\n\x15subview_serialization\x18\x0c \x03(\x0b\x32U.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.SubviewSerialization\x12n\n\x12todo_serialization\x18\r \x03(\x0b\x32R.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.TodoSerialization\x12O\n\x17sub_scene_serialization\x18\x0e \x03(\x0b\x32..NodeNote.ViewSerialization.SceneSerialization\x12\x13\n\x0bhighlighter\x18\x0f \x01(\x08\x12\x15\n\rattr_location\x18\x10 \x03(\x05\x12\x15\n\rnext_location\x18\x11 \x03(\x05\x12\x1d\n\x15self_attr_font_family\x18\x12 \x01(\t\x12\x1b\n\x13self_attr_font_size\x18\x13 \x01(\x05\x12\x17\n\x0fself_attr_color\x18\x14 \x03(\x03\x12\x11\n\tattr_flag\x18\x15 \x03(\x08\x1at\n\x11\x46ileSerialization\x12\x0f\n\x07\x66ile_id\x18\x01 \x01(\x03\x12\x0c\n\x04text\x18\x02 \x01(\t\x12\r\n\x05\x63over\x18\x03 \x01(\t\x12\x11\n\x04\x66ile\x18\x04 \x01(\tH\x00\x88\x01\x01\x12\x15\n\rfile_location\x18\x05 \x03(\x05\x42\x07\n\x05_file\x1a\x80\x01\n\x14SubviewSerialization\x12\x12\n\nsubview_id\x18\x01 \x01(\x03\x12\x0c\n\x04size\x18\x02 \x03(\x02\x12\x18\n\x10subview_location\x18\x03 \x03(\x05\x12,\n\x07subview\x18\x04 \x03(\x0b\x32\x1b.NodeNote.ViewSerialization\x1aW\n\x11TodoSerialization\x12\x0f\n\x07todo_id\x18\x01 \x01(\x03\x12\x0c\n\x04task\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\x03\x12\x15\n\rtodo_location\x18\x04 \x03(\x05\x1a\x93\x02\n\x12LogicSerialization\x12\x10\n\x08logic_id\x18\x01 \x01(\x03\x12\x16\n\x0elogic_position\x18\x02 \x03(\x02\x12\x13\n\x0blogic_truth\x18\x03 \x03(\x05\x12/\n\nlogic_port\x18\x04 \x03(\x0b\x32\x1b.NodeNote.PortSerialization\x12\x17\n\x0flogic_next_attr\x18\x05 \x03(\x03\x12\x18\n\x10logic_next_logic\x18\x06 \x03(\x03\x12\x17\n\x0flogic_last_attr\x18\x07 \x03(\x03\x12\x18\n\x10logic_last_logic\x18\x08 \x03(\x03\x12\x13\n\x0blogic_color\x18\t \x03(\x03\x12\x12\n\nlogic_flag\x18\n \x03(\x08\x1a\xb5\x02\n\x11PipeSerialization\x12\x0f\n\x07pipe_id\x18\x01 \x01(\x03\x12\x14\n\x0cpipe_port_id\x18\x02 \x03(\x03\x12\x11\n\tpipe_text\x18\x03 \x01(\t\x12\x13\n\x0bstart_point\x18\x04 \x03(\x02\x12\x11\n\tend_point\x18\x05 \x03(\x02\x12\x1a\n\x12source_move_status\x18\x06 \x01(\x08\x12\x1f\n\x17\x64\x65stination_move_status\x18\x07 \x01(\x08\x12\x1a\n\x12offset_start_point\x18\x08 \x03(\x02\x12 \n\x18offset_destination_point\x18\t \x03(\x02\x12\x17\n\x0fself_pipe_width\x18\n \x01(\x02\x12\x17\n\x0fself_pipe_color\x18\x0b \x03(\x03\x12\x11\n\tpipe_flag\x18\x0c \x03(\x08\x1aW\n\x11\x44rawSerialization\x12\x0f\n\x07\x64raw_id\x18\x01 \x01(\x03\x12\x11\n\tdraw_size\x18\x02 \x03(\x02\x12\x10\n\x08\x64raw_pos\x18\x03 \x03(\x02\x12\x0c\n\x04path\x18\x04 \x01(\tB\x19\n\x17_scene_attr_font_familyB\x17\n\x15_scene_attr_font_sizeB\x1e\n\x1c_scene_attr_style_font_colorB$\n\"_scene_attr_style_background_colorB-\n+_scene_attr_style_selected_background_colorB \n\x1e_scene_attr_style_border_colorB)\n\'_scene_attr_style_selected_border_colorB%\n#_scene_logic_style_background_colorB.\n,_scene_logic_style_selected_background_colorB!\n\x1f_scene_logic_style_border_colorB*\n(_scene_logic_style_selected_border_colorB\x13\n\x11_scene_pipe_widthB$\n\"_scene_pipe_style_background_colorB-\n+_scene_pipe_style_selected_background_colorB\x19\n\x17_scene_port_style_colorB \n\x1e_scene_port_style_border_colorB!\n\x1f_scene_port_style_hovered_colorB(\n&_scene_port_style_hovered_border_colorB#\n!_scene_port_style_activated_colorB*\n(_scene_port_style_activated_border_colorB\x0b\n\t_use_timeB\x0c\n\n_last_timeB\r\n\x0b_image_pathb\x06proto3'
+  serialized_pb=b'\n\x0fserialize.proto\x12\x08NodeNote\"\x98\x01\n\x11PortSerialization\x12\x0f\n\x07port_id\x18\x01 \x01(\x03\x12\x11\n\tport_type\x18\x02 \x01(\x05\x12\x12\n\nport_truth\x18\x03 \x01(\x08\x12\x10\n\x08pipes_id\x18\x04 \x03(\x03\x12\x12\n\nport_width\x18\x05 \x01(\x02\x12\x12\n\nport_color\x18\x06 \x03(\x03\x12\x11\n\tport_flag\x18\x07 \x03(\x08\"\xb0$\n\x11ViewSerialization\x12K\n\x13scene_serialization\x18\x01 \x03(\x0b\x32..NodeNote.ViewSerialization.SceneSerialization\x12\x18\n\x10\x63urrent_scene_id\x18\x02 \x01(\x03\x12\x15\n\x08use_time\x18\x03 \x01(\x03H\x00\x88\x01\x01\x12\x16\n\tlast_time\x18\x04 \x01(\x03H\x01\x88\x01\x01\x12\x17\n\nimage_path\x18\x05 \x01(\tH\x02\x88\x01\x01\x12\x1c\n\x14\x61ll_attr_font_family\x18\x06 \x01(\t\x12\x1a\n\x12\x61ll_attr_font_size\x18\x07 \x01(\x05\x12\x16\n\x0e\x61ll_attr_color\x18\x08 \x03(\x03\x12\x17\n\x0f\x61ll_logic_color\x18\t \x03(\x03\x12\x16\n\x0e\x61ll_pipe_width\x18\n \x01(\x02\x12\x16\n\x0e\x61ll_pipe_color\x18\x0b \x03(\x03\x12\x16\n\x0e\x61ll_port_width\x18\x0c \x01(\x02\x12\x16\n\x0e\x61ll_port_color\x18\r \x03(\x03\x12\x16\n\x0e\x61ll_draw_width\x18\x0e \x01(\x02\x12\x16\n\x0e\x61ll_draw_color\x18\x0f \x01(\x03\x1a\xc6 \n\x12SceneSerialization\x12\x10\n\x08scene_id\x18\x01 \x01(\x03\x12\\\n\x12\x61ttr_serialization\x18\x02 \x03(\x0b\x32@.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization\x12^\n\x13logic_serialization\x18\x03 \x03(\x0b\x32\x41.NodeNote.ViewSerialization.SceneSerialization.LogicSerialization\x12\\\n\x12pipe_serialization\x18\x04 \x03(\x0b\x32@.NodeNote.ViewSerialization.SceneSerialization.PipeSerialization\x12\\\n\x12\x64raw_serialization\x18\x05 \x03(\x0b\x32@.NodeNote.ViewSerialization.SceneSerialization.DrawSerialization\x12\x18\n\x10\x62\x61\x63kground_image\x18\x06 \x01(\t\x12#\n\x16scene_attr_font_family\x18\x07 \x01(\tH\x00\x88\x01\x01\x12!\n\x14scene_attr_font_size\x18\x08 \x01(\x05H\x01\x88\x01\x01\x12(\n\x1bscene_attr_style_font_color\x18\t \x01(\x03H\x02\x88\x01\x01\x12.\n!scene_attr_style_background_color\x18\n \x01(\x03H\x03\x88\x01\x01\x12\x37\n*scene_attr_style_selected_background_color\x18\x0b \x01(\x03H\x04\x88\x01\x01\x12*\n\x1dscene_attr_style_border_color\x18\x0c \x01(\x03H\x05\x88\x01\x01\x12\x33\n&scene_attr_style_selected_border_color\x18\r \x01(\x03H\x06\x88\x01\x01\x12/\n\"scene_logic_style_background_color\x18\x0e \x01(\x03H\x07\x88\x01\x01\x12\x38\n+scene_logic_style_selected_background_color\x18\x0f \x01(\x03H\x08\x88\x01\x01\x12+\n\x1escene_logic_style_border_color\x18\x10 \x01(\x03H\t\x88\x01\x01\x12\x34\n\'scene_logic_style_selected_border_color\x18\x11 \x01(\x03H\n\x88\x01\x01\x12\x1d\n\x10scene_pipe_width\x18\x12 \x01(\x02H\x0b\x88\x01\x01\x12.\n!scene_pipe_style_background_color\x18\x13 \x01(\x03H\x0c\x88\x01\x01\x12\x37\n*scene_pipe_style_selected_background_color\x18\x14 \x01(\x03H\r\x88\x01\x01\x12\x18\n\x10scene_port_width\x18\x15 \x01(\x02\x12#\n\x16scene_port_style_color\x18\x16 \x01(\x03H\x0e\x88\x01\x01\x12*\n\x1dscene_port_style_border_color\x18\x17 \x01(\x03H\x0f\x88\x01\x01\x12+\n\x1escene_port_style_hovered_color\x18\x18 \x01(\x03H\x10\x88\x01\x01\x12\x32\n%scene_port_style_hovered_border_color\x18\x19 \x01(\x03H\x11\x88\x01\x01\x12-\n scene_port_style_activated_color\x18\x1a \x01(\x03H\x12\x88\x01\x01\x12\x34\n\'scene_port_style_activated_border_color\x18\x1b \x01(\x03H\x13\x88\x01\x01\x1a\xbe\n\n\x11\x41ttrSerialization\x12\x0f\n\x07\x61ttr_id\x18\x01 \x01(\x03\x12\x0c\n\x04size\x18\x02 \x03(\x02\x12\x10\n\x08position\x18\x03 \x03(\x02\x12\x10\n\x08\x63ontents\x18\x04 \x01(\t\x12.\n\tattr_port\x18\x05 \x03(\x0b\x32\x1b.NodeNote.PortSerialization\x12\x14\n\x0cnext_attr_id\x18\x06 \x03(\x03\x12\x15\n\rnext_logic_id\x18\x07 \x03(\x03\x12\x14\n\x0clast_attr_id\x18\x08 \x03(\x03\x12\x15\n\rlast_logic_id\x18\t \x03(\x03\x12\x10\n\x08sub_attr\x18\n \x03(\x03\x12n\n\x12\x66ile_serialization\x18\x0b \x03(\x0b\x32R.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.FileSerialization\x12t\n\x15subview_serialization\x18\x0c \x03(\x0b\x32U.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.SubviewSerialization\x12n\n\x12todo_serialization\x18\r \x03(\x0b\x32R.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.TodoSerialization\x12n\n\x12none_serialization\x18\x0e \x03(\x0b\x32R.NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.NoneSerialization\x12O\n\x17sub_scene_serialization\x18\x0f \x03(\x0b\x32..NodeNote.ViewSerialization.SceneSerialization\x12\x13\n\x0bhighlighter\x18\x10 \x01(\x08\x12\x15\n\rattr_location\x18\x11 \x03(\x05\x12\x15\n\rnext_location\x18\x12 \x03(\x05\x12\x1d\n\x15self_attr_font_family\x18\x13 \x01(\t\x12\x1b\n\x13self_attr_font_size\x18\x14 \x01(\x05\x12\x17\n\x0fself_attr_color\x18\x15 \x03(\x03\x12\x11\n\tattr_flag\x18\x16 \x03(\x08\x1at\n\x11\x46ileSerialization\x12\x0f\n\x07\x66ile_id\x18\x01 \x01(\x03\x12\x0c\n\x04text\x18\x02 \x01(\t\x12\r\n\x05\x63over\x18\x03 \x01(\t\x12\x11\n\x04\x66ile\x18\x04 \x01(\tH\x00\x88\x01\x01\x12\x15\n\rfile_location\x18\x05 \x03(\x05\x42\x07\n\x05_file\x1a\x80\x01\n\x14SubviewSerialization\x12\x12\n\nsubview_id\x18\x01 \x01(\x03\x12\x0c\n\x04size\x18\x02 \x03(\x02\x12\x18\n\x10subview_location\x18\x03 \x03(\x05\x12,\n\x07subview\x18\x04 \x03(\x0b\x32\x1b.NodeNote.ViewSerialization\x1aW\n\x11TodoSerialization\x12\x0f\n\x07todo_id\x18\x01 \x01(\x03\x12\x0c\n\x04task\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\x03\x12\x15\n\rtodo_location\x18\x04 \x03(\x05\x1a\x36\n\x11NoneSerialization\x12\x0f\n\x07none_id\x18\x01 \x01(\x03\x12\x10\n\x08none_pos\x18\x02 \x03(\x05\x1a\x93\x02\n\x12LogicSerialization\x12\x10\n\x08logic_id\x18\x01 \x01(\x03\x12\x16\n\x0elogic_position\x18\x02 \x03(\x02\x12\x13\n\x0blogic_truth\x18\x03 \x03(\x05\x12/\n\nlogic_port\x18\x04 \x03(\x0b\x32\x1b.NodeNote.PortSerialization\x12\x17\n\x0flogic_next_attr\x18\x05 \x03(\x03\x12\x18\n\x10logic_next_logic\x18\x06 \x03(\x03\x12\x17\n\x0flogic_last_attr\x18\x07 \x03(\x03\x12\x18\n\x10logic_last_logic\x18\x08 \x03(\x03\x12\x13\n\x0blogic_color\x18\t \x03(\x03\x12\x12\n\nlogic_flag\x18\n \x03(\x08\x1a\xb5\x02\n\x11PipeSerialization\x12\x0f\n\x07pipe_id\x18\x01 \x01(\x03\x12\x14\n\x0cpipe_port_id\x18\x02 \x03(\x03\x12\x11\n\tpipe_text\x18\x03 \x01(\t\x12\x13\n\x0bstart_point\x18\x04 \x03(\x02\x12\x11\n\tend_point\x18\x05 \x03(\x02\x12\x1a\n\x12source_move_status\x18\x06 \x01(\x08\x12\x1f\n\x17\x64\x65stination_move_status\x18\x07 \x01(\x08\x12\x1a\n\x12offset_start_point\x18\x08 \x03(\x02\x12 \n\x18offset_destination_point\x18\t \x03(\x02\x12\x17\n\x0fself_pipe_width\x18\n \x01(\x02\x12\x17\n\x0fself_pipe_color\x18\x0b \x03(\x03\x12\x11\n\tpipe_flag\x18\x0c \x03(\x08\x1aW\n\x11\x44rawSerialization\x12\x0f\n\x07\x64raw_id\x18\x01 \x01(\x03\x12\x11\n\tdraw_size\x18\x02 \x03(\x02\x12\x10\n\x08\x64raw_pos\x18\x03 \x03(\x02\x12\x0c\n\x04path\x18\x04 \x01(\tB\x19\n\x17_scene_attr_font_familyB\x17\n\x15_scene_attr_font_sizeB\x1e\n\x1c_scene_attr_style_font_colorB$\n\"_scene_attr_style_background_colorB-\n+_scene_attr_style_selected_background_colorB \n\x1e_scene_attr_style_border_colorB)\n\'_scene_attr_style_selected_border_colorB%\n#_scene_logic_style_background_colorB.\n,_scene_logic_style_selected_background_colorB!\n\x1f_scene_logic_style_border_colorB*\n(_scene_logic_style_selected_border_colorB\x13\n\x11_scene_pipe_widthB$\n\"_scene_pipe_style_background_colorB-\n+_scene_pipe_style_selected_background_colorB\x19\n\x17_scene_port_style_colorB \n\x1e_scene_port_style_border_colorB!\n\x1f_scene_port_style_hovered_colorB(\n&_scene_port_style_hovered_border_colorB#\n!_scene_port_style_activated_colorB*\n(_scene_port_style_activated_border_colorB\x0b\n\t_use_timeB\x0c\n\n_last_timeB\r\n\x0b_image_pathb\x06proto3'
 )
 
 
@@ -159,8 +159,8 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_FILESERIALIZATION = _des
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=2879,
-  serialized_end=2995,
+  serialized_start=2991,
+  serialized_end=3107,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_SUBVIEWSERIALIZATION = _descriptor.Descriptor(
@@ -211,8 +211,8 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_SUBVIEWSERIALIZATION = _
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2998,
-  serialized_end=3126,
+  serialized_start=3110,
+  serialized_end=3238,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_TODOSERIALIZATION = _descriptor.Descriptor(
@@ -263,8 +263,46 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_TODOSERIALIZATION = _des
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3128,
-  serialized_end=3215,
+  serialized_start=3240,
+  serialized_end=3327,
+)
+
+_VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_NONESERIALIZATION = _descriptor.Descriptor(
+  name='NoneSerialization',
+  full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.NoneSerialization',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='none_id', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.NoneSerialization.none_id', index=0,
+      number=1, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='none_pos', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.NoneSerialization.none_pos', index=1,
+      number=2, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3329,
+  serialized_end=3383,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION = _descriptor.Descriptor(
@@ -367,57 +405,64 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION = _descriptor.Descriptor
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='sub_scene_serialization', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.sub_scene_serialization', index=13,
+      name='none_serialization', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.none_serialization', index=13,
       number=14, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='highlighter', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.highlighter', index=14,
-      number=15, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='attr_location', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.attr_location', index=15,
-      number=16, type=5, cpp_type=1, label=3,
+      name='sub_scene_serialization', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.sub_scene_serialization', index=14,
+      number=15, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='next_location', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.next_location', index=16,
+      name='highlighter', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.highlighter', index=15,
+      number=16, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='attr_location', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.attr_location', index=16,
       number=17, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='self_attr_font_family', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.self_attr_font_family', index=17,
-      number=18, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='self_attr_font_size', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.self_attr_font_size', index=18,
-      number=19, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='self_attr_color', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.self_attr_color', index=19,
-      number=20, type=3, cpp_type=2, label=3,
+      name='next_location', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.next_location', index=17,
+      number=18, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='attr_flag', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.attr_flag', index=20,
-      number=21, type=8, cpp_type=7, label=3,
+      name='self_attr_font_family', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.self_attr_font_family', index=18,
+      number=19, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='self_attr_font_size', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.self_attr_font_size', index=19,
+      number=20, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='self_attr_color', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.self_attr_color', index=20,
+      number=21, type=3, cpp_type=2, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='attr_flag', full_name='NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.attr_flag', index=21,
+      number=22, type=8, cpp_type=7, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -425,7 +470,7 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION = _descriptor.Descriptor
   ],
   extensions=[
   ],
-  nested_types=[_VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_FILESERIALIZATION, _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_SUBVIEWSERIALIZATION, _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_TODOSERIALIZATION, ],
+  nested_types=[_VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_FILESERIALIZATION, _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_SUBVIEWSERIALIZATION, _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_TODOSERIALIZATION, _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_NONESERIALIZATION, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -435,7 +480,7 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION = _descriptor.Descriptor
   oneofs=[
   ],
   serialized_start=2041,
-  serialized_end=3215,
+  serialized_end=3383,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION_LOGICSERIALIZATION = _descriptor.Descriptor(
@@ -528,8 +573,8 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_LOGICSERIALIZATION = _descriptor.Descripto
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3218,
-  serialized_end=3493,
+  serialized_start=3386,
+  serialized_end=3661,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION_PIPESERIALIZATION = _descriptor.Descriptor(
@@ -636,8 +681,8 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_PIPESERIALIZATION = _descriptor.Descriptor
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3496,
-  serialized_end=3805,
+  serialized_start=3664,
+  serialized_end=3973,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION_DRAWSERIALIZATION = _descriptor.Descriptor(
@@ -688,8 +733,8 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_DRAWSERIALIZATION = _descriptor.Descriptor
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3807,
-  serialized_end=3894,
+  serialized_start=3975,
+  serialized_end=4062,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION = _descriptor.Descriptor(
@@ -1002,7 +1047,7 @@ _VIEWSERIALIZATION_SCENESERIALIZATION = _descriptor.Descriptor(
     fields=[]),
   ],
   serialized_start=633,
-  serialized_end=4631,
+  serialized_end=4799,
 )
 
 _VIEWSERIALIZATION = _descriptor.Descriptor(
@@ -1146,7 +1191,7 @@ _VIEWSERIALIZATION = _descriptor.Descriptor(
     fields=[]),
   ],
   serialized_start=185,
-  serialized_end=4673,
+  serialized_end=4841,
 )
 
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_FILESERIALIZATION.containing_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION
@@ -1156,10 +1201,12 @@ _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_FILESERIALIZATION.fields
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_SUBVIEWSERIALIZATION.fields_by_name['subview'].message_type = _VIEWSERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_SUBVIEWSERIALIZATION.containing_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_TODOSERIALIZATION.containing_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION
+_VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_NONESERIALIZATION.containing_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION.fields_by_name['attr_port'].message_type = _PORTSERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION.fields_by_name['file_serialization'].message_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_FILESERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION.fields_by_name['subview_serialization'].message_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_SUBVIEWSERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION.fields_by_name['todo_serialization'].message_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_TODOSERIALIZATION
+_VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION.fields_by_name['none_serialization'].message_type = _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_NONESERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION.fields_by_name['sub_scene_serialization'].message_type = _VIEWSERIALIZATION_SCENESERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION.containing_type = _VIEWSERIALIZATION_SCENESERIALIZATION
 _VIEWSERIALIZATION_SCENESERIALIZATION_LOGICSERIALIZATION.fields_by_name['logic_port'].message_type = _PORTSERIALIZATION
@@ -1278,6 +1325,13 @@ ViewSerialization = _reflection.GeneratedProtocolMessageType('ViewSerialization'
         # @@protoc_insertion_point(class_scope:NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.TodoSerialization)
         })
       ,
+
+      'NoneSerialization' : _reflection.GeneratedProtocolMessageType('NoneSerialization', (_message.Message,), {
+        'DESCRIPTOR' : _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION_NONESERIALIZATION,
+        '__module__' : 'serialize_pb2'
+        # @@protoc_insertion_point(class_scope:NodeNote.ViewSerialization.SceneSerialization.AttrSerialization.NoneSerialization)
+        })
+      ,
       'DESCRIPTOR' : _VIEWSERIALIZATION_SCENESERIALIZATION_ATTRSERIALIZATION,
       '__module__' : 'serialize_pb2'
       # @@protoc_insertion_point(class_scope:NodeNote.ViewSerialization.SceneSerialization.AttrSerialization)
@@ -1319,6 +1373,7 @@ _sym_db.RegisterMessage(ViewSerialization.SceneSerialization.AttrSerialization)
 _sym_db.RegisterMessage(ViewSerialization.SceneSerialization.AttrSerialization.FileSerialization)
 _sym_db.RegisterMessage(ViewSerialization.SceneSerialization.AttrSerialization.SubviewSerialization)
 _sym_db.RegisterMessage(ViewSerialization.SceneSerialization.AttrSerialization.TodoSerialization)
+_sym_db.RegisterMessage(ViewSerialization.SceneSerialization.AttrSerialization.NoneSerialization)
 _sym_db.RegisterMessage(ViewSerialization.SceneSerialization.LogicSerialization)
 _sym_db.RegisterMessage(ViewSerialization.SceneSerialization.PipeSerialization)
 _sym_db.RegisterMessage(ViewSerialization.SceneSerialization.DrawSerialization)

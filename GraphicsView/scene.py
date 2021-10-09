@@ -364,6 +364,16 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                                 item.attribute_layout.addItem(attribute_sub,
                                                               attribute_sub.item_row,
                                                               attribute_sub.item_column)
+                            for attribute_none_widget in attribute_widget_data.none_serialization:
+                                attribute_none = attribute.NoneWidget(attribute_none_widget.none_pos[0],
+                                                                      attribute_none_widget.none_pos[1],
+                                                                      item)
+                                attribute_none.deserialize(attribute_none_widget, hashmap, view, flag)
+                                item.attribute_sub_widgets.append(attribute_none)
+                                item.attribute_layout.addItem(attribute_none,
+                                                              attribute_none.item_row,
+                                                              attribute_none.item_column)
+
                             item.text_change_node_shape()
                             # deserialize attribute widgets with attribute next widgets
                             for attribute_next_id in attribute_widget_data.next_attr_id:

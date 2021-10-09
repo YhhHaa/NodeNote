@@ -1893,7 +1893,7 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         return True
 
 
-class NoneWidget(QtWidgets.QGraphicsProxyWidget):
+class NoneWidget(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
     def __init__(self, row=0, column=0, parent=None):
         super(NoneWidget, self).__init__(parent)
         self.pixmap_label = QtWidgets.QLabel()
@@ -1903,6 +1903,15 @@ class NoneWidget(QtWidgets.QGraphicsProxyWidget):
 
         self.item_row = row
         self.item_column = column
+
+    def serialize(self, nonewidget_serialization=None):
+        nonewidget_serialization.none_id = self.id
+        nonewidget_serialization.none_pos.extend((self.item_row, self.item_column))
+
+    def deserialize(self, data, hashmap: dict, view=None, flag=True):
+        self.id = data.none_id
+        self.item_row = data.none_pos[0]
+        self.item_column = data.none_pos[1]
 
 
 class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
@@ -3145,6 +3154,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 attribute_sub_widget.serialize(attr_serialization.subview_serialization.add())
             elif isinstance(attribute_sub_widget, Todo):
                 attribute_sub_widget.serialize(attr_serialization.todo_serialization.add())
+            elif isinstance(attribute_sub_widget, NoneWidget):
+                attribute_sub_widget.serialize(attr_serialization.none_serialization.add())
 
         # sub scene
         if self.sub_scene:

@@ -75,20 +75,26 @@ message ViewSerialization {
       }
       repeated TodoSerialization todo_serialization = 13;
 
-      repeated SceneSerialization sub_scene_serialization = 14;
+      message NoneSerialization {
+        int64 none_id = 1;
+        repeated int32 none_pos = 2;
+      }
+      repeated NoneSerialization none_serialization = 14;
 
-      bool highlighter = 15;
+      repeated SceneSerialization sub_scene_serialization = 15;
 
-      repeated int32 attr_location = 16;
-      repeated int32 next_location = 17;
+      bool highlighter = 16;
+
+      repeated int32 attr_location = 17;
+      repeated int32 next_location = 18;
 
       // ui
-      string self_attr_font_family = 18;
-      int32 self_attr_font_size = 19;
-      repeated int64 self_attr_color = 20;
+      string self_attr_font_family = 19;
+      int32 self_attr_font_size = 20;
+      repeated int64 self_attr_color = 21;
 
       // flag
-      repeated bool attr_flag = 21;
+      repeated bool attr_flag = 22;
 
     }
     repeated AttrSerialization attr_serialization = 2;
