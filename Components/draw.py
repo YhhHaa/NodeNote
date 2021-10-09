@@ -97,7 +97,6 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def paint_pixmap(self, painter: QtGui.QPainter, event: QtGui.QTabletEvent):
         # Draw settings
         max_pen_radius = self.pressure_to_width(1.0)
-        print(max_pen_radius, self.pen.widthF())
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
         # Draw line
