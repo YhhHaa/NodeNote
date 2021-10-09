@@ -4,7 +4,7 @@ import time
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from Components.effect_snow import EffectSkyWidget
-from Components import attribute, pipe, port, container
+from Components import attribute, pipe, port, draw
 from Model import stylesheet
 from GraphicsView.view import View
 
@@ -271,39 +271,29 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.port_style_activated_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         #   Container widgets
-        #       Width and Color
-        self.container_style_width = None
-        self.container_style_color = None
-        self.container_style_selected_color = None
         #       Label widgets
         #           init
-        self.container_style_label = QtWidgets.QLabel("Container Widgets")
-        self.container_style_width_label = QtWidgets.QLabel("Width")
-        self.container_style_color_label = QtWidgets.QLabel("Color")
-        self.container_style_selected_color_label = QtWidgets.QLabel("Selected Color")
+        self.draw_style_label = QtWidgets.QLabel("Draw Widgets")
+        self.draw_style_width_label = QtWidgets.QLabel("Width")
+        self.draw_style_color_label = QtWidgets.QLabel("Color")
         #           added
-        self.style_list_layout.addWidget(self.container_style_label, 25, 0, 1, -1)
-        self.style_list_layout.addWidget(self.container_style_width_label, 26, 1)
-        self.style_list_layout.addWidget(self.container_style_color_label, 27, 1)
-        self.style_list_layout.addWidget(self.container_style_selected_color_label, 28, 1)
+        self.style_list_layout.addWidget(self.draw_style_label, 25, 0, 1, -1)
+        self.style_list_layout.addWidget(self.draw_style_width_label, 26, 1)
+        self.style_list_layout.addWidget(self.draw_style_color_label, 27, 1)
         #           stylesheet
-        self.container_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.container_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.container_style_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.container_style_selected_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
+        self.draw_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
+        self.draw_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
+        self.draw_style_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         #       Pushbutton widgets
         #           init
-        self.container_style_width_button = QtWidgets.QPushButton("Change Width")
-        self.container_style_color_button = QtWidgets.QPushButton("Change Color")
-        self.container_style_selected_color_button = QtWidgets.QPushButton("Change Selected Color")
+        self.draw_style_width_button = QtWidgets.QPushButton("Change Width")
+        self.draw_style_color_button = QtWidgets.QPushButton("Change Color")
         #           added
-        self.style_list_layout.addWidget(self.container_style_width_button, 26, 0)
-        self.style_list_layout.addWidget(self.container_style_color_button, 27, 0)
-        self.style_list_layout.addWidget(self.container_style_selected_color_button, 28, 0)
+        self.style_list_layout.addWidget(self.draw_style_width_button, 26, 0)
+        self.style_list_layout.addWidget(self.draw_style_color_button, 27, 0)
         #           stylesheet
-        self.container_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.container_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.container_style_selected_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
+        self.draw_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
+        self.draw_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         #   Slots Controller
         self.style_switch_combox.currentIndexChanged.connect(self.init_style)
@@ -762,48 +752,11 @@ class NoteWindow(QtWidgets.QMainWindow):
                             self.color_label_changed(self.port_style_activated_border_color_label,
                                                      color)
 
-        elif widget_type == "Container_color":
-            color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
-                                                    QtWidgets.QColorDialog.ShowAlphaChannel)
+        elif widget_type == "draw_color":
+            color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color")
             if color:
-                if current_index == 0:
-                    container.Container.color = color
-                    self.color_label_changed(self.container_style_color_label, container.Container.color)
-
-                elif current_index == 1:
-                    self.view_widget.current_scene.container_style_color = color
-                    self.color_label_changed(self.container_style_color_label,
-                                             self.view_widget.current_scene.container_style_color)
-
-                elif current_index == 2:
-                    for item in self.view_widget.current_scene.selectedItems():
-                        if isinstance(item, container.Container):
-                            item.color = color
-                            item.color_flag = True
-                            self.color_label_changed(self.container_style_color_label,
-                                                     color)
-
-        elif widget_type == "Container_selected_color":
-            color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
-                                                    QtWidgets.QColorDialog.ShowAlphaChannel)
-            if color:
-                if current_index == 0:
-                    container.Container.selected_color = color
-                    self.color_label_changed(self.container_style_selected_color_label,
-                                             container.Container.selected_color)
-
-                elif current_index == 1:
-                    self.view_widget.current_scene.container_style_selected_color = color
-                    self.color_label_changed(self.container_style_selected_color_label,
-                                             self.view_widget.current_scene.container_style_selected_color)
-
-                elif current_index == 2:
-                    for item in self.view_widget.current_scene.selectedItems():
-                        if isinstance(item, container.Container):
-                            item.selected_color = color
-                            item.selected_color_flag = True
-                            self.color_label_changed(self.container_style_selected_color_label,
-                                                     color)
+                draw.Draw.color = color
+                self.color_label_changed(self.draw_style_color_label, color)
 
     def font_changed(self, widget_type, current_index):
         if widget_type == "Attribute":
@@ -884,25 +837,12 @@ class NoteWindow(QtWidgets.QMainWindow):
                         item.updateGeometry()
                         item.update()
 
-        elif widget_type == "Container_width":
+        elif widget_type == "draw_width":
             width, ok = QtWidgets.QInputDialog.getDouble(self, "Get Double Width",
-                                                         "Width", 2, 0.1, 15.0, 2, QtCore.Qt.WindowFlags(), 0.5)
+                                                         "Width", 10.0, 1.0, 50.0, 2, QtCore.Qt.WindowFlags(), 0.5)
             if width and ok:
-                if current_index == 0:
-                    container.Container.width = width
-                    self.width_label_changed(self.container_style_width_label, container.Container.width)
-
-                elif current_index == 1:
-                    self.view_widget.current_scene.container_style_width = width
-                    self.width_label_changed(self.container_style_width_label,
-                                             self.view_widget.current_scene.container_style_width)
-
-                elif current_index == 2:
-                    for item in self.view_widget.current_scene.selectedItems():
-                        if isinstance(item, container.Container):
-                            item.width = width
-                            item.width_flag = True
-                            self.width_label_changed(self.container_style_width_label, width)
+                draw.Draw.pen_width = width
+                self.width_label_changed(self.draw_style_width_label, width)
 
     def init_attribute(self, current_index):
         if current_index == 0:
@@ -1327,84 +1267,26 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.port_style_activated_border_color_button.clicked.connect(
                 lambda x: self.color_changed("Port_activated_border_color", current_index))
 
-    def init_container(self, current_index):
-        if current_index == 0:
-            #   change current parameters
-            #       width
-            self.width_label_changed(self.container_style_width_label, container.Container.width)
-            #       color
-            self.color_label_changed(self.container_style_color_label, container.Container.color)
-            self.color_label_changed(self.container_style_selected_color_label, container.Container.selected_color)
-            #   chang slots
-            #       width
-            self.container_style_width_button.disconnect()
-            self.container_style_width_button.clicked.connect(
-                lambda x: self.width_changed("Container_width", current_index))
-            #       color
-            self.container_style_color_button.disconnect()
-            self.container_style_color_button.clicked.connect(
-                lambda x: self.color_changed("Container_color", current_index))
-
-            self.container_style_selected_color_button.disconnect()
-            self.container_style_selected_color_button.clicked.connect(
-                lambda x: self.color_changed("Container_selected_color", current_index))
-
-        elif current_index == 1:
-            #   change current parameters
-            #       width
-            if not self.view_widget.current_scene.container_style_width:
-                self.width_label_changed(self.container_style_width_label, container.Container.width)
-            else:
-                self.width_label_changed(self.container_style_width_label,
-                                         self.view_widget.current_scene.container_style_width)
-            #       color
-            if not self.view_widget.current_scene.container_style_color:
-                self.color_label_changed(self.container_style_color_label, container.Container.color)
-            else:
-                self.color_label_changed(self.container_style_color_label,
-                                         self.view_widget.current_scene.container_style_color)
-
-            if not self.view_widget.current_scene.container_style_selected_color:
-                self.color_label_changed(self.container_style_selected_color_label, container.Container.selected_color)
-            else:
-                self.color_label_changed(self.container_style_selected_color_label,
-                                         self.view_widget.current_scene.container_style_selected_color)
-
-            #   chang slots
-            #       width
-            self.container_style_width_button.disconnect()
-            self.container_style_width_button.clicked.connect(
-                lambda x: self.width_changed("Container_width", current_index))
-            #       color
-            self.container_style_color_button.disconnect()
-            self.container_style_color_button.clicked.connect(
-                lambda x: self.color_changed("Container_color", current_index))
-
-            self.container_style_selected_color_button.disconnect()
-            self.container_style_selected_color_button.clicked.connect(
-                lambda x: self.color_changed("Container_selected_color", current_index))
-
-        elif current_index == 2:
-            #   chang slots
-            #       width
-            self.container_style_width_button.disconnect()
-            self.container_style_width_button.clicked.connect(
-                lambda x: self.width_changed("Container_width", current_index))
-            #       color
-            self.container_style_color_button.disconnect()
-            self.container_style_color_button.clicked.connect(
-                lambda x: self.color_changed("Container_color", current_index))
-
-            self.container_style_selected_color_button.disconnect()
-            self.container_style_selected_color_button.clicked.connect(
-                lambda x: self.color_changed("Container_selected_color", current_index))
+    def init_draw(self):
+        #   change current parameters
+        #       width
+        self.width_label_changed(self.draw_style_width_label, draw.Draw.pen_width)
+        #       color
+        self.color_label_changed(self.draw_style_color_label, draw.Draw.color)
+        #   chang slots
+        #       width
+        self.draw_style_width_button.clicked.connect(
+            lambda x: self.width_changed("draw_width", 0))
+        #       color
+        self.draw_style_color_button.clicked.connect(
+            lambda x: self.color_changed("draw_color", 0))
 
     def init_style(self, current_index):
         self.init_attribute(current_index)
         self.init_logic(current_index)
         self.init_pipe(current_index)
         self.init_port(current_index)
-        self.init_container(current_index)
+        self.init_draw()
 
     def resizeEvent(self, a0) -> None:
         super(NoteWindow, self).resizeEvent(a0)

@@ -1,6 +1,8 @@
 import sys
 
 from Components.window import NoteWindow
+from Components.draw import Draw
+from Model.constants import Z_VAL_PIPE
 from PyQt5.QtWidgets import QApplication, QSplashScreen
 from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtCore import Qt, QEvent
@@ -19,7 +21,7 @@ class TabletApplication(QApplication):
 
                 if a0.type() == QEvent.TabletLeaveProximity:
                     self._window.view_widget.current_scene.history.store_history("Create Container")
-
+                    Draw.z_value = Z_VAL_PIPE
                 return True
         return super(TabletApplication, self).event(a0)
 

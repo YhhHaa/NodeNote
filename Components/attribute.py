@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from Model import constants, stylesheet, serializable
 from Components import port, pipe
 
-__all__ = ["SubConstituteWidget", "InputTextField", "PythonHighlighter",
+__all__ = ["SubConstituteWidget", "InputTextField", "PythonHighlighter", "AbstractWidget",
            "LogicWidget", "TruthWidget", "AttributeWidget", "AttributeFile"]
 
 

@@ -138,21 +138,14 @@ message ViewSerialization {
     repeated PipeSerialization pipe_serialization = 4;
 
     // container widget serialization
-    message ContainerSerialization {
-      int64 container_id = 1;
-      message point {
-        float x = 1;
-        float y = 2;
-      }
-      repeated point points = 2;
-      repeated float pressures = 3;
+    message DrawSerialization {
+      int64 draw_id = 1;
+      repeated float draw_size = 2;
+      repeated float draw_pos = 3;
 
-      // ui
-      float self_container_width = 4;
-      repeated int64 self_container_color = 5;
-      repeated bool self_container_flag = 6;
+      string path = 4;
     }
-    repeated ContainerSerialization container_serialization = 5;
+    repeated DrawSerialization draw_serialization = 5;
 
     // ui serialization
     string background_image = 6;
@@ -188,12 +181,6 @@ message ViewSerialization {
     optional int64 scene_port_style_activated_color = 26;
     optional int64 scene_port_style_activated_border_color = 27;
 
-
-    // container widget ui
-    float scene_container_width = 28;
-    optional int64 scene_container_style_color = 29;
-    optional int64 scene_container_style_selected_color = 30;
-
   }
 
   repeated SceneSerialization scene_serialization = 1;
@@ -222,7 +209,7 @@ message ViewSerialization {
   float all_port_width = 12;
   repeated int64 all_port_color = 13;  // 6 items of list
 
-  // container widget ui
-  float all_container_width = 14;
-  repeated int64 all_container_color = 15;  // 2 items of list
+  // draw widget ui
+  float all_draw_width = 14;
+  int64 all_draw_color = 15;
 }

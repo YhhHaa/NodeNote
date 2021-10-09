@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
-from Components import effect_background, effect_cutline, attribute, pipe, container, port
+from Components import effect_background, effect_cutline, attribute, pipe, draw, port
 from Model import serializable, constants, history
 
 __all__ = ["Scene"]
@@ -66,12 +66,6 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.port_style_activated_border_color = None
         #   =================================================
 
-        #   =============== container widget========================
-        self.container_style_width = None
-        self.container_style_color = None
-        self.container_style_selected_color = None
-        #   =================================================
-
         #   Background
         self.brush = QtGui.QBrush(QtGui.QImage("Resources/Background/scene_background.png"))
         self.setBackgroundBrush(self.brush)
@@ -126,8 +120,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 item.serialize(scene_serialization.logic_serialization.add())
             elif isinstance(item, pipe.Pipe):
                 item.serialize(scene_serialization.pipe_serialization.add())
-            elif isinstance(item, container.Container):
-                item.serialize(scene_serialization.container_serialization.add())
+            elif isinstance(item, draw.Draw):
+                item.serialize(scene_serialization.draw_serialization.add())
 
         # ui serialization
         scene_serialization.background_image = self.background_image.name
@@ -185,14 +179,6 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         if self.port_style_activated_border_color:
             scene_serialization.scene_port_style_activated_border_color = self.port_style_activated_border_color.rgba()
 
-        # container widget ui
-        if self.container_style_width:
-            scene_serialization.scene_container_width = self.container_style_width
-        if self.container_style_color:
-            scene_serialization.scene_container_style_color = self.container_style_color.rgba()
-        if self.container_style_selected_color:
-            scene_serialization.scene_container_style_selected_color = self.container_style_selected_color.rgba()
-
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         if flag is True:
             # deserialize id
@@ -215,9 +201,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 start_port.update_pipes_position()
                 end_port.update_pipes_position()
             # deserialize container widgets with all
-            for container_data in data.container_serialization:
-                container.Container(QtCore.QPointF(container_data.points[0].x, container_data.points[0].y)). \
-                    deserialize(container_data, hashmap, view, flag)
+            for draw_data in data.draw_serialization:
+                draw.Draw().deserialize(draw_data, hashmap, view, flag)
             # background image
             self.background_image.change_svg(data.background_image)
             # style
@@ -340,23 +325,6 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 self.port_style_activated_border_color.setRgba(data.scene_port_style_activated_border_color)
             else:
                 self.port_style_activated_border_color = None
-
-            if data.scene_container_width:
-                self.container_style_width = data.scene_container_width
-            else:
-                self.container_style_width = None
-
-            if data.scene_container_style_color:
-                self.container_style_color = QtGui.QColor()
-                self.container_style_color.setRgba(data.scene_container_style_color)
-            else:
-                self.container_style_color = None
-
-            if data.scene_container_style_selected_color:
-                self.container_style_selected_color = QtGui.QColor()
-                self.container_style_selected_color.setRgba(data.scene_container_style_selected_color)
-            else:
-                self.container_style_selected_color = None
 
         elif flag is False:
             for item in self.items():

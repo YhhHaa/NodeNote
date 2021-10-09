@@ -2,7 +2,8 @@ import time
 import re
 from PyQt5 import QtGui, QtCore, QtWidgets, sip
 from GraphicsView.scene import Scene
-from Components import effect_water, attribute, port, pipe, container, effect_cutline, effect_background, effect_snow
+from Components import effect_water, attribute, port, pipe, effect_cutline, effect_background, effect_snow, \
+    draw
 from Model import constants, stylesheet, history, serializable, serialize_pb2
 
 __all__ = ["View", "TreeWidgetItem"]
@@ -93,10 +94,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.attribute_widgets = list()
         self.logic_widgets = list()
         self.pipes = list()
-        self.containers = list()
-
-        # Container
-        self.container_widget = None
+        self.draw_widgets = list()
 
         # SUB SCENE
         if self.root_flag:
@@ -109,11 +107,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.root_scene.sub_scene_flag = self.root_scene_flag
         self.current_scene = self.root_scene
         self.current_scene_flag = self.root_scene_flag
-
-        # History
-        # Todo: 替换视图内所有的history为场景history(完成)
-        # Todo: 进行场景的deserialization(完成)
-        # Todo: 异步序列化
 
         # Search
         self.search_widget = QtWidgets.QWidget(self)
@@ -418,9 +411,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         self.remove_logic_widget(item)
                     elif isinstance(item, pipe.Pipe):
                         self.delete_pipe(item)
-                    elif isinstance(item, container.Container):
+                    elif isinstance(item, draw.Draw):
                         self.current_scene.removeItem(item)
-                        self.containers.remove(item)
+                        self.draw_widgets.remove(item)
                     elif isinstance(item, (attribute.AttributeFile, Todo)):
                         item.parent_item.attribute_layout.removeItem(item)
                         item.parent_item.attribute_sub_widgets.remove(item)
@@ -465,6 +458,13 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         basic_widget.setPos(self.mapToScene(event.pos()))
         self.logic_widgets.append(basic_widget)
         self.current_scene.history.store_history("Add Truth Widget")
+
+    def add_draw_widget(self, event):
+        canvas = draw.Draw()
+        self.current_scene.addItem(canvas)
+        canvas.setPos(self.mapToScene(event.pos()))
+        self.draw_widgets.append(canvas)
+        self.current_scene.history.store_history("Add Canvas Widget")
 
     def open_file(self, item):
         if not item.file_url:
@@ -605,15 +605,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.ArrowCursor)
         self.mode = constants.MODE_NOOP
 
-    def container_pressed(self, event):
-        self.mode = constants.MODE_CONTAINER
-        self.container_widget = container.Container(self.mapToScene(event.pos()))
-        self.current_scene.addItem(self.container_widget)
-        self.containers.append(self.container_widget)
-
-    def container_released(self):
-        self.mode = constants.MODE_NOOP
-
     def new_sub_scene(self, attribute_widget):
         if not attribute_widget.sub_scene:
             sub_scene_flag = TreeWidgetItem(self.current_scene_flag,
@@ -740,27 +731,24 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     pic.save(name)
 
     def tabletEvent(self, a0: QtGui.QTabletEvent) -> None:
+        # Send to the draw widge
+        item = self.itemAt(a0.pos().x(),
+                           a0.pos().y())
 
-        self.tablet_used = True
+        # Change style when the pen almost enter
+        if a0.type() == QtCore.QEvent.TabletEnterProximity:
+            self.mouse_effect = False
+            self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
+            cursor_style = QtGui.QPixmap('Resources/point.png').scaled(10, 10)
+            cursor = QtGui.QCursor(cursor_style, 5, 5)
+            QtWidgets.QApplication.setOverrideCursor(cursor)
 
-        if a0.deviceType() == QtGui.QTabletEvent.Stylus:
+        if isinstance(item, (draw.Canvas, draw.Draw)):
+            # Make other mouse events not work
+            self.tablet_used = True
 
-            # change style when the pen almost enter
-            if a0.type() == QtCore.QEvent.TabletEnterProximity:
-                self.mouse_effect = False
-                self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-                cursor_style = QtGui.QPixmap('Resources/point.png').scaled(10, 10)
-                cursor = QtGui.QCursor(cursor_style, 5, 5)
-                QtWidgets.QApplication.setOverrideCursor(cursor)
-
-            # draw line when the pen is on the tablet
-            if a0.type() == QtCore.QEvent.TabletPress:
-                self.container_pressed(a0)
-            elif a0.type() == QtCore.QEvent.TabletMove and self.mode == constants.MODE_CONTAINER:
-                self.container_widget.update_brush((self.mapToScene(a0.pos()).x(), self.mapToScene(a0.pos()).y()),
-                                                   a0.pressure())
-            elif a0.type() == QtCore.QEvent.TabletRelease:
-                self.container_released()
+            # Draw
+            item.tablet_event(a0)
 
         a0.accept()
 
@@ -895,6 +883,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             create_attribute_widget.setIcon(QtGui.QIcon("Resources/ViewContextMenu/Attribute Widget.png"))
             create_truth_widget = context_menu.addAction("Create Truth Widget")
             create_truth_widget.setIcon((QtGui.QIcon("Resources/ViewContextMenu/Truth Widget.png")))
+            create_canvas_widget = context_menu.addAction(("Create Canvas Widget"))
             change_background_image = context_menu.addAction("Change Background Image")
             change_background_image.setIcon(QtGui.QIcon("Resources/ViewContextMenu/Change Background Image.png"))
             change_snow_image = context_menu.addAction("Change flowing Image")
@@ -905,6 +894,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.add_attribute_widget(event)
             elif action == create_truth_widget:
                 self.add_truth_widget(event)
+            elif action == create_canvas_widget:
+                self.add_draw_widget(event)
             elif action == change_background_image:
                 self.change_svg_image()
             elif action == change_snow_image:
@@ -1015,10 +1006,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         view_serialization.all_port_color.append(port.Port.activated_border_color.rgba())
 
         # container widget ui
-        view_serialization.all_container_width = container.Container.width
-        view_serialization.all_container_color.append(container.Container.color.rgba())
-        view_serialization.all_container_color.append(container.Container.selected_color.rgba())
-
+        view_serialization.all_draw_width = draw.Draw.pen_width
+        view_serialization.all_draw_color = draw.Draw.color.rgba()
 
         return view_serialization.SerializeToString()
 
@@ -1098,10 +1087,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         port.Port.activated_color.setRgba(data.all_port_color[4])
         port.Port.activated_border_color.setRgba(data.all_port_color[5])
 
-        #   container widget
-        container.Container.width = data.all_container_width
-        container.Container.color.setRgba(data.all_container_color[0])
-        container.Container.selected_color.setRgba(data.all_container_color[1])
+        #   draw widget
+        draw.Draw.pen_width = data.all_draw_width
+        draw.Draw.color.setRgb(data.all_draw_color)
 
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
         self.mainwindow.style_switch_combox.setCurrentIndex(0)
