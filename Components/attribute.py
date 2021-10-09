@@ -6,7 +6,7 @@ import validators
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps, ImageQt
 import numpy as np
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWidgets, QtGui, sip
 from Model import constants, stylesheet, serializable
 from Components import port, pipe
 
@@ -1893,6 +1893,18 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         return True
 
 
+class NoneWidget(QtWidgets.QGraphicsProxyWidget):
+    def __init__(self, row=0, column=0, parent=None):
+        super(NoneWidget, self).__init__(parent)
+        self.pixmap_label = QtWidgets.QLabel()
+        self.pixmap_label.setPixmap(QtGui.QPixmap("Resources/blank.png"))
+        self.pixmap_label.setScaledContents(True)
+        self.setWidget(self.pixmap_label)
+
+        self.item_row = row
+        self.item_column = column
+
+
 class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     display_name_changed = QtCore.pyqtSignal(str)
     draw_label = None
@@ -2148,18 +2160,31 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             else:
                 self.current_row += 1
                 self.current_column = 0
-            self.attribute_layout.addItem(widget,
-                                          self.current_row,
-                                          self.current_column)
 
         elif line:
             self.current_column += 1
-            self.attribute_layout.addItem(widget,
-                                          self.current_row,
-                                          self.current_column)
+
+        if isinstance(self.attribute_layout.itemAt(self.current_row, self.current_column), NoneWidget):
+            # Delete none type widget from target
+            none_widget = self.attribute_layout.itemAt(self.current_row, self.current_column)
+            self.attribute_layout.removeItem(none_widget)
+            self.attribute_sub_widgets.remove(none_widget)
+            none_widget.setParentItem(None)
+            sip.delete(none_widget)
+
+        self.attribute_layout.addItem(widget,
+                                      self.current_row,
+                                      self.current_column)
 
         widget.item_row = self.current_row
         widget.item_column = self.current_column
+
+        for row in range(self.current_row):
+            for column in range(self.current_column + 1):
+                if not self.attribute_layout.itemAt(row, column):
+                    item = NoneWidget(row, column, self)
+                    self.attribute_layout.addItem(item, row, column)
+                    self.attribute_sub_widgets.append(item)
 
     def add_new_subwidget(self, line=True, view_flag=None):
         if not view_flag:
@@ -2353,6 +2378,20 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                         return 1
             return None
 
+    def colliding_judge_none(self, parent_widget, item):
+        while parent_widget.attribute_sub_widgets:
+            for sub_widget in parent_widget.attribute_sub_widgets:
+                if isinstance(sub_widget, NoneWidget):
+                    if sub_widget is item:
+                        self.colliding_child = True
+                        self.update()
+                        return 1
+                elif isinstance(sub_widget, AttributeWidget):
+                    parent_widget = sub_widget
+                    if self.colliding_judge_sub(parent_widget, item):
+                        return 1
+            return None
+
     def colliding_judge_parent(self, parent_widget, item):
         while parent_widget.parentItem():
             parent_widget = parent_widget.parentItem()
@@ -2431,6 +2470,13 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
                     return item
 
+            elif isinstance(item, NoneWidget):
+
+                if not self.colliding_judge_none(self, item):
+                    self.colliding_type = constants.COLLIDING_NONE
+                    self.colliding_co = True
+                    return item
+
             else:
 
                 self.colliding_co = False
@@ -2442,26 +2488,83 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def colliding_release(self, event):
         if self.colliding_type == constants.COLLIDING_ATTRIBUTE:
             if self.colliding_co and self.colliding_parent:
+                source = self.parentItem()
+
                 item = self.colliding_detection()
                 self.parentItem().delete_subwidget(self)
                 item.add_exist_subwidget(self)
+
+                # Added none type widget into blank
+                add_none = NoneWidget(self.item_row, self.item_column, self)
+                source.attribute_layout.addItem(add_none, self.item_row, self.item_column)
+                source.attribute_sub_widgets.append(add_none)
+
                 if self.scene().view.mode == constants.MODE_NOOP:
                     self.scene().history.store_history("Colliding Add Subwidget")
+
             elif not self.colliding_co and self.colliding_parent and not self.colliding_inside:
+                source = self.parentItem()
+
                 self.parentItem().delete_subwidget(self)
                 self.setPos(event.scenePos())
+
+                # Added none type widget into blank
+                add_none = NoneWidget(self.item_row, self.item_column, self)
+                source.attribute_layout.addItem(add_none, self.item_row, self.item_column)
+                source.attribute_sub_widgets.append(add_none)
+
                 self.scene().history.store_history("Colliding Delete Subwidget")
+
             elif not self.colliding_co and self.colliding_parent and self.colliding_inside:
                 self.parentItem().text_change_node_shape()
+
             elif self.colliding_co and not self.colliding_parent:
                 self.colliding_detection().add_exist_subwidget(self)
                 if self.scene().view.mode == constants.MODE_NOOP:
                     self.scene().history.store_history("Colliding Add Subwidget")
+
             self.colliding_co = False
             self.colliding_parent = False
             self.colliding_child = False
             self.colliding_inside = False
             self.moving = False
+            self.update()
+
+        elif self.colliding_type == constants.COLLIDING_NONE:
+            # Get none type widget
+            item = self.colliding_detection()
+
+            # Remove from current index
+            source = self.parentItem()
+            if self.parentItem():
+                self.parentItem().delete_subwidget(self)
+                self.setPos(event.scenePos())
+
+            # Added none type widget into blank
+            if source:
+                add_none = NoneWidget(self.item_row, self.item_column, self)
+                source.attribute_layout.addItem(add_none, self.item_row, self.item_column)
+                source.attribute_sub_widgets.append(add_none)
+
+            # Delete none type widget from target
+            target = item.parentItem()
+            target.delete_subwidget(item)
+            sip.delete(item)
+
+            # Added into index of none type widget
+            target.attribute_layout.addItem(self, item.item_row, item.item_column)
+            target.attribute_sub_widgets.append(self)
+            self.setParentItem(target)
+            self.item_row = item.item_row
+            self.item_column = item.item_column
+
+            # Recover
+            self.colliding_co = False
+            self.colliding_parent = False
+            self.colliding_child = False
+            self.colliding_inside = False
+            self.moving = False
+            self.colliding_type = constants.COLLIDING_ATTRIBUTE
             self.update()
 
         elif self.colliding_type == constants.COLLIDING_PIPE and self.scene().view.mode == constants.MODE_NOOP:

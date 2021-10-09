@@ -395,6 +395,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                             parent_item = item.parentItem()
                             parent_item.delete_subwidget(item)
                             self.remove_attribute_widget(item)
+
+                            # Added none type widget into blank
+                            add_none = attribute.NoneWidget(item.item_row, item.item_column, parent_item)
+                            parent_item.attribute_layout.addItem(add_none, item.item_row, item.item_column)
+                            parent_item.attribute_sub_widgets.append(add_none)
+
                         else:
                             self.remove_attribute_widget(item)
 

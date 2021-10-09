@@ -13,7 +13,8 @@ __all__ = ["DEBUG_DRAW_PIPE", "DEBUG_EFFECT_SNOW", "DEBUG_VIEW_CHANGE_SCALE", "D
            "SCALE_WIDGET",
            "PIPE_STATUS_NEW", "PIPE_STATUS_CHANGE", "PIPE_FIRST", "PIPE_MOVEING", "PIPE_COMMON", "PIPE_UPDATE",
            "INPUT_NODE_START", "OUTPUT_NODE_START",
-           "down", "up", "left", "right"]
+           "down", "up", "left", "right",
+           "COLLIDING_NONE"]
 
 
 # === DEBUG ===
@@ -74,6 +75,7 @@ OUTPUT_NODE_START = 1
 # === COLLIDING ===
 COLLIDING_ATTRIBUTE = 0
 COLLIDING_PIPE = 1
+COLLIDING_NONE = 2
 
 # === PIPE MOVE ===
 PIPE_FIRST = 0
