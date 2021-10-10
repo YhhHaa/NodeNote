@@ -885,6 +885,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             create_truth_widget = context_menu.addAction("Create Truth Widget")
             create_truth_widget.setIcon((QtGui.QIcon("Resources/ViewContextMenu/Truth Widget.png")))
             create_canvas_widget = context_menu.addAction(("Create Canvas Widget"))
+            create_canvas_widget.setIcon(QtGui.QIcon("Resources/ViewContextMenu/draw_widget.png"))
             change_background_image = context_menu.addAction("Change Background Image")
             change_background_image.setIcon(QtGui.QIcon("Resources/ViewContextMenu/Change Background Image.png"))
             change_snow_image = context_menu.addAction("Change flowing Image")
