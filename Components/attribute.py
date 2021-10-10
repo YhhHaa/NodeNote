@@ -2148,13 +2148,13 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                                                                          self.false_output_port.width / 2)
         return pos
 
-    def caculate_column(self, row):
+    def calculate_last_widget(self, row):
         for i in range(self.attribute_layout.columnCount() - 1, -1, -1):
             widget = self.attribute_layout.itemAt(row, i)
             if widget:
                 return widget
 
-    def caculate_number(self, row):
+    def calculate_widget_index(self, row):
         number = 0
         for i in range(self.attribute_layout.columnCount() - 1, -1, -1):
             widget = self.attribute_layout.itemAt(row, i)
@@ -2163,31 +2163,35 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         return number
 
     def add_widget(self, widget, line=True):
+        # calculate current pos
         if not line:
-            if self.current_row == 0 and self.current_column == -1:
-                self.current_column = 0
-            else:
+            if not (self.current_row == 0 and self.current_column == -1):
                 self.current_row += 1
                 self.current_column = 0
-
+            else:
+                self.current_column = 0
         elif line:
             self.current_column += 1
 
+        # Delete none widget
         if isinstance(self.attribute_layout.itemAt(self.current_row, self.current_column), NoneWidget):
-            # Delete none type widget from target
             none_widget = self.attribute_layout.itemAt(self.current_row, self.current_column)
             self.attribute_layout.removeItem(none_widget)
             self.attribute_sub_widgets.remove(none_widget)
             none_widget.setParentItem(None)
             sip.delete(none_widget)
 
+        # Add sub widget
         self.attribute_layout.addItem(widget,
                                       self.current_row,
                                       self.current_column)
-
         widget.item_row = self.current_row
         widget.item_column = self.current_column
 
+        if constants.DEBUG_ATTRIBUTE_INDEX:
+            print("Add sub widget index", self.current_row, self.current_column)
+
+        # Add none widget
         for row in range(self.current_row):
             for column in range(self.current_column + 1):
                 if not self.attribute_layout.itemAt(row, column):
@@ -2195,30 +2199,41 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     self.attribute_layout.addItem(item, row, column)
                     self.attribute_sub_widgets.append(item)
 
-    def add_new_subwidget(self, line=True, view_flag=None):
-        if not view_flag:
+    def add_new_subwidget(self, line=True, flag=""):
+        # Create sub widget
+        subwidget = None
+        if flag == "attr":
             subwidget = AttributeWidget()
-        else:
-            subwidget = view_flag
+            self.scene().view.attribute_widgets.append(subwidget)
+        elif flag == "file":
+            subwidget = AttributeFile(self)
+        elif flag == "view":
+            from Components.sub_view import ProxyView
+            subwidget = ProxyView(self.scene().view.mainwindow)
+        elif flag == "todo":
+            from Components.todo import Todo
+            subwidget = Todo(self)
+
+        # Added into scene
         self.add_widget(subwidget, line)
         self.attribute_sub_widgets.append(subwidget)
-        self.scene().view.attribute_widgets.append(subwidget)
         self.text_change_node_shape()
         self.update_pipe_position()
 
+        # Update ui
         parent = self
         while parent.parentItem():
             parent = parent.parentItem()
             parent.text_change_node_shape()
             parent.update_pipe_position()
 
+        # Serialization undo&&redo
         self.scene().history.store_history("Add New Subwidget")
 
-    def add_file(self, line=True):
-        file = AttributeFile(self)
-        self.add_widget(file, line)
-        self.attribute_sub_widgets.append(file)
-
+    def add_exist_subwidget(self, subwidget, line=True):
+        self.add_widget(subwidget, line)
+        self.attribute_sub_widgets.append(subwidget)
+        subwidget.setParentItem(self)
         self.text_change_node_shape()
         self.update_pipe_position()
 
@@ -2228,7 +2243,21 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent.text_change_node_shape()
             parent.update_pipe_position()
 
-        self.scene().history.store_history("Add New FIle")
+    def delete_subwidget(self, subwidget):
+        if constants.DEBUG_ATTRIBUTE_INDEX:
+            print("Delete sub widget index", self.current_row, self.current_column)
+
+        # Delete the sub widget
+        self.attribute_layout.removeItem(subwidget)
+        self.attribute_sub_widgets.remove(subwidget)
+        subwidget.setParentItem(None)
+
+        # Added none type widget into blank and update ui
+        add_none = NoneWidget(subwidget.item_row, subwidget.item_column, self)
+        self.attribute_layout.addItem(add_none, subwidget.item_row, subwidget.item_column)
+        self.attribute_sub_widgets.append(add_none)
+        self.text_change_node_shape()
+        self.update_pipe_position()
 
     def move_up_widget(self, widget):
         if isinstance(widget, SubConstituteWidget):
@@ -2346,34 +2375,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
             self.scene().history.store_history("Move down widget")
 
-    def add_exist_subwidget(self, subwidget, line=True):
-        self.add_widget(subwidget, line)
-        self.attribute_sub_widgets.append(subwidget)
-        subwidget.setParentItem(self)
-        self.text_change_node_shape()
-        self.update_pipe_position()
-
-        parent = self
-        while parent.parentItem():
-            parent = parent.parentItem()
-            parent.text_change_node_shape()
-            parent.update_pipe_position()
-
-    def delete_subwidget(self, subwidget):
-        # change line
-        if subwidget.item_row != 0 and self.caculate_number(subwidget.item_row) == 1:
-            self.current_row -= 1
-            last_item = self.caculate_column(subwidget.item_row - 1)
-            self.current_column = last_item.item_column if last_item else 0
-        # not change line and last widget
-        elif subwidget is self.caculate_column(subwidget.item_row):
-            self.current_column -= 1
-        self.attribute_layout.removeItem(subwidget)
-        self.attribute_sub_widgets.remove(subwidget)
-        subwidget.setParentItem(None)
-        self.text_change_node_shape()
-        self.update_pipe_position()
-
     def colliding_judge_sub(self, parent_widget, item):
         while parent_widget.attribute_sub_widgets:
             for sub_widget in parent_widget.attribute_sub_widgets:
@@ -2397,7 +2398,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                         return 1
                 elif isinstance(sub_widget, AttributeWidget):
                     parent_widget = sub_widget
-                    if self.colliding_judge_sub(parent_widget, item):
+                    if self.colliding_judge_none(parent_widget, item):
                         return 1
             return None
 
@@ -2426,7 +2427,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         for sub_widget in attribute_widget.attribute_sub_widgets:
             from Components.sub_view import ProxyView
             from Components.todo import Todo
-            if not isinstance(sub_widget, (AttributeFile, ProxyView, Todo)) and \
+            if not isinstance(sub_widget, (AttributeFile, ProxyView, Todo, NoneWidget)) and \
                     sub_widget.colliding_judge_pipe(sub_widget, item):
                 return True
         return False
@@ -2497,16 +2498,22 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def colliding_release(self, event):
         if self.colliding_type == constants.COLLIDING_ATTRIBUTE:
             if self.colliding_co and self.colliding_parent:
-                source = self.parentItem()
+                # if target is attribute widget and the parent exists
+                source_parent = self.parentItem()
+                target_attribute = self.colliding_detection()
 
-                item = self.colliding_detection()
+                # Delete from source
                 self.parentItem().delete_subwidget(self)
-                item.add_exist_subwidget(self)
 
                 # Added none type widget into blank
                 add_none = NoneWidget(self.item_row, self.item_column, self)
-                source.attribute_layout.addItem(add_none, self.item_row, self.item_column)
-                source.attribute_sub_widgets.append(add_none)
+                source_parent.attribute_layout.addItem(add_none, self.item_row, self.item_column)
+                source_parent.attribute_sub_widgets.append(add_none)
+                source_parent.text_change_node_shape()
+
+                # Added into target
+                target_attribute.add_exist_subwidget(self)
+                target_attribute.text_change_node_shape()
 
                 if self.scene().view.mode == constants.MODE_NOOP:
                     self.scene().history.store_history("Colliding Add Subwidget")
@@ -2521,6 +2528,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 add_none = NoneWidget(self.item_row, self.item_column, self)
                 source.attribute_layout.addItem(add_none, self.item_row, self.item_column)
                 source.attribute_sub_widgets.append(add_none)
+                source.text_change_node_shape()
 
                 self.scene().history.store_history("Colliding Delete Subwidget")
 
@@ -2542,23 +2550,29 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         elif self.colliding_type == constants.COLLIDING_NONE:
             # Get none type widget
             item = self.colliding_detection()
-
-            # Remove from current index
             source = self.parentItem()
-            if self.parentItem():
-                self.parentItem().delete_subwidget(self)
+
+            if source:
+                # Remove from current index
+                source.delete_subwidget(self)
                 self.setPos(event.scenePos())
 
-            # Added none type widget into blank
-            if source:
-                add_none = NoneWidget(self.item_row, self.item_column, self)
-                source.attribute_layout.addItem(add_none, self.item_row, self.item_column)
-                source.attribute_sub_widgets.append(add_none)
+                if constants.DEBUG_ATTRIBUTE_INDEX:
+                    print("Colliding source", self.item_row, self.item_column)
+
+                # update
+                source.text_change_node_shape()
 
             # Delete none type widget from target
             target = item.parentItem()
-            target.delete_subwidget(item)
+            target.attribute_layout.removeItem(item)
+            target.attribute_sub_widgets.remove(item)
+            item.setParentItem(None)
             sip.delete(item)
+
+            if constants.DEBUG_ATTRIBUTE_INDEX:
+                print("Colliding none type item", item,
+                      target.attribute_layout.itemAt(item.item_row, item.item_column))
 
             # Added into index of none type widget
             target.attribute_layout.addItem(self, item.item_row, item.item_column)
@@ -2566,6 +2580,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.setParentItem(target)
             self.item_row = item.item_row
             self.item_column = item.item_column
+
+            if constants.DEBUG_ATTRIBUTE_INDEX:
+                print("Colliding target", item.item_row, item.item_column)
 
             # Recover
             self.colliding_co = False
@@ -2745,12 +2762,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 if scene_flag.data(0, QtCore.Qt.ToolTipRole) is self.sub_scene:
                     scene_flag.setText(0, self.attribute_widget.label_item.toPlainText())
 
-    def mousePressEvent(self, event) -> None:
-        if int(event.modifiers()) & QtCore.Qt.ShiftModifier:
-            self.mouse_update_node_size(event)
-        else:
-            super(AttributeWidget, self).mousePressEvent(event)
-
     def travers_subitem(self, subitem: list):
         for item in subitem:
             if isinstance(item, AttributeWidget):
@@ -2761,6 +2772,12 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     pipe_item.source_item.setSelected(True)
                     pipe_item.destination_item.setSelected(True)
                 self.travers_subitem(item.attribute_sub_widgets)
+
+    def mousePressEvent(self, event) -> None:
+        if int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            self.mouse_update_node_size(event)
+        else:
+            super(AttributeWidget, self).mousePressEvent(event)
 
     def mouseMoveEvent(self, event) -> None:
         for item in self.scene().selectedItems():
@@ -3066,6 +3083,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             add_line_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_line_video.png"))
             add_file = menu.addAction("Add File")
             add_file.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/add_video.png"))
+            add_line_view = menu.addAction("Add Line View")
+            add_line_view.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/sub view.png"))
             add_view = menu.addAction("Add View")
             add_view.setIcon(QtGui.QIcon("Resources/AttributeWidgetContextMenu/sub view.png"))
             add_todo_line = menu.addAction("Add Todo Inline")
@@ -3079,13 +3098,21 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             result = menu.exec(event.globalPos())
 
             if result == add_line_subwidget:
-                self.add_new_subwidget(line=True)
+                self.add_new_subwidget(line=True, flag="attr")
             elif result == add_subwidget:
-                self.add_new_subwidget(line=False)
+                self.add_new_subwidget(line=False, flag="attr")
             elif result == add_line_file:
-                self.add_file(line=True)
+                self.add_new_subwidget(line=True, flag="file")
             elif result == add_file:
-                self.add_file(line=False)
+                self.add_new_subwidget(line=False, flag="file")
+            elif result == add_line_view:
+                self.add_new_subwidget(line=True, flag="view")
+            elif result == add_view:
+                self.add_new_subwidget(line=False, flag="view")
+            elif result == add_todo_line:
+                self.add_new_subwidget(line=True, flag="todo")
+            elif result == add_todo:
+                self.add_new_subwidget(line=False, flag="todo")
             elif result == move_up and (isinstance(self.scene().itemAt(self.scene().view.mapToScene(event.pos()),
                                                                        QtGui.QTransform()),
                                                    (AttributeWidget, AttributeFile, SubConstituteWidget,
@@ -3096,15 +3123,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                                                    (AttributeWidget, AttributeFile, SubConstituteWidget,
                                                     SimpleTextField))):
                 self.move_down_widget(self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
-            elif result == add_view:
-                from Components.sub_view import ProxyView
-                self.add_new_subwidget(True, ProxyView(self.scene().view.mainwindow))
-            elif result == add_todo_line:
-                from Components.todo import Todo
-                self.add_new_subwidget(True, Todo(self))
-            elif result == add_todo:
-                from Components.todo import Todo
-                self.add_new_subwidget(False, Todo(self))
             self.context_flag = False
 
     def moveEvent(self, event: 'QtWidgets.QGraphicsSceneMoveEvent') -> None:
