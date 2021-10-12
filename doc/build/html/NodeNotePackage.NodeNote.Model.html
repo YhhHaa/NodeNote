@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NodeNotePackage.NodeNote.Model package &mdash; NodeNote 2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> NodeNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">NodeNotePackage.NodeNote.Model package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-NodeNotePackage.NodeNote.Model.constants">NodeNotePackage.NodeNote.Model.constants module</a></li>
+<li><a class="reference internal" href="#module-NodeNotePackage.NodeNote.Model.history">NodeNotePackage.NodeNote.Model.history module</a></li>
+<li><a class="reference internal" href="#module-NodeNotePackage.NodeNote.Model.serializable">NodeNotePackage.NodeNote.Model.serializable module</a></li>
+<li><a class="reference internal" href="#module-NodeNotePackage.NodeNote.Model.serialize_pb2">NodeNotePackage.NodeNote.Model.serialize_pb2 module</a></li>
+<li><a class="reference internal" href="#module-NodeNotePackage.NodeNote.Model.stylesheet">NodeNotePackage.NodeNote.Model.stylesheet module</a></li>
+<li><a class="reference internal" href="#module-NodeNotePackage.NodeNote.Model">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NodeNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>NodeNotePackage.NodeNote.Model package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/NodeNotePackage.NodeNote.Model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nodenotepackage-nodenote-model-package">
+<h1>NodeNotePackage.NodeNote.Model package<a class="headerlink" href="#nodenotepackage-nodenote-model-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-NodeNotePackage.NodeNote.Model.constants">
+<span id="nodenotepackage-nodenote-model-constants-module"></span><h2>NodeNotePackage.NodeNote.Model.constants module<a class="headerlink" href="#module-NodeNotePackage.NodeNote.Model.constants" title="Permalink to this headline"></a></h2>
+<p>The model parameters.</p>
+</section>
+<section id="module-NodeNotePackage.NodeNote.Model.history">
+<span id="nodenotepackage-nodenote-model-history-module"></span><h2>NodeNotePackage.NodeNote.Model.history module<a class="headerlink" href="#module-NodeNotePackage.NodeNote.Model.history" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.history.History">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">NodeNotePackage.NodeNote.Model.history.</span></span><span class="sig-name descname"><span class="pre">History</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.history.History" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Serialization for undo &amp;&amp; redo.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.history.History.create_history_stamp">
+<span class="sig-name descname"><span class="pre">create_history_stamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.history.History.create_history_stamp" title="Permalink to this definition"></a></dt>
+<dd><p>Create Serialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>desc</strong> – The description of the operation.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Serialization dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>history_stamp</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.history.History.redo">
+<span class="sig-name descname"><span class="pre">redo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.history.History.redo" title="Permalink to this definition"></a></dt>
+<dd><p>Redo.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.history.History.restore_history">
+<span class="sig-name descname"><span class="pre">restore_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.history.History.restore_history" title="Permalink to this definition"></a></dt>
+<dd><p>Restore the Serialization from list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.history.History.restore_history_stamp">
+<span class="sig-name descname"><span class="pre">restore_history_stamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history_stamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.history.History.restore_history_stamp" title="Permalink to this definition"></a></dt>
+<dd><p>Deserialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>history_stamp</strong> – The Serialization dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.history.History.store_history">
+<span class="sig-name descname"><span class="pre">store_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.history.History.store_history" title="Permalink to this definition"></a></dt>
+<dd><p>Store the Serialization into list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>desc</strong> – The description of the operation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.history.History.undo">
+<span class="sig-name descname"><span class="pre">undo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.history.History.undo" title="Permalink to this definition"></a></dt>
+<dd><p>Undo.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-NodeNotePackage.NodeNote.Model.serializable">
+<span id="nodenotepackage-nodenote-model-serializable-module"></span><h2>NodeNotePackage.NodeNote.Model.serializable module<a class="headerlink" href="#module-NodeNotePackage.NodeNote.Model.serializable" title="Permalink to this headline"></a></h2>
+<p>The Serialization base class</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.serializable.Serializable">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">NodeNotePackage.NodeNote.Model.serializable.</span></span><span class="sig-name descname"><span class="pre">Serializable</span></span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.serializable.Serializable" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.serializable.Serializable.deserialize">
+<span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashmap</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.serializable.Serializable.deserialize" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NodeNotePackage.NodeNote.Model.serializable.Serializable.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NodeNotePackage.NodeNote.Model.serializable.Serializable.serialize" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-NodeNotePackage.NodeNote.Model.serialize_pb2">
+<span id="nodenotepackage-nodenote-model-serialize-pb2-module"></span><h2>NodeNotePackage.NodeNote.Model.serialize_pb2 module<a class="headerlink" href="#module-NodeNotePackage.NodeNote.Model.serialize_pb2" title="Permalink to this headline"></a></h2>
+<p>Generated protocol buffer code.</p>
+</section>
+<section id="module-NodeNotePackage.NodeNote.Model.stylesheet">
+<span id="nodenotepackage-nodenote-model-stylesheet-module"></span><h2>NodeNotePackage.NodeNote.Model.stylesheet module<a class="headerlink" href="#module-NodeNotePackage.NodeNote.Model.stylesheet" title="Permalink to this headline"></a></h2>
+<p>Stylesheet ui.</p>
+</section>
+<section id="module-NodeNotePackage.NodeNote.Model">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-NodeNotePackage.NodeNote.Model" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Ye Tao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+syntax = "proto3";
+
+
+// define the package name which is not necessary for Python to avoid collision
+// in other languages
+package NodeNote;
+
+// port serialization
+message PortSerialization {
+  int64 port_id = 1;
+  int32 port_type = 2;
+  bool port_truth = 3;
+
+  // pipes
+  repeated int64 pipes_id = 4;
+
+  // ui
+  float port_width = 5;
+  repeated int64 port_color = 6;
+
+  // flag
+  repeated bool port_flag = 7;
+}
+
+// define the root view serialization data
+message ViewSerialization {
+  // scene serialization
+  message SceneSerialization {
+    // scene id
+    int64 scene_id = 1;
+
+    // attribute widget serialization
+    message AttrSerialization {
+      // attribute widget id
+      int64 attr_id = 1;
+
+      // geometry
+      repeated float size = 2;
+      repeated float position = 3;
+
+      // contents
+      string contents = 4;
+
+      repeated PortSerialization attr_port = 5;
+
+      // connections serialization
+      repeated int64 next_attr_id = 6;
+      repeated int64 next_logic_id = 7;
+      repeated int64 last_attr_id = 8;
+      repeated int64 last_logic_id = 9;
+      repeated int64 sub_attr = 10;
+
+      message FileSerialization {
+        int64 file_id = 1;
+        string text = 2;
+        string cover = 3;
+        optional string file = 4;
+        repeated int32 file_location = 5;
+      }
+      repeated FileSerialization file_serialization = 11;
+
+      message SubviewSerialization {
+        int64 subview_id = 1;
+        repeated float size = 2;
+        repeated int32 subview_location = 3;
+        repeated ViewSerialization subview = 4;
+      }
+      repeated SubviewSerialization subview_serialization = 12;
+
+      message TodoSerialization {
+        int64 todo_id = 1;
+        string task = 2;
+        float time = 3;
+        repeated int32 todo_location = 4;
+      }
+      repeated TodoSerialization todo_serialization = 13;
+
+      message NoneSerialization {
+        int64 none_id = 1;
+        repeated int32 none_pos = 2;
+      }
+      repeated NoneSerialization none_serialization = 14;
+
+      repeated SceneSerialization sub_scene_serialization = 15;
+
+      bool highlighter = 16;
+
+      repeated int32 attr_location = 17;
+      repeated int32 next_location = 18;
+
+      // ui
+      string self_attr_font_family = 19;
+      int32 self_attr_font_size = 20;
+      repeated int64 self_attr_color = 21;
+
+      // flag
+      repeated bool attr_flag = 22;
+
+    }
+    repeated AttrSerialization attr_serialization = 2;
+
+    // logic widget serialization
+    message LogicSerialization {
+      int64 logic_id = 1;
+      repeated float logic_position = 2;
+      repeated int32 logic_truth = 3;
+      repeated PortSerialization logic_port = 4;
+
+      // connections
+      repeated int64 logic_next_attr = 5;
+      repeated int64 logic_next_logic = 6;
+      repeated int64 logic_last_attr = 7;
+      repeated int64 logic_last_logic = 8;
+
+      // ui
+      repeated int64 logic_color = 9;
+
+      // flag
+      repeated bool logic_flag = 10;
+    }
+    repeated LogicSerialization logic_serialization = 3;
+
+    // pipe widget serialization
+    message PipeSerialization {
+      int64 pipe_id = 1;
+      repeated int64 pipe_port_id = 2;
+      string pipe_text = 3;
+
+      // control point
+      repeated float start_point = 4;
+      repeated float end_point = 5;
+      bool source_move_status = 6;
+      bool destination_move_status = 7;
+      repeated float offset_start_point = 8;
+      repeated float offset_destination_point = 9;
+
+      // ui
+      float self_pipe_width = 10;
+      repeated int64 self_pipe_color = 11;
+
+      // flag
+      repeated bool pipe_flag = 12;
+    }
+    repeated PipeSerialization pipe_serialization = 4;
+
+    // container widget serialization
+    message DrawSerialization {
+      int64 draw_id = 1;
+      repeated float draw_size = 2;
+      repeated float draw_pos = 3;
+
+      string path = 4;
+    }
+    repeated DrawSerialization draw_serialization = 5;
+
+    // ui serialization
+    string background_image = 6;
+
+    // attribute widget ui
+    optional string scene_attr_font_family = 7;
+    optional int32 scene_attr_font_size = 8;
+    optional int64 scene_attr_style_font_color = 9;
+    optional int64 scene_attr_style_background_color = 10;
+    optional int64 scene_attr_style_selected_background_color = 11;
+    optional int64 scene_attr_style_border_color = 12;
+    optional int64 scene_attr_style_selected_border_color = 13;
+
+    // logic widget ui
+    optional int64 scene_logic_style_background_color = 14;
+    optional int64 scene_logic_style_selected_background_color = 15;
+    optional int64 scene_logic_style_border_color = 16;
+    optional int64 scene_logic_style_selected_border_color = 17;
+
+
+    // pipe widget ui
+    optional float scene_pipe_width = 18;
+    optional int64 scene_pipe_style_background_color = 19;  // 2 items of list
+    optional int64 scene_pipe_style_selected_background_color = 20;  // 2 items of list
+
+
+    // port widget ui
+    float scene_port_width = 21;
+    optional int64 scene_port_style_color = 22;
+    optional int64 scene_port_style_border_color = 23;
+    optional int64 scene_port_style_hovered_color = 24;
+    optional int64 scene_port_style_hovered_border_color = 25;
+    optional int64 scene_port_style_activated_color = 26;
+    optional int64 scene_port_style_activated_border_color = 27;
+
+  }
+
+  repeated SceneSerialization scene_serialization = 1;
+  int64 current_scene_id = 2;
+
+  // used time serialization
+  optional float use_time = 3;
+  optional float last_time = 4;
+
+  // ui serialization
+  optional string image_path = 5;
+
+  // attribute widget ui
+  string all_attr_font_family = 6;
+  int32 all_attr_font_size = 7;
+  repeated int64 all_attr_color = 8; // 5 items of list
+
+  // logic widget ui
+  repeated int64 all_logic_color = 9;  // 4 items of list
+
+  // pipe widget ui
+  float all_pipe_width = 10;
+  repeated int64 all_pipe_color = 11;  // 2 items of list
+
+  // port widget ui
+  float all_port_width = 12;
+  repeated int64 all_port_color = 13;  // 6 items of list
+
+  // draw widget ui
+  float all_draw_width = 14;
+  int64 all_draw_color = 15;
+}
