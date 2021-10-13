@@ -66,7 +66,7 @@ QComboBox::down-arrow:on {
     /* shift the arrow when popup is open */
     top: 1px;
     left: 1px;
-}''' % os.path.join(os.path.dirname(__file__), "../Resources/down_arrow.png")
+}''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/down_arrow.png"))
 
 STYLE_QLISTVIEW = '''
 QListView {
@@ -112,8 +112,8 @@ QCheckBox::indicator:unchecked {
 image: url(%s);
 }
 ''' % (
-    os.path.join(os.path.dirname(__file__), "../Resources/True.png"),
-    os.path.join(os.path.dirname(__file__), "../Resources/False.png")
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/True.png")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/False.png"))
 )
 
 STYLE_QTEXTEDIT = '''
@@ -214,7 +214,7 @@ QToolBar {
 QToolBar::handle {
     image: url(%s);
 }
-''' % os.path.join(os.path.dirname(__file__), "../Resources/Flowers.png")
+''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Flowers.png"))
 
 
 STYLE_QTREEWIDGET = '''
@@ -305,11 +305,11 @@ QTreeWidget::branch:open:has-children:has-siblings  {
         image: url(%s);
 }
 ''' % (
-    os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-vline.png"),
-    os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-more.png"),
-    os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-end.png"),
-    os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-closed.png"),
-    os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-open.png")
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-vline.png")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-more.png")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-end.png")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-closed.png")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-open.png"))
 )
 
 STYLE_QTOOLBUTTON = '''

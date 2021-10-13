@@ -2,7 +2,6 @@
 attribute.py - Create many components which can be used in the scene.
 """
 
-
 import re
 import os
 import io
@@ -14,7 +13,6 @@ import numpy as np
 from PyQt5 import QtCore, QtWidgets, QtGui, sip
 from ..Model import constants, stylesheet, serializable
 from ..Components import port, pipe
-
 
 __all__ = ["InputTextField", "SimpleTextField",
            "LogicWidget", "AttributeWidget", "AttributeFile"]
@@ -32,8 +30,8 @@ class SizeDialog(QtWidgets.QDialog):
         super(SizeDialog, self).__init__(parent)
         self.resize(100, 80)
         self.setWindowTitle("Set Image Width and Height")
-        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                    "../Resources/Plane.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                    "../Resources/Plane.png"))))
         self.num_width = QtWidgets.QLineEdit(parent=self)
         self.num_width.setValidator(QtGui.QDoubleValidator())
         self.num_height = QtWidgets.QLineEdit(parent=self)
@@ -273,7 +271,7 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
 class InputTextField(QtWidgets.QGraphicsTextItem):
     edit_finished = QtCore.pyqtSignal(bool)
     start_editing = QtCore.pyqtSignal()
-    
+
     font = QtGui.QFont("等距更纱黑体 SC", 8)
     font_color = QtGui.QColor(0, 0, 0, 255)
 
@@ -918,8 +916,8 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                         image_folder = "Assets"
                         if not os.path.exists(image_folder):
                             os.makedirs(image_folder)
-                        image_name = os.path.join(image_folder,
-                                                  time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
+                        image_name = os.path.join(
+                            image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
                         image.save(image_name, quality=50)
                     image_format = QtGui.QTextImageFormat()
                     image_format.setName(image_name)
@@ -2047,12 +2045,12 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.image.setAutoFillBackground(True)
         palette = self.image.palette()
         palette.setBrush(QtGui.QPalette.Window, QtGui.QBrush(
-            QtGui.QPixmap(os.path.join(os.path.dirname(__file__), "../Resources/video.png")).scaled(
+            QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/video.png"))).scaled(
                 self.image.size().width(),
                 self.image.size().height(),
                 QtCore.Qt.IgnoreAspectRatio,
                 QtCore.Qt.SmoothTransformation
-        )))
+            )))
         self.image.setPalette(palette)
 
         self.label_item = SimpleTextField("Description", self)
@@ -2079,7 +2077,7 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.setLayout(self.layout)
 
         # store
-        self.image_url = os.path.join(os.path.dirname(__file__), r"../Resources/video.png")
+        self.image_url = os.path.abspath(os.path.join(os.path.dirname(__file__), r"../Resources/video.png"))
 
         # layout
         self.item_row = 0
@@ -2162,7 +2160,8 @@ class NoneWidget(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
 
         super(NoneWidget, self).__init__(parent)
         self.pixmap_label = QtWidgets.QLabel()
-        self.pixmap_label.setPixmap(os.path.join(os.path.dirname(__file__), QtGui.QPixmap("../Resources/blank.png")))
+        self.pixmap_label.setPixmap(QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                               "../Resources/blank.png"))))
         self.pixmap_label.setScaledContents(True)
         self.setWidget(self.pixmap_label)
 
@@ -2390,7 +2389,6 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             event: Qmouseevent.
 
         """
-
 
         if event.type() == QtCore.QEvent.GraphicsSceneMousePress and not self.parentItem():
             self.resizing = True
@@ -3489,36 +3487,36 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             menu.setStyleSheet(stylesheet.STYLE_QMENU)
             add_line_subwidget = menu.addAction("Add Line Subwidget")
             add_line_subwidget.setIcon(QtGui.QIcon(
-                os.path.join(os.path.dirname(__file__),
-                             "../Resources/add_line_widget.PNG")))
+                os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                             "../Resources/add_line_widget.PNG"))))
             add_subwidget = menu.addAction("Add Subwidget")
             add_subwidget.setIcon(
-                QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                         "../Resources/add_widget.png")))
+                QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                         "../Resources/add_widget.png"))))
             add_line_file = menu.addAction("Add Line File")
-            add_line_file.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                           "../Resources/add_line_video.png")))
+            add_line_file.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                           "../Resources/add_line_video.png"))))
             add_file = menu.addAction("Add File")
-            add_file.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                      "../Resources/add_video.png")))
+            add_file.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                      "../Resources/add_video.png"))))
             add_line_view = menu.addAction("Add Line View")
-            add_line_view.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                           "../Resources/sub view.png")))
+            add_line_view.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                           "../Resources/sub view.png"))))
             add_view = menu.addAction("Add View")
-            add_view.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                      "../Resources/sub view.png")))
+            add_view.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                      "../Resources/sub view.png"))))
             add_todo_line = menu.addAction("Add Todo Inline")
-            add_todo_line.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                           "../Resources/Todo.png")))
+            add_todo_line.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                           "../Resources/Todo.png"))))
             add_todo = menu.addAction("Add Todo")
-            add_todo.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                      "../Resources/Todo.png")))
+            add_todo.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                      "../Resources/Todo.png"))))
             move_up = menu.addAction("Move Up")
-            move_up.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                     "../Resources/up.png")))
+            move_up.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                     "../Resources/up.png"))))
             move_down = menu.addAction("Move Down")
-            move_down.setIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                       "../Resources/down.png")))
+            move_down.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                       "../Resources/down.png"))))
             result = menu.exec(event.globalPos())
 
             if result == add_line_subwidget:
@@ -3543,10 +3541,11 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                                                     SimpleTextField))):
                 self.move_up_widget(self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
             elif result == move_down and (isinstance(self.scene().itemAt(self.scene().view.mapToScene(event.pos()),
-                                                                       QtGui.QTransform()),
-                                                   (AttributeWidget, AttributeFile, SubConstituteWidget,
-                                                    SimpleTextField))):
-                self.move_down_widget(self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
+                                                                         QtGui.QTransform()),
+                                                     (AttributeWidget, AttributeFile, SubConstituteWidget,
+                                                      SimpleTextField))):
+                self.move_down_widget(
+                    self.scene().itemAt(self.scene().view.mapToScene(event.pos()), QtGui.QTransform()))
             self.context_flag = False
 
     def moveEvent(self, event: 'QtWidgets.QGraphicsSceneMoveEvent') -> None:

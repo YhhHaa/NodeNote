@@ -374,7 +374,7 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         painter.drawPath(self.path())
 
         # ARROW
-        image = QtGui.QPixmap(os.path.join(os.path.dirname(__file__), "../Resources/arrow.png"))
+        image = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/arrow.png")))
         image_rectf = QtCore.QRectF(image.rect().x(), image.rect().y(), image.rect().width(), image.rect().height())
         target_rectf = QtCore.QRectF(0, 0, 0, 0)
         if self.start_flag == constants.OUTPUT_NODE_START or (self.start_flag == constants.INPUT_NODE_START and

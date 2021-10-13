@@ -1031,8 +1031,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if a0.type() == QtCore.QEvent.TabletEnterProximity:
             self.mouse_effect = False
             self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-            cursor_style = QtGui.QPixmap(os.path.join(os.path.dirname(__file__),
-                                                      '../Resources/point.png')).scaled(10,
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                      '../Resources/point.png'))).scaled(10,
                                                                                         10)
             cursor = QtGui.QCursor(cursor_style, 5, 5)
             QtWidgets.QApplication.setOverrideCursor(cursor)
@@ -1175,21 +1175,21 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             # context list
             create_attribute_widget = context_menu.addAction("Create Attribute Widget")
             create_attribute_widget.setIcon(QtGui.QIcon(
-                os.path.join(os.path.dirname(__file__), "../Resources/Attribute Widget.png")))
+                os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Attribute Widget.png"))))
             create_truth_widget = context_menu.addAction("Create Truth Widget")
             create_truth_widget.setIcon(
-                (QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                          "../Resources/Truth Widget.png"))))
+                (QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                          "../Resources/Truth Widget.png")))))
             create_canvas_widget = context_menu.addAction("Create Canvas Widget")
             create_canvas_widget.setIcon(
-                QtGui.QIcon(os.path.join(os.path.dirname(__file__), "../Resources/draw_widget.png")))
+                QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/draw_widget.png"))))
             change_background_image = context_menu.addAction("Change Background Image")
             change_background_image.setIcon(QtGui.QIcon(
-                os.path.join(os.path.dirname(__file__), "../Resources/Change Background Image.png")))
+                os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Change Background Image.png"))))
             change_snow_image = context_menu.addAction("Change flowing Image")
             change_snow_image.setIcon(
-                QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                         "../Resources/Change flowing.png")))
+                QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                         "../Resources/Change flowing.png"))))
 
             action = context_menu.exec_(self.mapToGlobal(event.pos()))
             if action == create_attribute_widget:

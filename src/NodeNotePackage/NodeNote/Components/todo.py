@@ -50,15 +50,15 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.time_show.setStyleSheet(stylesheet.STYLE_QLABEL)
         self.time_show.setMinimumWidth(135)
 
-        self.start_png = QtGui.QIcon(QtGui.QPixmap(os.path.join(os.path.dirname(__file__),
-                                                                r'../Resources/start.png')).scaled(
+        self.start_png = QtGui.QIcon(QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                r'../Resources/start.png'))).scaled(
             10,
             10,
             QtCore.Qt.IgnoreAspectRatio,
             QtCore.Qt.SmoothTransformation
         ))
-        self.pause_png = QtGui.QIcon(QtGui.QPixmap(os.path.join(os.path.dirname(__file__),
-                                                                r'../Resources/pause.png')).scaled(
+        self.pause_png = QtGui.QIcon(QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                r'../Resources/pause.png'))).scaled(
             10,
             10,
             QtCore.Qt.IgnoreAspectRatio,

@@ -33,8 +33,8 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.app._window = self
 
         #   Window Init
-        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__),
-                                                    '../Resources/cloudy.png')))  # set icon
+        self.setWindowIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                    '../Resources/cloudy.png'))))  # set icon
         self.setWindowTitle("My Beautiful life")  # set title
         self.resize(1200, 1000)  # set size
         self.move(  # set geometry

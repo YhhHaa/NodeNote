@@ -20,7 +20,7 @@ class EffectBackground(QtSvg.QGraphicsSvgItem):
         self.view = view
         self.width = 1080
         self.height = 900
-        self.name = os.path.join(os.path.dirname(__file__), "../Resources/soft.svg")
+        self.name = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/soft.svg"))
         self.svg = QtSvg.QSvgRenderer(self.name)
         self.setSharedRenderer(self.svg)
         self.setCacheMode(QtWidgets.QGraphicsItem.ItemCoordinateCache)

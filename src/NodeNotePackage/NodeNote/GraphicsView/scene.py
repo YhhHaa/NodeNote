@@ -87,8 +87,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         #   =================================================
 
         #   Background
-        self.brush = QtGui.QBrush(QtGui.QImage(os.path.join(os.path.dirname(__file__),
-                                                            "../Resources/scene_background.png")))
+        self.brush = QtGui.QBrush(QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                            "../Resources/scene_background.png"))))
         self.setBackgroundBrush(self.brush)
 
     def get_id_attribute(self, attribute_id) -> attribute.AttributeWidget:

@@ -68,6 +68,7 @@ src/NodeNotePackage/NodeNote/Resources/life.png
 src/NodeNotePackage/NodeNote/Resources/lone.svg
 src/NodeNotePackage/NodeNote/Resources/pause.png
 src/NodeNotePackage/NodeNote/Resources/point.png
+src/NodeNotePackage/NodeNote/Resources/rainbow.ico
 src/NodeNotePackage/NodeNote/Resources/sakuara.svg
 src/NodeNotePackage/NodeNote/Resources/scene_background.png
 src/NodeNotePackage/NodeNote/Resources/sea.svg

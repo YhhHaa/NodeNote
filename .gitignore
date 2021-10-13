@@ -1,4 +1,5 @@
-.idea
+./.idea
 Assets
 __pycache__
-dist
+./dist
+./build

@@ -106,8 +106,8 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.eraser_flag = True
 
             # Change eraser cursor
-            cursor_style = QtGui.QPixmap(os.path.join(os.path.dirname(__file__),
-                                                      '../Resources/eraser.png')).scaled(20, 20)
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                      '../Resources/eraser.png'))).scaled(20, 20)
             cursor = QtGui.QCursor(cursor_style, 10, 10)
             QtWidgets.QApplication.setOverrideCursor(cursor)
 
@@ -117,8 +117,8 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.eraser_flag = False
 
             # Change draw cursor
-            cursor_style = QtGui.QPixmap(os.path.join(os.path.dirname(__file__),
-                                                      '../Resources/point.png')).scaled(10, 10)
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                      '../Resources/point.png'))).scaled(10, 10)
             cursor = QtGui.QCursor(cursor_style, 5, 5)
             QtWidgets.QApplication.setOverrideCursor(cursor)
 

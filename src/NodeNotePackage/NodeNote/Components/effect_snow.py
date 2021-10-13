@@ -106,7 +106,7 @@ class EffectSkyWidget(QtWidgets.QWidget):
 
 
 class SnowWidget(QtWidgets.QWidget):
-    image_path = os.path.join(os.path.dirname(__file__), '../Resources/flower.png')
+    image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../Resources/flower.png'))
 
     def __init__(self, parent=None):
         """

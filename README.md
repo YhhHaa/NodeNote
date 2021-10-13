@@ -23,7 +23,8 @@ video tutorial [video tutorial](https://www.bilibili.com/video/BV1s34y1D7gE/)
 - Resource file will be saved in `Assets` in the current directory
 
 ## 3. Custom development
-- you can install the python package: `pip install NodeNotePackage`
+- You can install the python package: `pip install NodeNotePackage`
+- You can run the example in `NodeNotePackage/Examples/example.py`
 - Here is the documentation in `doc/build/html/index.html`
 
 
