@@ -66,7 +66,7 @@ QComboBox::down-arrow:on {
     /* shift the arrow when popup is open */
     top: 1px;
     left: 1px;
-}''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/down_arrow.png"))
+}''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/down_arrow.png")).replace('\\', r'/')
 
 STYLE_QLISTVIEW = '''
 QListView {
@@ -112,8 +112,8 @@ QCheckBox::indicator:unchecked {
 image: url(%s);
 }
 ''' % (
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/True.png")),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/False.png"))
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/True.png")).replace('\\', r'/'),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/False.png")).replace('\\', r'/')
 )
 
 STYLE_QTEXTEDIT = '''
@@ -214,8 +214,7 @@ QToolBar {
 QToolBar::handle {
     image: url(%s);
 }
-''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Flowers.png"))
-
+''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Flowers.png")).replace('\\', r'/')
 
 STYLE_QTREEWIDGET = '''
 QTreeWidget {
@@ -305,11 +304,16 @@ QTreeWidget::branch:open:has-children:has-siblings  {
         image: url(%s);
 }
 ''' % (
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-vline.png")),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-more.png")),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-end.png")),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-closed.png")),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-open.png"))
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-vline.png")
+                    ).replace('\\', r'/'),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-more.png")
+                    ).replace('\\', r'/'),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-end.png")
+                    ).replace('\\', r'/'),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-closed.png")
+                    ).replace('\\', r'/'),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-open.png")
+                    ).replace('\\', r'/')
 )
 
 STYLE_QTOOLBUTTON = '''
