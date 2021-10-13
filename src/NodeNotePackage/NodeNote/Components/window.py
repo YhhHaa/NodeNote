@@ -7,7 +7,6 @@ from ..Components import attribute, pipe, port, draw
 from ..Model import stylesheet
 from ..GraphicsView.view import View
 
-
 __all__ = ["NoteWindow"]
 
 
@@ -34,7 +33,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         #   Window Init
         self.setWindowIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                    '../Resources/cloudy.png'))))  # set icon
+                                                                    '../Resources/cloudy.png'))))  # set icon
         self.setWindowTitle("My Beautiful life")  # set title
         self.resize(1200, 1000)  # set size
         self.move(  # set geometry
@@ -313,6 +312,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         #           stylesheet
         self.draw_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.draw_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
+        self.draw_init_flag = True
 
         #   Slots Controller
         self.style_switch_combox.currentIndexChanged.connect(self.init_style)
@@ -1394,11 +1394,13 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.color_label_changed(self.draw_style_color_label, draw.Draw.color)
         #   chang slots
         #       width
-        self.draw_style_width_button.clicked.connect(
-            lambda x: self.width_changed("draw_width", 0))
-        #       color
-        self.draw_style_color_button.clicked.connect(
-            lambda x: self.color_changed("draw_color", 0))
+        if self.draw_init_flag:
+            self.draw_style_width_button.clicked.connect(
+                lambda x: self.width_changed("draw_width", 0))
+            #       color
+            self.draw_style_color_button.clicked.connect(
+                lambda x: self.color_changed("draw_color", 0))
+            self.draw_init_flag = False
 
     def init_style(self, current_index):
         """
