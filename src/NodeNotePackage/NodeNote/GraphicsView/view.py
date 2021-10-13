@@ -1071,9 +1071,13 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.button() == QtCore.Qt.LeftButton and self.mouse_effect:
                 self.set_leftbtn_beauty(event)
             item = self.itemAt(event.pos())
-            if event.button() == QtCore.Qt.LeftButton and int(event.modifiers()) & QtCore.Qt.AltModifier and \
-                    isinstance(item, attribute.AttributeWidget):
-                self.new_sub_scene(item)
+            if event.button() == QtCore.Qt.LeftButton and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                if isinstance(item, attribute.AttributeWidget):
+                    self.new_sub_scene(item)
+                elif isinstance(item, attribute.SubConstituteWidget):
+                    self.new_sub_scene(item.parentItem())
+                elif isinstance(item, attribute.InputTextField):
+                    self.new_sub_scene(item.node)
 
             # control point
             pipe_item = self.itemAt(event.pos())
