@@ -922,7 +922,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         elif widget_type == "draw_width":
             width, ok = QtWidgets.QInputDialog.getDouble(self, "Get Double Width",
-                                                         "Width", 10.0, 0.001, 50.0, 3, QtCore.Qt.WindowFlags(), 0.2)
+                                                         "Width", 10.0, 0.1, 50.0, 2, QtCore.Qt.WindowFlags(), 0.2)
             if width and ok:
                 draw.Draw.pen_width = width
                 self.width_label_changed(self.draw_style_width_label, width)

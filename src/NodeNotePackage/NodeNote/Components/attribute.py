@@ -2164,6 +2164,7 @@ class NoneWidget(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
                                                                                "../Resources/blank.png"))))
         self.pixmap_label.setScaledContents(True)
         self.setWidget(self.pixmap_label)
+        self.setZValue(constants.Z_VAL_PORT)
 
         self.item_row = row
         self.item_column = column
@@ -2595,9 +2596,12 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         subwidget.setParentItem(None)
 
         # Added none type widget into blank and update ui
-        add_none = NoneWidget(subwidget.item_row, subwidget.item_column, self)
-        self.attribute_layout.addItem(add_none, subwidget.item_row, subwidget.item_column)
-        self.attribute_sub_widgets.append(add_none)
+        if not self.attribute_layout.itemAt(subwidget.item_row, subwidget.item_column):
+            add_none = NoneWidget(subwidget.item_row, subwidget.item_column, self)
+            self.attribute_layout.addItem(add_none, subwidget.item_row, subwidget.item_column)
+            self.attribute_sub_widgets.append(add_none)
+
+        # Update
         self.text_change_node_shape()
         self.update_pipe_position()
 
@@ -2916,10 +2920,11 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                 self.parentItem().delete_subwidget(self)
 
                 # Added none type widget into blank
-                add_none = NoneWidget(self.item_row, self.item_column, self)
-                source_parent.attribute_layout.addItem(add_none, self.item_row, self.item_column)
-                source_parent.attribute_sub_widgets.append(add_none)
-                source_parent.text_change_node_shape()
+                if not source_parent.attribute_layout.itemAt(self.item_row, self.item_column):
+                    add_none = NoneWidget(self.item_row, self.item_column, self)
+                    source_parent.attribute_layout.addItem(add_none, self.item_row, self.item_column)
+                    source_parent.attribute_sub_widgets.append(add_none)
+                    source_parent.text_change_node_shape()
 
                 # Added into target
                 target_attribute.add_exist_subwidget(self)
@@ -2929,16 +2934,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     self.scene().history.store_history("Colliding Add Subwidget")
 
             elif not self.colliding_co and self.colliding_parent and not self.colliding_inside:
-                source = self.parentItem()
 
                 self.parentItem().delete_subwidget(self)
                 self.setPos(event.scenePos())
-
-                # Added none type widget into blank
-                add_none = NoneWidget(self.item_row, self.item_column, self)
-                source.attribute_layout.addItem(add_none, self.item_row, self.item_column)
-                source.attribute_sub_widgets.append(add_none)
-                source.text_change_node_shape()
 
                 self.scene().history.store_history("Colliding Delete Subwidget")
 
