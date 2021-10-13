@@ -83,7 +83,7 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
         Returns:
 
         """
-        return pressure * self.pen_width + 1
+        return pressure * self.pen_width
 
     def update_brush(self, event: QtGui.QTabletEvent):
         """
