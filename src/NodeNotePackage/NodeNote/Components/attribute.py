@@ -923,7 +923,9 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                     image_format.setName(image_name)
                     cursor.insertImage(image_format)
                 else:
-                    break
+                    text = mime_data.text()
+                    cursor.insertText(text)
+
         elif mime_data.hasText():
             text = mime_data.text()
             cursor.insertText(text)
