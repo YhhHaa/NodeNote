@@ -3,3 +3,7 @@ Assets
 __pycache__
 /dist
 /build/
+/doc/source
+/doc/make.bat
+/doc/Makefile
+/src/NodeNotePackage.egg-info
