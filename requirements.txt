@@ -4,3 +4,5 @@ validators==0.18.2
 Pillow==8.3.2
 protobuf==3.18.1
 PyQt5==5.15.4
+google-cloud==0.34.0
+google==3.0.0
