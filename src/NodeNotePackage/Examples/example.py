@@ -7,6 +7,9 @@ Distributed under MPL-2.0 license. See LICENSE for more information
 
 import sys
 import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(__file__, "../../../../")))
+
 from src.NodeNotePackage.NodeNote.Components.window import NoteWindow
 from src.NodeNotePackage.NodeNote.GraphicsView.app import TabletApplication
 from PyQt5.QtWidgets import QSplashScreen
