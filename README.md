@@ -91,6 +91,8 @@ you can add widgets by the context menu : `Attribute Widget` and  `Logic Widget`
 - Search everywhere: `Crtl + F`
 - Change background image(svg format) and background flowing image(png format): `Resources/Background` and `Resources`
 - Save and load: `Ctrl S`(auto sava when close the application) and `Ctrl O` to load `.note` file.
+- print items in this scene to image: `Ctrl Alt p`
+- print selected items to image: `Ctrl Shift p`
 
 # 3. How to note your knowledge 
 For the four ports of the specified `attribute widget`, the left side of the two represents the input, and the two represent the output on the right.

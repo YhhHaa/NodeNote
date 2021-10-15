@@ -992,13 +992,13 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 bottom = float("-inf")
                 for item in self.current_scene.selectedItems():
                     if item.scenePos().x() <= left:
-                        left = item.scenePos().x()
+                        left = item.scenePos().x() - 20
                     if item.scenePos().x() + item.boundingRect().width() >= right:
-                        right = item.scenePos().x() + item.boundingRect().width()
+                        right = item.scenePos().x() + item.boundingRect().width() + 20
                     if item.scenePos().y() <= top:
-                        top = item.scenePos().y()
+                        top = item.scenePos().y() - 20
                     if item.scenePos().y() + item.boundingRect().height() >= bottom:
-                        bottom = item.scenePos().y() + item.boundingRect().height()
+                        bottom = item.scenePos().y() + item.boundingRect().height() + 20
 
                 pic = QtGui.QPixmap(abs(right - left), abs(bottom - top))
                 painter = QtGui.QPainter(pic)
