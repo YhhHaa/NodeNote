@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="NodeNotePackage",
-    version="2.0.9",
+    version="2.0.10",
     author="Ye Tao",
     author_email="helper033@163.com",
     description="Mind map software",

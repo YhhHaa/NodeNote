@@ -3,7 +3,7 @@ import os
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from ..Components.effect_snow import EffectSkyWidget
-from ..Components import attribute, pipe, port, draw
+from ..Components import attribute, pipe, port, draw, todo
 from ..Model import stylesheet
 from ..GraphicsView.view import View
 
@@ -380,6 +380,7 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.view_widget.last_time = self.last_time
 
         if self.view_widget.filename:
+            todo.Todo.close_flag = True
             self.view_widget.save_to_file()
 
     @staticmethod

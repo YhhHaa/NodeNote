@@ -23,6 +23,8 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     """
 
+    close_flag = False  # Used to store time when the note window was closed
+
     def __init__(self, parent=None):
         """
         Create the Todo widget
@@ -169,7 +171,12 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
         todo_serialization.todo_id = self.id
         todo_serialization.task = self.edit.text()
-        todo_serialization.time = self.total_time
+        if not self.close_flag:
+            todo_serialization.time = self.total_time
+        else:
+            self.total_time += self.use_time
+            todo_serialization.time = self.total_time
+
         todo_serialization.todo_location.append(self.item_row)
         todo_serialization.todo_location.append(self.item_column)
 
