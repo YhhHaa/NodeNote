@@ -19,7 +19,7 @@ video tutorial [video tutorial](https://www.bilibili.com/video/BV1s34y1D7gE/)
 - Resource file will be saved in `Assets` in the current directory
 
 ### 3. Mac OS
-- Run: `main`
+- Run: `NodeNote.app`
 - Resource file will be saved in `Assets` in the current directory
 
 ## 3. Custom development
