@@ -2149,7 +2149,7 @@ class AttributeFile(QtWidgets.QGraphicsWidget, serializable.Serializable):
         return True
 
 
-class NoneWidget(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
+class NoneWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def __init__(self, row=0, column=0, parent=None):
         """
         Create the blank item in attribute layout.
@@ -2161,15 +2161,23 @@ class NoneWidget(QtWidgets.QGraphicsProxyWidget, serializable.Serializable):
         """
 
         super(NoneWidget, self).__init__(parent)
-        self.pixmap_label = QtWidgets.QLabel()
-        self.pixmap_label.setPixmap(QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                                               "../Resources/blank.png"))))
-        self.pixmap_label.setScaledContents(True)
-        self.setWidget(self.pixmap_label)
+        self.parent_item = parent
+        self.pixmap = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                                 "../Resources/blank.png")))
+
         self.setZValue(constants.Z_VAL_PORT)
+        self.setFlags(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setMinimumSize(float(self.pixmap.size().width()), float(self.pixmap.size().height()))
 
         self.item_row = row
         self.item_column = column
+
+    def paint(self, painter: QtGui.QPainter, option=None, widget=None) -> None:
+        painter.drawPixmap(self.boundingRect().toRect(), self.pixmap)
+        pen = QtGui.QPen(AttributeWidget.border_color if not self.isSelected()
+                         else AttributeWidget.selected_border_color)
+        painter.setPen(pen)
+        painter.drawRoundedRect(self.boundingRect(), 5, 5)
 
     def serialize(self, nonewidget_serialization=None):
         nonewidget_serialization.none_id = self.id

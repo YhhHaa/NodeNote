@@ -3,6 +3,9 @@
 Example.py -  run the application
 Copyright 2021 ye tao
 Distributed under MPL-2.0 license. See LICENSE for more information
+
+v2.1.0:
+    - You can delete the NoneWidget.
 """
 
 import sys

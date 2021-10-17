@@ -552,7 +552,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     elif isinstance(item, draw.Draw):
                         self.current_scene.removeItem(item)
                         self.draw_widgets.remove(item)
-                    elif isinstance(item, (attribute.AttributeFile, Todo)):
+                    elif isinstance(item, (attribute.AttributeFile, Todo, attribute.NoneWidget)):
                         item.parent_item.attribute_layout.removeItem(item)
                         item.parent_item.attribute_sub_widgets.remove(item)
                         sip.delete(item)
