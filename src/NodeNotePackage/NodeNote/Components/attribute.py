@@ -1489,16 +1489,20 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.last_logic.append(widget)
 
     def remove_next_attribute(self, widget):
-        self.next_attribute.remove(widget)
+        if widget in self.next_attribute:
+            self.next_attribute.remove(widget)
 
     def remove_last_attribute(self, widget):
-        self.last_attribute.remove(widget)
+        if widget in self.last_attribute:
+            self.last_attribute.remove(widget)
 
     def remove_next_logic(self, widget):
-        self.next_logic.remove(widget)
+        if widget in self.next_logic:
+            self.next_logic.remove(widget)
 
     def remove_last_logic(self, widget):
-        self.last_logic.remove(widget)
+        if widget in self.last_logic:
+            self.last_logic.remove(widget)
 
     def start_pipe_animation(self):
         self.output_port.start_pipes_animation()
@@ -3103,16 +3107,20 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.sub_scene = scene_widget
 
     def remove_next_attribute(self, widget):
-        self.next_attribute.remove(widget)
+        if widget in self.next_attribute:
+            self.next_attribute.remove(widget)
 
     def remove_last_attribute(self, widget):
-        self.last_attribute.remove(widget)
+        if widget in self.last_attribute:
+            self.last_attribute.remove(widget)
 
     def remove_next_logic(self, widget):
-        self.next_logic.remove(widget)
+        if widget in self.next_logic:
+            self.next_logic.remove(widget)
 
     def remove_last_logic(self, widget):
-        self.last_logic.remove(widget)
+        if widget in self.last_logic:
+            self.last_logic.remove(widget)
 
     def remove_sub_scene(self):
         self.sub_scene = None
