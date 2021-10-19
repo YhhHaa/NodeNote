@@ -6,6 +6,7 @@ Distributed under MPL-2.0 license. See LICENSE for more information
 
 v2.1.0:
     - You can delete the NoneWidget.
+    - Bug fixed: delete the scene list when undo.
 """
 
 import sys

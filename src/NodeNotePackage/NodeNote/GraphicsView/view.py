@@ -527,6 +527,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                                 iterator += 1
                                 if scene_flag.data(0, QtCore.Qt.ToolTipRole) is item.sub_scene:
                                     self.delete_sub_scene(scene_flag)
+                                    break
 
                         if item.parentItem():
                             parent_item = item.parentItem()
