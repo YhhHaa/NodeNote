@@ -1,4 +1,4 @@
-video tutorial [video tutorial](https://www.bilibili.com/video/BV1s34y1D7gE/)
+![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.1example.png)
 
 # 1. How to install
 
@@ -23,7 +23,7 @@ video tutorial [video tutorial](https://www.bilibili.com/video/BV1s34y1D7gE/)
 - Resource file will be saved in `Assets` in the current directory
 
 ## 3. Custom development
-- You can install the python package: `pip install NodeNotePackage`
+- You can install the python package: `pip install NodeNotePackage or python setup.py install`
 - You can run the example in `NodeNotePackage/Examples/example.py`
 - Here is the documentation in `doc/build/html/index.html`
 
