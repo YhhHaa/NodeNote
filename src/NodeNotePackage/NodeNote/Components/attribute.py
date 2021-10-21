@@ -923,11 +923,11 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                     image_format.setName(image_name)
                     cursor.insertImage(image_format)
                 else:
-                    text = mime_data.text()
+                    text = mime_data.text().replace('\t', '    ')
                     cursor.insertText(text)
 
         elif mime_data.hasText():
-            text = mime_data.text()
+            text = mime_data.text().replace('\t', '    ')
             cursor.insertText(text)
             if constants.DEBUG_RICHTEXT:
                 print("PASTE: ", text)
