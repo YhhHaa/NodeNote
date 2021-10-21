@@ -2523,7 +2523,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             print("Add sub widget index", self.current_row, self.current_column)
 
         # Add none widget
-        for row in range(self.current_row):
+        for row in range(self.current_row + 1):
             for column in range(self.current_column + 1):
                 if not self.attribute_layout.itemAt(row, column):
                     item = NoneWidget(row, column, self)

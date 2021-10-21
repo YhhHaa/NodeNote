@@ -7,6 +7,7 @@ Distributed under MPL-2.0 license. See LICENSE for more information
 v2.1.0:
     - You can delete the NoneWidget.
     - Override the tab with 4 spaces when you paste the text from other editors.
+    - Generate NoneWidget on current row.
     - Bug fixed: delete the scene list when undo.
 """
 
