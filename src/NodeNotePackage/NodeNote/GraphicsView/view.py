@@ -500,11 +500,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             history_flag: To control whether store the serialization.
 
         """
-
         from ..Components.todo import Todo
         if event.key() == QtCore.Qt.Key_Delete:
-            for item in self.current_scene.selectedItems():
-                if item in self.current_scene.selectedItems():
+            selected_items = list(self.current_scene.selectedItems())
+            for item in selected_items:
+                if item in selected_items:
                     if isinstance(item, attribute.AttributeWidget):
                         self.delete_connections(item)
                         for next_widget in item.next_attribute:
