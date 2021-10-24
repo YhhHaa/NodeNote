@@ -590,7 +590,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         output_port.remove_pipes(item)
 
         self.current_scene.removeItem(item)
-        self.pipes.remove(item)
+        if item in self.pipes:
+            self.pipes.remove(item)
 
     def add_attribute_widget(self, event):
         """
