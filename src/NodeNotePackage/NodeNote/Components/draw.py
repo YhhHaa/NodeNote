@@ -32,7 +32,7 @@ class Canvas(QtGui.QPixmap):
 
 
 class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
-    z_value = constants.Z_VAL_PIPE
+    z_value = constants.Z_VAL_CONTAINERS
     color = QtGui.QColor(QtCore.Qt.red)
     pen_width = 10
 
@@ -98,7 +98,7 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
         # Set alpha channel
         self.color.setAlphaF(event.pressure())
         # Set color saturation
-        self.color.setHsv(hue, int(event.pressure() * 255) if int(event.pressure() * 255) > 125 else 125, value, alpha)
+        self.color.setHsv(hue, int(event.pressure() * 255) if int(event.pressure() * 255) > 150 else 150, value, alpha)
         # Set line width
         self.pen.setWidthF(self.pressure_to_width(event.pressure()))
         # Set color
@@ -168,8 +168,6 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
         """
 
         if event.deviceType() == QtGui.QTabletEvent.Stylus:
-
-            Draw.z_value = constants.Z_VAL_CONTAINERS
 
             if event.type() == QtCore.QEvent.TabletPress:
                 self.device_down = True
