@@ -42,6 +42,5 @@ class TabletApplication(QApplication):
 
                 if a0.type() == QEvent.TabletLeaveProximity:
                     self._window.view_widget.current_scene.history.store_history("Create Container")
-                    Draw.z_value = Z_VAL_PIPE
                 return True
         return super(TabletApplication, self).event(a0)
