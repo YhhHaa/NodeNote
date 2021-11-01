@@ -40,7 +40,5 @@ class TabletApplication(QApplication):
                 self._window.view_widget.tabletEvent(a0)
                 self._window.view_widget.tablet_used = a0.type() == QEvent.TabletEnterProximity
 
-                if a0.type() == QEvent.TabletLeaveProximity:
-                    self._window.view_widget.current_scene.history.store_history("Create Container")
                 return True
         return super(TabletApplication, self).event(a0)
