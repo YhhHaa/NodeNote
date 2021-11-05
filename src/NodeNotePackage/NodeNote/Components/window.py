@@ -332,52 +332,18 @@ class NoteWindow(QtWidgets.QMainWindow):
         # time clock
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.time_update)
-        self.start_time = None
-        self.last_time = 0
-        self.timer_status = False
-
-    def time_start(self):
-        """
-        Statistical use time
-
-        """
-        if self.timer_status is False:
-            self.timer.start(1000)
-            self.timer_status = True
-            self.start_time = time.time()
-            if not self.view_widget.start_time:
-                self.view_widget.start_time = self.start_time
-            self.last_time = self.view_widget.last_time
-        elif self.timer_status:
-            self.timer.stop()
-            self.timer_status = False
-            self.last_time += time.time() - self.start_time
-            self.view_widget.last_time = self.last_time
+        self.timer.start(300000)
 
     def time_update(self):
         """
-        Update the statistical use time
+        Auto save file.
 
         """
 
-        day_time = time.time() - self.start_time + self.last_time
-        day_time_hour = int(day_time // 60 // 60)
-        day_time_min = int((day_time // 60) - 60 * day_time_hour)
-        day_time_sec = int(day_time - 60 * day_time_min - 60 * 60 * day_time_hour)
         if self.view_widget.filename:
-            self.setWindowTitle(self.view_widget.filename + "-Life-" + "(Current: " +
-                                time.strftime("%Y-%m-%d_%H:%M:%S  ", time.localtime(time.time())) +
-                                "Use: " + "%s:%s:%s" % (day_time_hour, day_time_min, day_time_sec) + ")")
-        else:
-            self.setWindowTitle("-Life-" + "(Current: " +
-                                time.strftime("%Y-%m-%d_%H:%M:%S  ", time.localtime(time.time())) +
-                                "Use: " + "%s:%s:%s" % (day_time_hour, day_time_min, day_time_sec) + ")")
+            self.view_widget.save_to_file()
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        if self.timer_status:
-            self.timer_status = False
-            self.last_time += time.time() - self.start_time
-            self.view_widget.last_time = self.last_time
 
         if self.view_widget.filename:
             todo.Todo.close_flag = True

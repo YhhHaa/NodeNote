@@ -98,7 +98,7 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
         # Set alpha channel
         self.color.setAlphaF(event.pressure())
         # Set color saturation
-        self.color.setHsv(hue, int(event.pressure() * 255) if int(event.pressure() * 255) > 150 else 150, value, alpha)
+        self.color.setHsv(hue, int(event.pressure() * 255) if int(event.pressure() * 255) > 200 else 200, value, alpha)
         # Set line width
         self.pen.setWidthF(self.pressure_to_width(event.pressure()))
         # Set color
@@ -138,7 +138,7 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
         # Draw settings
         max_pen_radius = self.pressure_to_width(1.0)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        painter.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
 
         # Draw line
         painter.setPen(self.pen)
@@ -148,6 +148,9 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
                     normalized().adjusted(-max_pen_radius, -max_pen_radius, max_pen_radius, max_pen_radius))
 
     def paint(self, painter: QtGui.QPainter, option=None, widget=None) -> None:
+        # Set painter render hint.
+        painter.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
+
         # set ZValue
         self.setZValue(self.z_value)
 

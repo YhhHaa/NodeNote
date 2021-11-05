@@ -91,7 +91,10 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
         """
 
         for pipe in self.pipes:
-            pipe.update_position()
+            if pipe:
+                pipe.update_position()
+            else:
+                self.pipes.remove(pipe)
 
     def start_pipes_animation(self):
         """
@@ -226,7 +229,10 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
         # pipes
         for pipe_widget in self.pipes:
-            port_serialization.pipes_id.append(pipe_widget.id)
+            if pipe_widget:
+                port_serialization.pipes_id.append(pipe_widget.id)
+            else:
+                self.pipes.remove(pipe_widget)
 
         # ui
         port_serialization.port_width = self.width

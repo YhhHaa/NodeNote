@@ -1165,9 +1165,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_P and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
                 int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.print_item(part="Items")
-        if event.key() == QtCore.Qt.Key_I and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
-                int(event.modifiers()) & QtCore.Qt.ShiftModifier:
-            self.mainwindow.time_start()
 
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
         super(View, self).contextMenuEvent(event)
@@ -1294,12 +1291,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.root_scene.serialize(view_serialization.scene_serialization.add())
         view_serialization.current_scene_id = self.current_scene.id
 
-        # used time
-        if self.start_time:
-            view_serialization.use_time = self.start_time
-        if self.last_time:
-            view_serialization.last_time = self.last_time
-
         # ui serialization
         if self.image_path:
             view_serialization.image_path = self.image_path
@@ -1362,20 +1353,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.logic_widgets = list()
         self.pipes = list()
         self.draw_widgets = list()
-
-        # use time
-        current_day = time.strftime("%Y/%m/%d", time.localtime(time.time()))
-        last_day = time.strftime("%Y/%m/%d", time.localtime(data.use_time))
-        if current_day == last_day:
-            self.start_time = data.use_time
-            self.last_time = data.last_time
-        else:
-            self.start_time = None
-            self.last_time = 0
-        day_time = self.last_time
-        day_time_hour = int(day_time // 60 // 60)
-        day_time_min = int((day_time // 60) - 60 * day_time_hour)
-        day_time_sec = int(day_time - 60 * day_time_min - 60 * 60 * day_time_hour)
 
         # image path
         if data.image_path:
