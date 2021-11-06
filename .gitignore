@@ -7,3 +7,4 @@ __pycache__
 /doc/make.bat
 /doc/Makefile
 /src/NodeNotePackage.egg-info
+/venv
