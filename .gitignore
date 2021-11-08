@@ -8,3 +8,4 @@ __pycache__
 /doc/Makefile
 /src/NodeNotePackage.egg-info
 /venv
+exception_log.txt
