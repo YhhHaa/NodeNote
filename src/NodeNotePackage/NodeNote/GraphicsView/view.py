@@ -236,7 +236,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select svg", "", "*.svg")
         if image_name != "":
-            self.background_image.change_svg(image_name)
+            self.background_image.change_svg(os.path.relpath(os.path.abspath(image_name)))
 
     def change_flowing_image(self):
         """
@@ -247,6 +247,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select png", "", "*.png")
         if image_name != "":
+            image_name = os.path.relpath(os.path.abspath(image_name))
             self.image_path = image_name
             effect_snow.SnowWidget.image_path = image_name
 

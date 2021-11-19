@@ -15,9 +15,8 @@ import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(__file__, "../../../../")))
+sys.path.insert(0, os.path.abspath(os.path.join(__file__, "../../../")))
 
-import traceback
-from datetime import datetime
 
 from src.NodeNotePackage.NodeNote.Components.window import NoteWindow
 from src.NodeNotePackage.NodeNote.GraphicsView.app import TabletApplication
@@ -28,7 +27,7 @@ from PyQt5.QtCore import Qt, qInstallMessageHandler
 
 def message_output(msg_type, context, msg):
     with open("exception_log.txt", "a", encoding="utf-8") as log:
-        log.write(f"{msg} from {context.file}, {context.function}, {context.line}")
+        log.write(f"{msg},{msg_type} from {context.file},{context.function},{context.line}\n")
 
 
 if __name__ == '__main__':

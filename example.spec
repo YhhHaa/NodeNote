@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(['src\\NodeNotePackage\\Examples\\example.py'],
-             pathex=['C:\\Users\\shadiao\\Projects\\BaiduNetdiskWorkspace\\NodeNote'],
+             pathex=['D:\Projects\\BaiduNetdiskWorkspace\\NodeNote'],
              binaries=[],
              datas=[("src/NodeNotePackage/NodeNote/Resources", "src/NodeNotePackage/NodeNote/Resources")],
              hiddenimports=[],

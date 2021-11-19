@@ -332,7 +332,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         # time clock
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.time_update)
-        self.timer.start(300000)
+        self.timer.start(180000)
 
     def time_update(self):
         """

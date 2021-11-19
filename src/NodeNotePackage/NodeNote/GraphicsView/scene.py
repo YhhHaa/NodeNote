@@ -16,6 +16,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
     Store the scene serialization and create the basic widget.
 
     """
+
     def __init__(self, sub_scene_flag, view, attribute_widget=None, parent=None):
         """
         Create the scene which contains many widgets.
@@ -88,7 +89,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
 
         #   Background
         self.brush = QtGui.QBrush(QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                            "../Resources/scene_background.png"))))
+                                                                            "../Resources/scene_background.png"))))
         self.setBackgroundBrush(self.brush)
 
     def get_id_attribute(self, attribute_id) -> attribute.AttributeWidget:
