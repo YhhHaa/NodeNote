@@ -651,7 +651,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if not item.file_url:
             item.file_url, _ = QtWidgets.QFileDialog.getOpenFileName(self, "select files", "",
                                                                      "any file (*.*)")
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl(item.file_url))
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl().fromLocalFile(item.file_url))
         self.current_scene.history.store_history("Add File")
 
     def add_drag_pipe(self, port_widget, pipe_widget):
@@ -1141,7 +1141,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.mode = constants.MODE_NOOP
         if event.key() == QtCore.Qt.Key_0 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.view_update_pipe_animation()
-        if event.key() == QtCore.Qt.Key_6 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+        if event.key() == QtCore.Qt.Key_9 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.python_highlighter()
         if event.key() == QtCore.Qt.Key_Delete:
             self.delete_widgets(event)

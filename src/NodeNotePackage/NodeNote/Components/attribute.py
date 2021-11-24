@@ -341,8 +341,8 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         table_format = QtGui.QTextTableFormat()
 
         # set and insert
-        table_format.setCellPadding(10)
-        table_format.setCellSpacing(2)
+        table_format.setCellPadding(0)
+        table_format.setCellSpacing(1)
         table_format.setAlignment(QtCore.Qt.AlignCenter)
         table_format.setBackground(QtGui.QBrush(QtGui.QColor(229, 255, 255, 255)))
         cursor.insertTable(1, 1, table_format)
@@ -374,6 +374,14 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
 
         row = table.cellAt(cursor).row() + 1
         table.insertRows(row, 1)
+
+    @staticmethod
+    def table_merge_cells(table: QtGui.QTextTable, cursor: QtGui.QTextCursor):
+        table.mergeCells(cursor)
+
+    @staticmethod
+    def table_split_column(table: QtGui.QTextTable, cursor: QtGui.QTextCursor):
+        table.splitCell(table.cellAt(cursor).row(), table.cellAt(cursor).column(), 1, 1)
 
     @staticmethod
     def table_delete_column(table, cursor):
@@ -1021,17 +1029,21 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         current_table = current_cursor.currentTable()
         if current_key == QtCore.Qt.Key_1 and event.modifiers() & QtCore.Qt.ControlModifier:
             self.add_table(current_cursor)
-        if current_key == QtCore.Qt.Key_T and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
+        if current_key == QtCore.Qt.Key_2 and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
             self.table_insert_column(current_table, current_cursor)
-        if current_key == QtCore.Qt.Key_R and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
+        if current_key == QtCore.Qt.Key_3 and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
             self.table_insert_row(current_table, current_cursor)
-        if current_key == QtCore.Qt.Key_D and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
+        if current_key == QtCore.Qt.Key_4 and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
             self.table_delete_column(current_table, current_cursor)
-        if current_key == QtCore.Qt.Key_M and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
+        if current_key == QtCore.Qt.Key_5 and event.modifiers() & QtCore.Qt.ControlModifier and current_table:
             self.table_delete_row(current_table, current_cursor)
+        if current_key == QtCore.Qt.Key_6 and event.modifiers() & QtCore.Qt.ControlModifier:
+            self.table_merge_cells(current_table, current_cursor)
+        if current_key == QtCore.Qt.Key_7 and event.modifiers() & QtCore.Qt.ControlModifier:
+            self.table_split_column(current_table, current_cursor)
 
         # list operation
-        if current_key == QtCore.Qt.Key_2 and event.modifiers() & QtCore.Qt.ControlModifier:
+        if current_key == QtCore.Qt.Key_8 and event.modifiers() & QtCore.Qt.ControlModifier:
             self.add_list(current_cursor)
 
         # image
@@ -1213,7 +1225,7 @@ class GroupWidget(QtWidgets.QGroupBox):
         """
 
         super(GroupWidget, self).__init__(parent)
-        layout = QtWidgets.QHBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.setSpacing(4)
         self.setTitle(label)
 
@@ -1367,7 +1379,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.logic_combobox_output.addItems(("And", "Or", "Not"))
         self.logic_combobox_output.clearFocus()
 
-        self.group = GroupWidget("Logical Controller")
+        self.group = GroupWidget("Logic")
         self.group.add_node_widget(self.logic_combobox_input)
         self.group.add_node_widget(self.logic_combobox_output)
         self.proxywidget = QtWidgets.QGraphicsProxyWidget()

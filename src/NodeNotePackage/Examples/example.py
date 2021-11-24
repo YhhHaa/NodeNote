@@ -4,11 +4,10 @@ Example.py -  run the application
 Copyright 2021 ye tao
 Distributed under MPL-2.0 license. See LICENSE for more information
 
-v2.1.0:
-    - You can delete the NoneWidget.
-    - Override the tab with 4 spaces when you paste the text from other editors.
-    - Generate NoneWidget on current row.
-    - Bug fixed: delete the scene list when undo.
+v2.1.1:
+    - DEBUG:  chinese file references.
+    - Function:
+        - Support separate and merge table.
 """
 
 import sys
@@ -26,8 +25,11 @@ from PyQt5.QtCore import Qt, qInstallMessageHandler
 
 
 def message_output(msg_type, context, msg):
-    with open("exception_log.txt", "a", encoding="utf-8") as log:
-        log.write(f"{msg},{msg_type} from {context.file},{context.function},{context.line}\n")
+    try:
+        with open("exception_log.txt", "a", encoding="utf-8") as log:
+            log.write(f"{msg},{msg_type} from {context.file},{context.function},{context.line}\n")
+    except PermissionError:
+        pass
 
 
 if __name__ == '__main__':
