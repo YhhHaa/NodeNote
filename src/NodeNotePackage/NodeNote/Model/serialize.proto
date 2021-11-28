@@ -193,8 +193,8 @@ message ViewSerialization {
   int64 current_scene_id = 2;
 
   // used time serialization
-  optional float use_time = 3;
-  optional float last_time = 4;
+//  optional float use_time = 3;
+//  optional float last_time = 4;
 
   // ui serialization
   optional string image_path = 5;
@@ -218,4 +218,7 @@ message ViewSerialization {
   // draw widget ui
   float all_draw_width = 14;
   int64 all_draw_color = 15;
+
+  // text width
+  optional double text_width = 16;
 }

@@ -1,3 +1,4 @@
+import math
 import time
 import os
 
@@ -313,6 +314,25 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.draw_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.draw_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.draw_init_flag = True
+
+        # Text editor
+        #       widgets
+        self.text_editor_label = QtWidgets.QLabel("Text Editor(All scene)")
+        self.text_editor_length_label = QtWidgets.QLabel("Set Fixed Width Or Not")
+        self.text_editor_length_box = QtWidgets.QDoubleSpinBox()
+        self.text_editor_length_box.setRange(-1, math.inf)
+        self.text_editor_length_box.setSingleStep(100)
+        self.text_editor_length_box.setValue(-1)
+        #       added
+        self.style_list_layout.addWidget(self.text_editor_label, 28, 0, 1, -1)
+        self.style_list_layout.addWidget(self.text_editor_length_box, 29, 0)
+        self.style_list_layout.addWidget(self.text_editor_length_label, 29, 1)
+        #       stylesheet
+        self.text_editor_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
+        self.text_editor_length_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
+        self.text_editor_length_box.setStyleSheet(stylesheet.STYLE_QDOUBLESPINBOX)
+        #       slot
+        self.text_editor_length_box.valueChanged.connect(self.text_width_changed)
 
         #   Slots Controller
         self.style_switch_combox.currentIndexChanged.connect(self.init_style)
@@ -1368,6 +1388,10 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.draw_style_color_button.clicked.connect(
                 lambda x: self.color_changed("draw_color", 0))
             self.draw_init_flag = False
+
+    @staticmethod
+    def text_width_changed(value: float):
+        attribute.AttributeWidget.width_flag = value
 
     def init_style(self, current_index):
         """

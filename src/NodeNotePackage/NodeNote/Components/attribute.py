@@ -2208,6 +2208,8 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
     border_color = QtGui.QColor(46, 57, 66, 255)
     selected_border_color = QtGui.QColor(254, 207, 42, 255)
 
+    width_flag = -1
+
     def __init__(self):
         super(AttributeWidget, self).__init__()
         # SET BASIC FUNCTION.
@@ -2371,6 +2373,10 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         painter.setPen(pen if not self.colliding_co else
                        QtGui.QPen(QtGui.QColor(230, 0, 0, 100), 2))
         painter.drawPath(path)
+
+        # width
+        self.attribute_widget.label_item.setTextWidth(AttributeWidget.width_flag)
+        self.text_change_node_shape()
 
         painter.restore()
 

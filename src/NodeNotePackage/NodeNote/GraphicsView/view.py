@@ -1329,6 +1329,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         view_serialization.all_draw_width = draw.Draw.pen_width
         view_serialization.all_draw_color = draw.Draw.color.rgba()
 
+        # text widget ui
+        view_serialization.text_width = attribute.AttributeWidget.width_flag
+
         return view_serialization.SerializeToString()
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
@@ -1407,6 +1410,14 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         #   draw widget
         draw.Draw.pen_width = data.all_draw_width
         draw.Draw.color.setRgb(data.all_draw_color)
+
+        #   text widget
+        try:
+            if data.text_width:
+                attribute.AttributeWidget.width_flag = data.text_width
+                self.mainwindow.text_editor_length_box.setValue(data.text_width)
+        except Exception:
+            pass
 
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
         self.mainwindow.style_switch_combox.setCurrentIndex(0)

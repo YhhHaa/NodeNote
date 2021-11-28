@@ -4,10 +4,11 @@ Example.py -  run the application
 Copyright 2021 ye tao
 Distributed under MPL-2.0 license. See LICENSE for more information
 
-v2.1.1:
+v2.2.1:
     - DEBUG:  chinese file references.
     - Function:
         - Support separate and merge table.
+        - Specify the length of text editor.
 """
 
 import sys

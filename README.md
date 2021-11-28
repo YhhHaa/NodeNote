@@ -51,16 +51,17 @@ you can add widgets by the context menu : `Attribute Widget` and  `Logic Widget`
 
     ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.13.png)
 
-|Python highlighter : `Ctrl+6`| Clear alignment: `Ctrl+P` | Bold: `Ctrl+W` |
+|Python highlighter : `Ctrl+9`| Clear alignment: `Ctrl+P` | Bold: `Ctrl+W` |
 | ---- |---- | ---- |
 | Align left : `Ctrl+[`  |Align right : `Ctrl+]`   | Align center : `Ctrl+ \ ` |
 |  Italic : `Ctrl+Q` | Underline : `Ctrl+R`  | Strikethrough: `Ctrl+/` |
 | Increase the font: `Ctrl+G` | Decrease the font: `Ctrl+H` | Change the font color: `Ctrl+N` |
 | Hyper link: `Ctrl+M` | mathematical formula ($LaTeX$): `Ctrl+I` | Clear format: `Ctrl + L`|
 | Undo: `Crtl+Z` | Redo: `Ctrl+Y` | Table: `Ctrl+1` |
-| Add a row in a table: `Ctrl+T` | Add a column in a table : `Ctrl+R` | Delete a row in a table : `Ctrl+D` |
-| Delete a column in a table : `Ctrl+M` | Add a list : `Ctrl+2` |  Resize the image : `Ctrl+U` |
-| Enter the sub scene : `Alt+left_mouse_press` | | |
+| Add a row in a table: `Ctrl+3` | Add a column in a table : `Ctrl+2` | Delete a row in a table : `Ctrl+5` |
+| Delete a column in a table : `Ctrl+4` | Merge Table: `Ctrl+6` | Spilt Table: `Ctrl+7` |
+|Add a list : `Ctrl+8` |  Resize the image : `Ctrl+U` | Enter the sub scene : `Alt+left_mouse_press` |
+| indent: `Tab` or `Ctrl+Tab`| 
 
 > `Logic Widget`:
 - Input and output: two ports.

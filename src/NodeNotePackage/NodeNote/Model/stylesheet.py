@@ -91,12 +91,23 @@ QListView::item:selected {
 }
 '''
 
+STYLE_QDOUBLESPINBOX = '''
+QDoubleSpinBox {
+    color: black;
+    selection-background-color: black;
+    border: 2px solid blue;
+    border-radius: 5px;
+    padding-left: 2px;
+    padding-top: 2px;
+}
+'''
+
 STYLE_QCHECKBOX = '''
 QCheckBox {
-    color: rgba(255, 255, 255, 255);
+    color: rgba(0, 0, 0, 255);
     background-color: transparent;
-    font-size: 8px;
-    spacing: 0px 0px;
+    font-size: 12px;
+    spacing: 5px 5px;
     padding-top: 8px;
     padding-bottom: 0px;
     height: 8px;
