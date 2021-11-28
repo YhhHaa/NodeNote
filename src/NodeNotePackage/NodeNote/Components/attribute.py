@@ -3729,6 +3729,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             if self.mouse_flag:
                 self.attribute_widget.label_item.setTextWidth(data.mouse_text_width)
                 self.text_change_node_shape()
+                self.resize(0, 0)
 
             # sub scene
             if data.sub_scene_serialization:
