@@ -96,6 +96,9 @@ message ViewSerialization {
       // flag
       repeated bool attr_flag = 22;
 
+      optional bool mouse_flag = 23;
+      optional double mouse_text_width = 24;
+
     }
     repeated AttrSerialization attr_serialization = 2;
 

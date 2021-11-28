@@ -2325,6 +2325,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         # context
         self.context_flag = False
 
+        # text
+        self.mouse_flag = False
+
     def paint(self, painter, option, widget=None) -> None:
         painter.save()
 
@@ -2375,8 +2378,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         painter.drawPath(path)
 
         # width
-        self.attribute_widget.label_item.setTextWidth(AttributeWidget.width_flag)
-        self.text_change_node_shape()
+        if not self.mouse_flag:
+            self.attribute_widget.label_item.setTextWidth(AttributeWidget.width_flag)
+            self.text_change_node_shape()
 
         painter.restore()
 
@@ -2431,6 +2435,9 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             current_pos = self.mapToScene(event.pos())
             current_width = current_pos.x() - past_pos.x() if current_pos.x() >= past_pos.x() else past_width
             current_height = current_pos.y() - past_pos.y() if current_pos.y() >= past_pos.y() else past_height
+            self.mouse_flag = True
+            self.attribute_widget.label_item.setTextWidth(current_width - 4)
+            self.text_change_node_shape()
             self.resize(current_width, current_height)
             self.update_pipe_position()
 
@@ -3657,6 +3664,10 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         attr_serialization.attr_flag.append(self.border_flag)
         attr_serialization.attr_flag.append(self.selected_border_flag)
 
+        # text
+        attr_serialization.mouse_flag = self.mouse_flag
+        attr_serialization.mouse_text_width = self.attribute_widget.label_item.textWidth()
+
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         if flag:
             # added into current scene and view
@@ -3712,6 +3723,12 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.selected_color_flag = data.attr_flag[3]
             self.border_flag = data.attr_flag[4]
             self.selected_border_flag = data.attr_flag[5]
+
+            # text width
+            self.mouse_flag = data.mouse_flag
+            if self.mouse_flag:
+                self.attribute_widget.label_item.setTextWidth(data.mouse_text_width)
+                self.text_change_node_shape()
 
             # sub scene
             if data.sub_scene_serialization:
