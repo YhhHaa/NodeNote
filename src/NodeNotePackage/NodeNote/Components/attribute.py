@@ -2396,7 +2396,7 @@ class AttributeWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         painter.drawPath(path)
 
         # width
-        if not self.mouse_flag:
+        if not self.mouse_flag and not self.moving:
             self.attribute_widget.label_item.setTextWidth(AttributeWidget.width_flag)
             self.text_change_node_shape()
 
