@@ -190,6 +190,11 @@ message ViewSerialization {
     optional int64 scene_port_style_activated_color = 26;
     optional int64 scene_port_style_activated_border_color = 27;
 
+    // scene rect
+    optional float x = 28;
+    optional float y = 29;
+    optional float width = 30;
+    optional float height = 31;
   }
 
   repeated SceneSerialization scene_serialization = 1;

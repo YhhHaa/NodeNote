@@ -241,6 +241,12 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         if self.port_style_activated_border_color:
             scene_serialization.scene_port_style_activated_border_color = self.port_style_activated_border_color.rgba()
 
+        # rect
+        scene_serialization.x = self.sceneRect().x()
+        scene_serialization.y = self.sceneRect().y()
+        scene_serialization.width = self.sceneRect().width()
+        scene_serialization.height = self.sceneRect().height()
+
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         """
         Deserialization.
@@ -257,6 +263,11 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
             # deserialize id
             self.id = data.scene_id
             hashmap[data.scene_id] = self
+
+            # size
+            self.scene_rect = QtCore.QRectF(data.x, data.y, data.width, data.height)
+            self.setSceneRect(self.scene_rect)
+
             # deserialize attribute widgets with (id, geometry)
             for attribute_data in data.attr_serialization:
                 attribute.AttributeWidget().deserialize(attribute_data, hashmap, view, flag=True)
