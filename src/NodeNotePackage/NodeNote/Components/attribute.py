@@ -2573,8 +2573,9 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         self.attribute_widget.update()
         #  layout
         self.prepareGeometryChange()
-        self.layout.invalidate()
         self.layout.activate()
+        self.updateGeometry()
+        self.update()
         # pipe position
         self.update_pipe_position()
         self.update_pipe_parent_position()
@@ -3003,7 +3004,10 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
                     source_parent.text_change_node_shape()
 
                 # Added into target
-                target_attribute.add_exist_subwidget(self)
+                if int(event.modifiers()) & QtCore.Qt.ControlModifier:
+                    target_attribute.add_exist_subwidget(self, False)
+                else:
+                    target_attribute.add_exist_subwidget(self, True)
                 target_attribute.text_change_node_shape()
 
                 if self.scene().view.mode == constants.MODE_NOOP and self.scene().view.undo_flag:
@@ -3020,7 +3024,11 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
                 self.parentItem().text_change_node_shape()
 
             elif self.colliding_co and not self.colliding_parent:
-                self.colliding_detection().add_exist_subwidget(self)
+                if int(event.modifiers()) & QtCore.Qt.ControlModifier:
+                    self.colliding_detection().add_exist_subwidget(self, False)
+                else:
+                    self.colliding_detection().add_exist_subwidget(self, True)
+
                 if self.scene().view.mode == constants.MODE_NOOP and self.scene().view.undo_flag:
                     self.scene().history.store_history("Colliding Add Subwidget")
 

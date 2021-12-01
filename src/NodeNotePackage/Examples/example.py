@@ -5,6 +5,8 @@ Copyright 2021 ye tao
 Distributed under MPL-2.0 license. See LICENSE for more information
 
 # v2.7.2:
+## Function:
+- Press Control and left mouse button to drag `attribute widget` into next line of others.(Control must be pressed after left mouse button!!)
 ## Debug:
 - Fixed the wrong position of input text field widget in subview.
 ## Changed:

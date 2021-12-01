@@ -116,3 +116,13 @@ Also, We can use tablet to help us note sth that text/logic can not express.
 # 4. Finally
 If you meet any problems or want to give a valuable suggestion, please email to `helper033@163.com` or create an issue.
 
+
+# v2.7.2:
+## Debug:
+- Fixed the wrong position of input text field widget in subview.
+## Changed:
+- Set cache mode to DeviceCoordinateCache->(logic widget, file widget, flower widget)
+- Press `F1` to turn on/off the line.
+- Press `F2` to turn of/off the undo&&redo
+- Press `F3/4/5/6` to expand left/right/top/bottom position of scene
+- Press `f7/8/9/10` to narrow left/right/top/bottom position of scene
