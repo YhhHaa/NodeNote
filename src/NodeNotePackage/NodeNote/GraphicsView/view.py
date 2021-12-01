@@ -91,16 +91,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.mainwindow = mainwindow
         self.proxy_widget = proxy_widget
         super(View, self).__init__(parent)
+        self.setCacheMode(QtWidgets.QGraphicsView.CacheBackground)
         if self.root_flag:
-            self.gpu_format = QtGui.QSurfaceFormat()
-            self.gpu_format.setSamples(4)
-            self.gpu_format.setSwapInterval(0)
-            self.gpu_format.setRenderableType(QtGui.QSurfaceFormat.OpenGL)
-            self.gpu_format.setSwapBehavior(QtGui.QSurfaceFormat.DefaultSwapBehavior)
-            self.gpu = QtWidgets.QOpenGLWidget()
-            self.gpu.setFormat(self.gpu_format)
-            self.setViewport(self.gpu)
+            self.line_flag = False
+        self.undo_flag = False
         # BASIC SETTINGS
+        self.setViewportUpdateMode(QtWidgets.QGraphicsView.MinimalViewportUpdate)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.HighQualityAntialiasing |
@@ -210,6 +206,34 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.mouse_effect = True
         self.setAttribute(QtCore.Qt.WA_TabletTracking)
 
+    def expand(self, expand_flag: str):
+        if expand_flag == "left":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(-200, 0, 0, 0)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+        elif expand_flag == "right":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(0, 0, 200, 0)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+        elif expand_flag == "top":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(0, -200, 0, 0)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+        elif expand_flag == "bottom":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(0, 0, 0, 200)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+
+    def narrow(self, narrow_flag: str):
+        if narrow_flag == "left":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(200, 0, 0, 0)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+        elif narrow_flag == "right":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(0, 0, -200, 0)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+        elif narrow_flag == "top":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(0, 200, 0, 0)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+        elif narrow_flag == "bottom":
+            self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(0, 0, 0, -200)
+            self.current_scene.setSceneRect(self.current_scene.scene_rect)
+
     def set_leftbtn_beauty(self, event):
         """
         Set the left mouse button effect.
@@ -295,8 +319,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         item.perform_evaluation_feedback()
                     elif item.timeline.state() == QtCore.QTimeLine.Running:
                         item.end_evaluation_feedback()
-
-        self.current_scene.history.store_history("update pipe animation")
+        if self.undo_flag:
+            self.current_scene.history.store_history("update pipe animation")
 
     def python_highlighter(self):
         """
@@ -562,7 +586,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         item.parent_item.text_change_node_shape()
                         item.parent_item.update_pipe_position()
 
-            if not history_flag:
+            if not history_flag and self.undo_flag:
                 self.current_scene.history.store_history("Delete Widgets")
 
     def delete_pipe(self, item):
@@ -607,7 +631,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene.addItem(basic_widget)
         basic_widget.setPos(self.mapToScene(event.pos()))
         self.attribute_widgets.append(basic_widget)
-        self.current_scene.history.store_history("Add Attribute Widget")
+        if self.undo_flag:
+            self.current_scene.history.store_history("Add Attribute Widget")
 
     def add_truth_widget(self, event):
         """
@@ -622,7 +647,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene.addItem(basic_widget)
         basic_widget.setPos(self.mapToScene(event.pos()))
         self.logic_widgets.append(basic_widget)
-        self.current_scene.history.store_history("Add Truth Widget")
+        if self.undo_flag:
+            self.current_scene.history.store_history("Add Truth Widget")
 
     def add_draw_widget(self, event):
         """
@@ -637,7 +663,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene.addItem(canvas)
         canvas.setPos(self.mapToScene(event.pos()))
         self.draw_widgets.append(canvas)
-        self.current_scene.history.store_history("Add Canvas Widget")
+        if self.undo_flag:
+            self.current_scene.history.store_history("Add Canvas Widget")
 
     def open_file(self, item):
         """
@@ -652,7 +679,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             item.file_url, _ = QtWidgets.QFileDialog.getOpenFileName(self, "select files", "",
                                                                      "any file (*.*)")
         QtGui.QDesktopServices.openUrl(QtCore.QUrl().fromLocalFile(item.file_url))
-        self.current_scene.history.store_history("Add File")
+        if self.undo_flag:
+            self.current_scene.history.store_history("Add File")
 
     def add_drag_pipe(self, port_widget, pipe_widget):
         """
@@ -793,8 +821,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 if input_node.attribute_animation or output_node.attribute_animation:
                     input_node.start_pipe_animation()
                     output_node.start_pipe_animation()
-
-                self.current_scene.history.store_history("Create Pipe")
+                if self.undo_flag:
+                    self.current_scene.history.store_history("Create Pipe")
             else:
                 if constants.DEBUG_DRAW_PIPE:
                     print("delete drag pipe case 1")
@@ -919,7 +947,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.mainwindow.style_switch_combox.setCurrentIndex(0)
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
 
-        self.current_scene.history.store_history("Create Sub Scene")
+        if self.undo_flag:
+            self.current_scene.history.store_history("Create Sub Scene")
 
     def change_current_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem):
         """
@@ -1139,33 +1168,75 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if self.mode == constants.MODE_PIPE_DRAG and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.drag_pipe_release(None)
             self.mode = constants.MODE_NOOP
+            return
         if event.key() == QtCore.Qt.Key_0 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.view_update_pipe_animation()
+            return
         if event.key() == QtCore.Qt.Key_9 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.python_highlighter()
+            return
         if event.key() == QtCore.Qt.Key_Delete:
             self.delete_widgets(event)
+            return
         if (event.key() == QtCore.Qt.Key_Equal and event.modifiers() & QtCore.Qt.ControlModifier) or \
                 (event.key() == QtCore.Qt.Key_Minus and event.modifiers() & QtCore.Qt.ControlModifier):
             self.change_scale(event)
+            return
         if event.key() == QtCore.Qt.Key_F and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.search_text()
+            return
         if event.key() == QtCore.Qt.Key_Z and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             if not event.isAccepted():
                 self.current_scene.history.undo()
+            return
         if event.key() == QtCore.Qt.Key_Y and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             if not event.isAccepted():
                 self.current_scene.history.redo()
+            return
         if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.save_to_file()
+            return
         if event.key() == QtCore.Qt.Key_O and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.load_from_file()
+            return
         if event.key() == QtCore.Qt.Key_P and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
                 int(event.modifiers()) & QtCore.Qt.AltModifier:
             self.print_item(part="Scene")
+            return
         if event.key() == QtCore.Qt.Key_P and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
                 int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.print_item(part="Items")
+            return
+        if event.key() == QtCore.Qt.Key_F1 and self.root_flag:
+            self.line_flag = not self.line_flag
+            return
+        if event.key() == QtCore.Qt.Key_F2 and self.root_flag:
+            self.undo_flag = not self.undo_flag
+            return
+        if event.key() == QtCore.Qt.Key_F3 and self.root_flag:
+            self.expand("left")
+            return
+        if event.key() == QtCore.Qt.Key_F4 and self.root_flag:
+            self.expand("right")
+            return
+        if event.key() == QtCore.Qt.Key_F5 and self.root_flag:
+            self.expand("top")
+            return
+        if event.key() == QtCore.Qt.Key_F6 and self.root_flag:
+            self.expand("bottom")
+            return
+        if event.key() == QtCore.Qt.Key_F7 and self.root_flag:
+            self.narrow("left")
+            return
+        if event.key() == QtCore.Qt.Key_F8 and self.root_flag:
+            self.narrow("right")
+            return
+        if event.key() == QtCore.Qt.Key_F9 and self.root_flag:
+            self.narrow("top")
+            return
+        if event.key() == QtCore.Qt.Key_F10 and self.root_flag:
+            self.narrow("bottom")
+            return
 
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
         super(View, self).contextMenuEvent(event)
@@ -1173,6 +1244,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                                                 QtCore.Qt.LeftButton, QtCore.Qt.NoButton, event.modifiers())
         self.mouseDoubleClickEvent(leftbtn_press_event)
         from ..Components.sub_view import ProxyView
+        from ..Components.todo import Todo
         current_item = self.itemAt(event.pos())
         if isinstance(current_item, effect_background.EffectBackground):
             context_menu = QtWidgets.QMenu(self)
@@ -1206,20 +1278,20 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.change_svg_image()
             elif action == change_snow_image:
                 self.change_flowing_image()
-        elif isinstance(current_item, ProxyView):
-            return
-        elif isinstance(current_item, attribute.AttributeWidget):
-            if self.root_flag:
-                current_item.context_flag = True
-                current_item.contextMenuEvent(event)
+        elif isinstance(current_item, (attribute.AttributeWidget, attribute.AttributeFile, Todo)):
+            # if self.root_flag:
+            current_item.context_flag = True
+            current_item.contextMenuEvent(event)
         elif isinstance(current_item, attribute.InputTextField):
             if self.root_flag:
                 current_item.node.context_flag = True
                 current_item.node.contextMenuEvent(event)
-        elif isinstance(current_item, attribute.SubConstituteWidget):
+        elif isinstance(current_item, (attribute.SubConstituteWidget, attribute.SimpleTextField)):
             if self.root_flag:
                 current_item.parentItem().context_flag = True
                 current_item.parentItem().contextMenuEvent(event)
+        elif isinstance(current_item, ProxyView):
+            return
 
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
         super(View, self).drawBackground(painter, rect)
@@ -1332,6 +1404,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         # text widget ui
         view_serialization.text_width = attribute.AttributeWidget.width_flag
 
+        # flag
+        if self.root_flag:
+            view_serialization.line_flag = self.line_flag
+        view_serialization.undo_flag = self.undo_flag
+
         return view_serialization.SerializeToString()
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
@@ -1418,6 +1495,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.mainwindow.text_editor_length_box.setValue(data.text_width)
         except Exception:
             pass
+
+        # flag
+        if self.root_flag and data.line_flag:
+            self.line_flag = data.line_flag
+        if data.undo_flag:
+            self.undo_flag = data.undo_flag
 
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
         self.mainwindow.style_switch_combox.setCurrentIndex(0)

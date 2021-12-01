@@ -7,14 +7,14 @@ import os
 import time
 
 from PyQt5 import QtWidgets, QtCore, QtGui
-from ..Components.attribute import AttributeWidget
+from ..Components.attribute import AttributeWidget, BaseWidget
 from ..Model import serializable, constants, stylesheet
 
 
 __all__ = ['Todo']
 
 
-class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
+class Todo(BaseWidget, serializable.Serializable):
     """
     Todo widget with:
         - Plan text input.
@@ -33,8 +33,8 @@ class Todo(QtWidgets.QGraphicsWidget, serializable.Serializable):
             parent: Parent item.
         """
 
-        super(Todo, self).__init__(parent)
-
+        super(BaseWidget, self).__init__(parent)
+        self.context_flag = False
         self.parent_item = parent
 
         # common setting

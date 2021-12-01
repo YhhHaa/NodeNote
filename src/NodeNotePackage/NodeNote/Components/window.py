@@ -1389,9 +1389,13 @@ class NoteWindow(QtWidgets.QMainWindow):
                 lambda x: self.color_changed("draw_color", 0))
             self.draw_init_flag = False
 
-    @staticmethod
-    def text_width_changed(value: float):
+    def text_width_changed(self, value: float):
         attribute.AttributeWidget.width_flag = value
+        for attribute_item in self.view_widget.attribute_widgets:
+            attribute_item.attribute_widget.label_item.setTextWidth(attribute.AttributeWidget.width_flag)
+            attribute_item.resize(0, 0)
+            if not attribute_item.parentItem():
+                attribute_item.text_change_node_shape()
 
     def init_style(self, current_index):
         """

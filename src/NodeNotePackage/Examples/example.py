@@ -4,11 +4,15 @@ Example.py -  run the application
 Copyright 2021 ye tao
 Distributed under MPL-2.0 license. See LICENSE for more information
 
-v2.2.1:
-    - DEBUG:  chinese file references.
-    - Function:
-        - Support separate and merge table.
-        - Specify the length of text editor.
+# v2.7.2:
+## Debug:
+- Fixed the wrong position of input text field widget in subview.
+## Changed:
+- Set cache mode to DeviceCoordinateCache->(logic widget, file widget, flower widget)
+- Press F1 to turn on/off the line.
+- Press F2 to turn of/off the undo&&redo
+- Press F3456 to expand left/right/top/bottom position of scene
+- Press f78910 to narrow left/right/top/bottom position of scene
 """
 
 import sys

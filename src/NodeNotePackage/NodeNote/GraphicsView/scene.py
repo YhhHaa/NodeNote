@@ -31,7 +31,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         super(Scene, self).__init__(parent)
         self.view = view
         self.attribute_widget = attribute_widget
-        self.setSceneRect(QtCore.QRectF())
+        self.scene_rect = QtCore.QRectF(-1000, -1000, 2000, 2000)
+        self.setSceneRect(self.scene_rect)
         self.sub_scene_flag = sub_scene_flag
 
         # History
@@ -271,7 +272,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 end_port = self.get_id_port(pipe_data.pipe_port_id[1])
                 pipe.Pipe(start_port, end_port, None).deserialize(pipe_data, hashmap, view, flag=True)
                 start_port.update_pipes_position()
-                end_port.update_pipes_position()
+                if end_port:
+                    end_port.update_pipes_position()
             # deserialize container widgets with all
             for draw_data in data.draw_serialization:
                 draw.Draw().deserialize(draw_data, hashmap, view, flag)

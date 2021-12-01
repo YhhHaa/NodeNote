@@ -224,4 +224,8 @@ message ViewSerialization {
 
   // text width
   optional double text_width = 16;
+
+  // flag
+  optional bool line_flag = 17;
+  optional bool undo_flag = 18;
 }
