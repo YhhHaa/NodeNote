@@ -1538,7 +1538,6 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.input_port = port.Port(constants.INPUT_NODE_TYPE, True, self)
         self.output_port = port.Port(constants.OUTPUT_NODE_TYPE, True, self)
         self.setZValue(constants.Z_VAL_NODE)
-        self.setCacheMode(constants.ITEM_CACHE_MODE)
         self.logic_combobox_input = ComboBox()
         self.logic_combobox_output = ComboBox()
         self.logic_combobox_input.setStyleSheet(stylesheet.STYLE_QCOMBOBOX)

@@ -294,7 +294,6 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         """
 
-        painter.save()
         # Width and color init
         if self.scene():
             if self.scene().pipe_style_width and not self.width_flag:
@@ -396,8 +395,6 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             self.setZValue(constants.Z_VAL_PIPE_DONE)
         else:
             self.setZValue(constants.Z_VAL_PIPE)
-
-        painter.restore()
 
     def serialize(self, pipe_serialization=None):
         """

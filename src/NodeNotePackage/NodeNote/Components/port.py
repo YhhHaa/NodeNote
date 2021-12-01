@@ -35,7 +35,6 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.setAcceptHoverEvents(True)
         self.setFlags(self.ItemSendsScenePositionChanges | self.ItemIsSelectable)
         self.setZValue(constants.Z_VAL_PORT)
-        self.setCacheMode(constants.ITEM_CACHE_MODE)
 
         # STORE PIPES
         self.pipes = list()
