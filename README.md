@@ -1,5 +1,7 @@
 ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.1example.png)
 
+#  [Video](https://youtu.be/pZGTFw3TL4U)
+
 # 1. How to install
 
 ## 1. Run through python script
