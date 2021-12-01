@@ -96,7 +96,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.line_flag = False
         self.undo_flag = False
         # BASIC SETTINGS
-        self.setViewportUpdateMode(QtWidgets.QGraphicsView.MinimalViewportUpdate)
+        self.setViewportUpdateMode(QtWidgets.QGraphicsView.SmartViewportUpdate)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.HighQualityAntialiasing |
