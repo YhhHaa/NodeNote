@@ -118,11 +118,13 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 
 
 # v2.7.2:
+## Function:
+- Press Control and left mouse button to drag `attribute widget` into next line of others.(Control must be pressed after left mouse button!!)
 ## Debug:
 - Fixed the wrong position of input text field widget in subview.
 ## Changed:
 - Set cache mode to DeviceCoordinateCache->(logic widget, file widget, flower widget)
-- Press `F1` to turn on/off the line.
-- Press `F2` to turn of/off the undo&&redo
-- Press `F3/4/5/6` to expand left/right/top/bottom position of scene
-- Press `f7/8/9/10` to narrow left/right/top/bottom position of scene
+- Press F1 to turn on/off the line.
+- Press F2 to turn of/off the undo&&redo
+- Press F3456 to expand left/right/top/bottom position of scene
+- Press f78910 to narrow left/right/top/bottom position of scene
