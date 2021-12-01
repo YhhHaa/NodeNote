@@ -2575,6 +2575,8 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         self.prepareGeometryChange()
         self.layout.activate()
         self.updateGeometry()
+        self.attribute_layout.updateGeometry()
+        self.attribute_layout.activate()
         self.update()
         # pipe position
         self.update_pipe_position()
