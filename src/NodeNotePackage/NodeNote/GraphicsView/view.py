@@ -91,7 +91,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.mainwindow = mainwindow
         self.proxy_widget = proxy_widget
         super(View, self).__init__(parent)
-        self.setCacheMode(QtWidgets.QGraphicsView.CacheBackground)
         if self.root_flag:
             self.line_flag = False
         self.undo_flag = False
@@ -488,33 +487,76 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 output_port = pipe_widget.get_output_type_port()
                 output_port.remove_pipes(pipe_widget)
                 self.current_scene.removeItem(pipe_widget)
-                self.pipes.remove(pipe_widget)
+                if pipe_widget in self.pipes:
+                    self.pipes.remove(pipe_widget)
             for pipe_widget in item.true_output_port.pipes:
                 input_port = pipe_widget.get_input_type_port()
                 input_port.remove_pipes(pipe_widget)
                 self.current_scene.removeItem(pipe_widget)
-                self.pipes.remove(pipe_widget)
+                if pipe_widget in self.pipes:
+                    self.pipes.remove(pipe_widget)
             for pipe_widget in item.false_input_port.pipes:
                 output_port = pipe_widget.get_output_type_port()
                 output_port.remove_pipes(pipe_widget)
                 self.current_scene.removeItem(pipe_widget)
-                self.pipes.remove(pipe_widget)
+                if pipe_widget in self.pipes:
+                    self.pipes.remove(pipe_widget)
             for pipe_widget in item.false_output_port.pipes:
                 input_port = pipe_widget.get_input_type_port()
                 input_port.remove_pipes(pipe_widget)
                 self.current_scene.removeItem(pipe_widget)
-                self.pipes.remove(pipe_widget)
+                if pipe_widget in self.pipes:
+                    self.pipes.remove(pipe_widget)
         elif isinstance(item, attribute.LogicWidget):
             for pipe_widget in item.input_port.pipes:
                 output_port = pipe_widget.get_output_type_port()
                 output_port.remove_pipes(pipe_widget)
                 self.current_scene.removeItem(pipe_widget)
-                self.pipes.remove(pipe_widget)
+                if pipe_widget in self.pipes:
+                    self.pipes.remove(pipe_widget)
             for pipe_widget in item.output_port.pipes:
                 input_port = pipe_widget.get_input_type_port()
                 input_port.remove_pipes(pipe_widget)
                 self.current_scene.removeItem(pipe_widget)
-                self.pipes.remove(pipe_widget)
+                if pipe_widget in self.pipes:
+                    self.pipes.remove(pipe_widget)
+
+    def delete_attr_widget(self, item: attribute.AttributeWidget):
+        for sub_attr_widget in item.attribute_sub_widgets:
+            if isinstance(sub_attr_widget, attribute.AttributeWidget):
+                self.delete_attr_widget(sub_attr_widget)
+
+        self.delete_connections(item)
+
+        for next_widget in item.next_attribute:
+            next_widget.remove_last_attribute(item)
+        for next_widget in item.next_logic:
+            next_widget.remove_last_attribute(item)
+        for last_widget in item.last_attribute:
+            if constants.DEBUG_DESERIALIZE:
+                print("last widget: ", last_widget,
+                        "next attribute widgets: ", last_widget.next_attribute,
+                        "remove widget: ", item)
+            last_widget.remove_next_attribute(item)
+        for last_widget in item.last_logic:
+            last_widget.remove_next_attribute(item)
+
+        if item.sub_scene:
+            iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
+            while iterator.value():
+                scene_flag = iterator.value()
+                iterator += 1
+                if scene_flag.data(0, QtCore.Qt.ToolTipRole) is item.sub_scene:
+                    self.delete_sub_scene(scene_flag)
+                    break
+
+        if item.parentItem():
+            parent_item = item.parentItem()
+            parent_item.delete_subwidget(item)
+            self.remove_attribute_widget(item)
+
+        else:
+            self.remove_attribute_widget(item)
 
     def delete_widgets(self, event, history_flag=False):
         """
@@ -529,62 +571,33 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_Delete:
             selected_items = list(self.current_scene.selectedItems())
             for item in selected_items:
-                if item in selected_items:
-                    if isinstance(item, attribute.AttributeWidget):
-                        self.delete_connections(item)
-                        for next_widget in item.next_attribute:
-                            next_widget.remove_last_attribute(item)
-                        for next_widget in item.next_logic:
-                            next_widget.remove_last_attribute(item)
-                        for last_widget in item.last_attribute:
-                            if constants.DEBUG_DESERIALIZE:
-                                print("last widget: ", last_widget,
-                                      "next attribute widgets: ", last_widget.next_attribute,
-                                      "remove widget: ", item)
-                            last_widget.remove_next_attribute(item)
-                        for last_widget in item.last_logic:
-                            last_widget.remove_next_attribute(item)
+                if isinstance(item, attribute.AttributeWidget):
+                    self.delete_attr_widget(item)
 
-                        if item.sub_scene:
-                            iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
-                            while iterator.value():
-                                scene_flag = iterator.value()
-                                iterator += 1
-                                if scene_flag.data(0, QtCore.Qt.ToolTipRole) is item.sub_scene:
-                                    self.delete_sub_scene(scene_flag)
-                                    break
-
-                        if item.parentItem():
-                            parent_item = item.parentItem()
-                            parent_item.delete_subwidget(item)
-                            self.remove_attribute_widget(item)
-
-                        else:
-                            self.remove_attribute_widget(item)
-
-                    elif isinstance(item, attribute.LogicWidget):
-                        self.delete_connections(item)
-                        for next_widget in item.next_attribute:
-                            next_widget.remove_last_logic(item)
-                        for next_widget in item.next_logic:
-                            next_widget.remove_last_logic(item)
-                        for last_widget in item.last_attribute:
-                            last_widget.remove_next_logic(item)
-                        for last_widget in item.last_logic:
-                            last_widget.remove_next_logic(item)
-                        self.remove_logic_widget(item)
-                    elif isinstance(item, pipe.Pipe):
+                elif isinstance(item, attribute.LogicWidget):
+                    self.delete_connections(item)
+                    for next_widget in item.next_attribute:
+                        next_widget.remove_last_logic(item)
+                    for next_widget in item.next_logic:
+                        next_widget.remove_last_logic(item)
+                    for last_widget in item.last_attribute:
+                        last_widget.remove_next_logic(item)
+                    for last_widget in item.last_logic:
+                        last_widget.remove_next_logic(item)
+                    self.remove_logic_widget(item)
+                elif isinstance(item, pipe.Pipe):
+                    if item in self.current_scene.items():
                         self.delete_pipe(item)
-                    elif isinstance(item, draw.Draw):
-                        self.current_scene.removeItem(item)
-                        self.draw_widgets.remove(item)
-                    elif isinstance(item, (attribute.AttributeFile, Todo, attribute.NoneWidget)):
-                        item.parent_item.attribute_layout.removeItem(item)
-                        item.parent_item.attribute_sub_widgets.remove(item)
-                        sip.delete(item)
+                elif isinstance(item, draw.Draw):
+                    self.current_scene.removeItem(item)
+                    self.draw_widgets.remove(item)
+                elif isinstance(item, (attribute.AttributeFile, Todo, attribute.NoneWidget)):
+                    item.parent_item.attribute_layout.removeItem(item)
+                    item.parent_item.attribute_sub_widgets.remove(item)
+                    sip.delete(item)
 
-                        item.parent_item.text_change_node_shape()
-                        item.parent_item.update_pipe_position()
+                    item.parent_item.text_change_node_shape()
+                    item.parent_item.update_pipe_position()
 
             if not history_flag and self.undo_flag:
                 self.current_scene.history.store_history("Delete Widgets")
@@ -706,7 +719,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         """
 
         self.current_scene.removeItem(widget)
-        self.attribute_widgets.remove(widget)
+        if widget in self.attribute_widgets:
+            self.attribute_widgets.remove(widget)
 
     def remove_logic_widget(self, widget):
         """

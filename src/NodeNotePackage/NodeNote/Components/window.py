@@ -379,19 +379,19 @@ class NoteWindow(QtWidgets.QMainWindow):
             color: QColor.
 
         """
-
-        color_style = '''
-         QLabel {
-             background-color: #%s;
-             border-style: outset;
-             border-width: 1px;
-             border-radius: 10px;
-             border-color: beige;
-             font: bold 8px;
-             padding: 6px;
-         }
-         ''' % str(hex(color.rgba()))[2:]
-        label.setStyleSheet(color_style)
+        if color:
+            color_style = '''
+             QLabel {
+                 background-color: #%s;
+                 border-style: outset;
+                 border-width: 1px;
+                 border-radius: 10px;
+                 border-color: beige;
+                 font: bold 8px;
+                 padding: 6px;
+             }
+             ''' % str(hex(color.rgba()))[2:]
+            label.setStyleSheet(color_style)
 
     @staticmethod
     def font_label_changed(label: QtWidgets.QLabel, font: QtGui.QFont):

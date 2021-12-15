@@ -130,3 +130,8 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - Press F2 to turn of/off the undo&&redo
 - Press F3456 to expand left/right/top/bottom position of scene
 - Press f78910 to narrow left/right/top/bottom position of scene
+
+# v2.7.4:
+## Debug:
+- Restore the scene rect.
+- Delete pipes correctly.
