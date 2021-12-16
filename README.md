@@ -135,3 +135,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Debug:
 - Restore the scene rect.
 - Delete pipes correctly.
+
+# v.2.8.4
+## Function:
+- Add thumbnails to index scene quickly.
