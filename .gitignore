@@ -9,3 +9,4 @@ __pycache__
 /src/NodeNotePackage.egg-info
 /venv
 exception_log.txt
+/.obsidian
