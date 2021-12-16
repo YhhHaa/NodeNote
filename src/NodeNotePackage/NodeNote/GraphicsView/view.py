@@ -1343,6 +1343,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             QtCore.Qt.IgnoreAspectRatio)
         painter.end()
         self.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
+        for item in self.current_scene.items():
+            item.update()
 
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
         super(View, self).drawBackground(painter, rect)
