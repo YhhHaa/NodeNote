@@ -43,7 +43,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.background_image.resize(self.view.size().width(), self.view.size().width())
         self.background_image.setPos(self.view.mapToScene(0, 0).x(), self.view.mapToScene(0, 0).y())
         self.addItem(self.background_image)
-        self.background_image.setFlag(QtWidgets.QGraphicsItem.ItemIgnoresTransformations)
+        # self.background_image.setFlag(QtWidgets.QGraphicsItem.ItemIgnoresTransformations)
 
         # CUT LINE
         self.cutline = effect_cutline.EffectCutline()
@@ -87,11 +87,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.port_style_activated_color = None
         self.port_style_activated_border_color = None
         #   =================================================
-
-        #   Background
-        self.brush = QtGui.QBrush(QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                                            "../Resources/scene_background.png"))))
-        self.setBackgroundBrush(self.brush)
+        self.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                    "../Resources/scene_background.png")))
 
     def get_id_attribute(self, attribute_id) -> attribute.AttributeWidget:
         """
@@ -161,7 +158,9 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                     return item
 
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
+        #   Background
         super(Scene, self).drawBackground(painter, rect)
+        painter.drawImage(self.scene_rect, self.draw_image)
 
     def serialize(self, scene_serialization=None):
         """

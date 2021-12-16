@@ -64,6 +64,15 @@ class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
             return 0
 
 
+class DisplayThumbnailsThread(QtCore.QThread):
+    run_draw_thumbnails = QtCore.pyqtSignal()
+
+    def run(self):
+        while True:
+            time.sleep(0.1)
+            self.run_draw_thumbnails.emit()
+
+
 class View(QtWidgets.QGraphicsView, serializable.Serializable):
     """
     Class used for managing components.
@@ -204,6 +213,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.tablet_used = False
         self.mouse_effect = True
         self.setAttribute(QtCore.Qt.WA_TabletTracking)
+
+        # thumbnails
+        self.run_thumbnails = DisplayThumbnailsThread()
+        self.run_thumbnails.run_draw_thumbnails.connect(self.draw_thumbnails)
+        self.run_thumbnails.start()
 
     def expand(self, expand_flag: str):
         if expand_flag == "left":
@@ -1176,6 +1190,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
     def keyPressEvent(self, event) -> None:
         super(View, self).keyPressEvent(event)
         from ..Components.attribute import InputTextField
+        if event.key() == QtCore.Qt.Key_K:
+            self.draw_thumbnails()
+            return
         if event.key() == QtCore.Qt.Key_Delete and isinstance(self.scene().focusItem(), InputTextField):
             if self.scene().focusItem().objectName() == 'MouseLocked':
                 return
@@ -1307,10 +1324,34 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         elif isinstance(current_item, ProxyView):
             return
 
+    def draw_thumbnails(self):
+        """
+        Draw thumbnails to index the scene quickly.
+
+        """
+
+        area = self.current_scene.scene_rect
+        image = QtGui.QImage(self.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32_Premultiplied)
+        painter = QtGui.QPainter(image)
+        self.current_scene.render(
+            painter, 
+            QtCore.QRectF(
+                0, 0,
+                self.mainwindow.thumbnails.size().width(), self.mainwindow.thumbnails.size().height()
+            ),
+            area,
+            QtCore.Qt.IgnoreAspectRatio)
+        painter.end()
+        self.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
+
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
         super(View, self).drawBackground(painter, rect)
+        if self.zoom - 5 >=0:
+            zoom_factor = self.zoomOutFactor ** (self.zoom - 5)
+        else:
+            zoom_factor = self.zoomInFactor ** (-(self.zoom - 5))
         self.background_image.setPos(self.mapToScene(0, 0).x(), self.mapToScene(0, 0).y())
-        self.background_image.resize(self.size().width(), self.size().height())
+        self.background_image.resize(self.size().width() * zoom_factor, self.size().height() * zoom_factor)
 
     def save_to_file(self):
         """

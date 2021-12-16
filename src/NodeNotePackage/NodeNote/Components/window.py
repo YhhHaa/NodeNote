@@ -51,9 +51,15 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.toolbar.setVisible(False)
 
         # Scene list widget
-        self.scene_list_bottom = QtWidgets.QWidget()
+        self.scene_thumbnails = QtWidgets.QWidget()
+        self.scene_thumbnails_layout = QtWidgets.QVBoxLayout()
+        self.scene_thumbnails_layout.setSpacing(0)
+        self.scene_thumbnails.setLayout(self.scene_thumbnails_layout)
+
+        self.scene_list_bottom = QtWidgets.QWidget(self.scene_thumbnails)
         self.scene_list_bottom_layout = QtWidgets.QVBoxLayout()
         self.scene_list_bottom.setLayout(self.scene_list_bottom_layout)
+        self.scene_thumbnails_layout.addWidget(self.scene_list_bottom)
 
         self.scene_list_scroll = QtWidgets.QScrollArea(self.scene_list_bottom)
         self.scene_list_scroll.setWidgetResizable(True)
@@ -68,7 +74,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_list.setHeaderLabel("Scene List")
         self.scene_list.setIndentation(8)
         self.scene_list_scroll.setWidget(self.scene_list)
-        self.tab_widget.addTab(self.scene_list_bottom, "Scene")
+        self.tab_widget.addTab(self.scene_thumbnails, "Scene")
 
         # Style list widget
         self.style_list_bottom = QtWidgets.QWidget()
@@ -353,6 +359,13 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.time_update)
         self.timer.start(180000)
+
+        # thumbnails
+        self.thumbnails = QtWidgets.QLabel()
+        self.thumbnails.setMinimumSize(self.style_list.sizeHint().width(), 200)
+        self.thumbnails.setMaximumSize(self.style_list.sizeHint().width(), 200)
+        self.thumbnails.setStyleSheet("border:1px solid red")
+        self.scene_thumbnails_layout.addWidget(self.thumbnails)
 
     def time_update(self):
         """
