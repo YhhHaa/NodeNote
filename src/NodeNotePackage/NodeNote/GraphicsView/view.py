@@ -68,7 +68,6 @@ class DisplayThumbnailsThread(QtCore.QThread):
     def __init__(self, view, parent=None) -> None:
         super().__init__(parent=parent)
         self.view = view
-        self.startTimer(1000, timerType=QtCore.Qt.VeryCoarseTimer)
 
 
     def run(self):
@@ -77,24 +76,6 @@ class DisplayThumbnailsThread(QtCore.QThread):
 
         """
         pass
-        # while True:
-        #     time.sleep(0.1)
-
-        #     area = self.view.current_scene.scene_rect
-        #     image = QtGui.QImage(self.view.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32_Premultiplied)
-        #     painter = QtGui.QPainter(image)
-        #     self.view.current_scene.render(
-        #         painter, 
-        #         QtCore.QRectF(
-        #             0, 0,
-        #             self.view.mainwindow.thumbnails.size().width(), self.view.mainwindow.thumbnails.size().height()
-        #         ),
-        #         area,
-        #         QtCore.Qt.IgnoreAspectRatio)
-        #     painter.end()
-        #     self.view.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
-        #     for item in self.view.current_scene.items():
-        #         item.update()
     
     def timerEvent(self, a0: 'QtCore.QTimerEvent') -> None:
         area = self.view.mainwindow.view_widget.current_scene.scene_rect
@@ -1251,9 +1232,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
     def keyPressEvent(self, event) -> None:
         super(View, self).keyPressEvent(event)
         from ..Components.attribute import InputTextField
-        if event.key() == QtCore.Qt.Key_K:
-            self.draw_thumbnails()
-            return
         if event.key() == QtCore.Qt.Key_Delete and isinstance(self.scene().focusItem(), InputTextField):
             if self.scene().focusItem().objectName() == 'MouseLocked':
                 return

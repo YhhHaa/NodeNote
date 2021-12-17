@@ -366,6 +366,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.thumbnails.setMaximumSize(self.style_list.sizeHint().width(), 200)
         self.thumbnails.setStyleSheet("border:1px solid red")
         self.scene_thumbnails_layout.addWidget(self.thumbnails)
+        self.time_id = 0
 
     def time_update(self):
         """
@@ -1431,7 +1432,16 @@ class NoteWindow(QtWidgets.QMainWindow):
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
         if a0.key() == QtCore.Qt.Key_B and int(a0.modifiers()) & QtCore.Qt.ControlModifier:
-            self.toolbar.setVisible(not self.toolbar.isVisible())
+            if self.toolbar.isVisible():
+                self.toolbar.setVisible(False)
+                self.view_widget.run_thumbnails.wait()
+                self.view_widget.run_thumbnails.killTimer(self.time_id)
+                self.thumbnails.hide()
+            else:
+                self.toolbar.setVisible(True)
+                self.view_widget.run_thumbnails.run()
+                self.time_id = self.view_widget.run_thumbnails.startTimer(500, timerType=QtCore.Qt.VeryCoarseTimer)
+                self.thumbnails.show()
         if a0.key() == QtCore.Qt.Key_Delete and len(self.scene_list.selectedItems()) == 1:
             self.view_widget.delete_sub_scene(self.scene_list.selectedItems()[0])
         super(NoteWindow, self).keyPressEvent(a0)
