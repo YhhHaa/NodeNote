@@ -65,12 +65,54 @@ class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
 
 
 class DisplayThumbnailsThread(QtCore.QThread):
-    run_draw_thumbnails = QtCore.pyqtSignal()
+    def __init__(self, view, parent=None) -> None:
+        super().__init__(parent=parent)
+        self.view = view
+        self.startTimer(1000, timerType=QtCore.Qt.VeryCoarseTimer)
+
 
     def run(self):
-        while True:
-            time.sleep(0.1)
-            self.run_draw_thumbnails.emit()
+        """
+        Draw thumbnails to index the scene quickly.
+
+        """
+        pass
+        # while True:
+        #     time.sleep(0.1)
+
+        #     area = self.view.current_scene.scene_rect
+        #     image = QtGui.QImage(self.view.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32_Premultiplied)
+        #     painter = QtGui.QPainter(image)
+        #     self.view.current_scene.render(
+        #         painter, 
+        #         QtCore.QRectF(
+        #             0, 0,
+        #             self.view.mainwindow.thumbnails.size().width(), self.view.mainwindow.thumbnails.size().height()
+        #         ),
+        #         area,
+        #         QtCore.Qt.IgnoreAspectRatio)
+        #     painter.end()
+        #     self.view.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
+        #     for item in self.view.current_scene.items():
+        #         item.update()
+    
+    def timerEvent(self, a0: 'QtCore.QTimerEvent') -> None:
+        area = self.view.mainwindow.view_widget.current_scene.scene_rect
+        image = QtGui.QImage(self.view.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32)
+        painter = QtGui.QPainter(image)
+        self.view.mainwindow.view_widget.current_scene.render(
+            painter, 
+            QtCore.QRectF(
+                0, 0,
+                self.view.mainwindow.thumbnails.size().width(), self.view.mainwindow.thumbnails.size().height()
+            ),
+            area,
+            QtCore.Qt.IgnoreAspectRatio)
+        painter.end()
+        self.view.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
+        for item in self.view.mainwindow.view_widget.current_scene.items():
+            item.update()
+        return super().timerEvent(a0)
 
 
 class View(QtWidgets.QGraphicsView, serializable.Serializable):
@@ -215,9 +257,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.setAttribute(QtCore.Qt.WA_TabletTracking)
 
         # thumbnails
-        self.run_thumbnails = DisplayThumbnailsThread()
-        self.run_thumbnails.run_draw_thumbnails.connect(self.draw_thumbnails)
+        self.run_thumbnails = DisplayThumbnailsThread(self)
         self.run_thumbnails.start()
+        # self.startTimer(100, timerType=QtCore.Qt.VeryCoarseTimer)
 
     def expand(self, expand_flag: str):
         if expand_flag == "left":
@@ -1074,6 +1116,25 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 if name and ok:
                     pic.save(name)
 
+    # def timerEvent(self, a0: 'QtCore.QTimerEvent') -> None:
+    #     area = self.current_scene.scene_rect
+    #     image = QtGui.QImage(self.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32_Premultiplied)
+    #     painter = QtGui.QPainter(image)
+    #     self.current_scene.render(
+    #         painter, 
+    #         QtCore.QRectF(
+    #             0, 0,
+    #             self.mainwindow.thumbnails.size().width(), self.mainwindow.thumbnails.size().height()
+    #         ),
+    #         area,
+    #         QtCore.Qt.IgnoreAspectRatio)
+    #     painter.end()
+    #     self.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
+    #     for item in self.current_scene.items():
+    #         item.update()
+    #     return super().timerEvent(a0)
+
+        
     def tabletEvent(self, a0: QtGui.QTabletEvent) -> None:
         """
         Used for tablet
@@ -1323,28 +1384,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 current_item.parentItem().contextMenuEvent(event)
         elif isinstance(current_item, ProxyView):
             return
-
-    def draw_thumbnails(self):
-        """
-        Draw thumbnails to index the scene quickly.
-
-        """
-
-        area = self.current_scene.scene_rect
-        image = QtGui.QImage(self.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32_Premultiplied)
-        painter = QtGui.QPainter(image)
-        self.current_scene.render(
-            painter, 
-            QtCore.QRectF(
-                0, 0,
-                self.mainwindow.thumbnails.size().width(), self.mainwindow.thumbnails.size().height()
-            ),
-            area,
-            QtCore.Qt.IgnoreAspectRatio)
-        painter.end()
-        self.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
-        for item in self.current_scene.items():
-            item.update()
 
     def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
         super(View, self).drawBackground(painter, rect)
