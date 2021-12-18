@@ -148,7 +148,8 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - Press `Alt+W` to create logic widget
 - Press `Alt+E` to create draw widget
 
-- 富文本索引
+- Press `Alt+C` to copy the id of the attribute widget, and you can use it as hyperlink (`Ctrl+M`) to index the node
+
 - 复制剪切节点
 - 漂浮特效可关闭
 ## Changed:

@@ -293,7 +293,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         self.setZValue(constants.Z_VAL_NODE + 1)
         # BASIC SETTINGS
         self.setFlags(QtWidgets.QGraphicsWidget.ItemSendsGeometryChanges | QtWidgets.QGraphicsWidget.ItemIsSelectable)
-        self.setOpenExternalLinks(True)
+        self.setOpenExternalLinks(False)
         self.setObjectName("Nothing")
         self.node = node
         self.single_line = single_line
@@ -738,8 +738,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
 
             return ImageQt.ImageQt(cropped)
 
-    @staticmethod
-    def hyper_link(hyperlink):
+    def hyper_link(self, hyperlink: str):
         """
         Create hyper link.
 
@@ -748,13 +747,25 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
 
         """
 
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.PointingHandCursor)
-        try:
-            validators.url(hyperlink)
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl(hyperlink))
-        except Exception as e:
-            print("Valid hyperlink: ", e)
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.ArrowCursor)
+        if hyperlink.isdigit():
+            for item in self.scene().view.mainwindow.view_widget.attribute_widgets:
+                if item.id == int(hyperlink):
+                    at_scene = item.scene()
+                    self.scene().view.mainwindow.view_widget.current_scene = at_scene
+                    self.scene().view.mainwindow.view_widget.current_scene_flag = at_scene.sub_scene_flag
+                    self.scene().view.mainwindow.view_widget.background_image = at_scene.background_image
+                    self.scene().view.mainwindow.view_widget.cutline = at_scene.cutline
+                    self.scene().view.mainwindow.view_widget.setScene(at_scene)
+                    self.scene().view.mainwindow.view_widget.centerOn(item.scenePos())
+                    return
+        else:
+            QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.PointingHandCursor)
+            try:
+                validators.url(hyperlink)
+                QtGui.QDesktopServices.openUrl(QtCore.QUrl(hyperlink))
+            except Exception as e:
+                print("Valid hyperlink: ", e)
+            QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.ArrowCursor)
 
     def font_format(self, font_type):
         """
@@ -3553,6 +3564,11 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
             self.mouse_update_node_size(event)
         else:
             super(AttributeWidget, self).mouseMoveEvent(event)
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        if event.key() == QtCore.Qt.Key_C and event.modifiers() & QtCore.Qt.AltModifier:
+            QtWidgets.QApplication.clipboard().setText(str(self.id))
+        return super().keyPressEvent(event)
 
     def mouseReleaseEvent(self, event) -> None:
         if self.was_moved:
