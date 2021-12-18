@@ -668,7 +668,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if item in self.pipes:
             self.pipes.remove(item)
 
-    def add_attribute_widget(self, event):
+    def add_attribute_widget(self, event=None, pos=None):
         """
         Create attribute widget.
 
@@ -679,12 +679,15 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         basic_widget = attribute.AttributeWidget()
         self.current_scene.addItem(basic_widget)
-        basic_widget.setPos(self.mapToScene(event.pos()))
+        if event:
+            basic_widget.setPos(self.mapToScene(event.pos()))
+        elif pos:
+            basic_widget.setPos(self.mapToScene(self.mapFromGlobal(pos)))
         self.attribute_widgets.append(basic_widget)
         if self.undo_flag:
             self.current_scene.history.store_history("Add Attribute Widget")
 
-    def add_truth_widget(self, event):
+    def add_truth_widget(self, event=None, pos=None):
         """
         Create logic widget.
 
@@ -695,12 +698,15 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         basic_widget = attribute.LogicWidget()
         self.current_scene.addItem(basic_widget)
-        basic_widget.setPos(self.mapToScene(event.pos()))
+        if event:
+            basic_widget.setPos(self.mapToScene(event.pos()))
+        elif pos:
+            basic_widget.setPos(self.mapToScene(self.mapFromGlobal(pos)))
         self.logic_widgets.append(basic_widget)
         if self.undo_flag:
             self.current_scene.history.store_history("Add Truth Widget")
 
-    def add_draw_widget(self, event):
+    def add_draw_widget(self, event=None, pos=None):
         """
         Create draw widget.
 
@@ -711,7 +717,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         canvas = draw.Draw()
         self.current_scene.addItem(canvas)
-        canvas.setPos(self.mapToScene(event.pos()))
+        if event:
+            canvas.setPos(self.mapToScene(event.pos()))
+        elif pos:
+            canvas.setPos(self.mapToScene(self.mapFromGlobal(pos)))
         self.draw_widgets.append(canvas)
         if self.undo_flag:
             self.current_scene.history.store_history("Add Canvas Widget")
@@ -1232,9 +1241,21 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
     def keyPressEvent(self, event) -> None:
         super(View, self).keyPressEvent(event)
         from ..Components.attribute import InputTextField
-        if event.key() == QtCore.Qt.Key_Delete and isinstance(self.scene().focusItem(), InputTextField):
-            if self.scene().focusItem().objectName() == 'MouseLocked':
+        current_item = self.current_scene.itemAt(self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())), QtGui.QTransform())
+
+        if isinstance(current_item, effect_background.EffectBackground):
+            if event.key() == QtCore.Qt.Key_Q and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.add_attribute_widget(pos=QtGui.QCursor.pos())
                 return
+            if event.key() == QtCore.Qt.Key_W and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.add_truth_widget(pos=QtGui.QCursor.pos())
+                return
+            if event.key() == QtCore.Qt.Key_E and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.add_draw_widget(pos=QtGui.QCursor.pos())
+                return
+            if event.key() == QtCore.Qt.Key_Delete and isinstance(self.scene().focusItem(), InputTextField):
+                if self.scene().focusItem().objectName() == 'MouseLocked':
+                    return
         if self.mode == constants.MODE_PIPE_DRAG and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.drag_pipe_release(None)
             self.mode = constants.MODE_NOOP

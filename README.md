@@ -144,7 +144,10 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Debug: 
 - Show the text cursor while editing.
 ## Function:
-- 快捷键创建节点
+- Press `Alt+Q` to create attribute widget
+- Press `Alt+W` to create logic widget
+- Press `Alt+E` to create draw widget
+
 - 富文本索引
 - 复制剪切节点
 - 漂浮特效可关闭
