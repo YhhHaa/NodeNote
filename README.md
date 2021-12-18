@@ -142,7 +142,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 
 # todo
 ## Debug: 
-- 光标消失的bug
+- Show the text cursor while editing.
 ## Function:
 - 快捷键创建节点
 - 富文本索引

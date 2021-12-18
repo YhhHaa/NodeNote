@@ -1135,7 +1135,6 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                 offset += proxy.scene().view.mapFromScene(proxy.scenePos())
                 return subview_in_root(proxy.scene().view.proxy_widget, offset)
 
-        super(InputTextField, self).focusInEvent(event)
 
         # remove from past scene and added into root scene
         if not self.scene().view.root_flag:
@@ -1164,6 +1163,8 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         self.setObjectName("MouseLocked")
         self.text_before_editing = self.toHtml()
         self.mouseMoveEvent = self.origMoveEvent
+
+        super(InputTextField, self).focusInEvent(event)
 
     def focusOutEvent(self, event) -> None:
         if self.past_scene:
