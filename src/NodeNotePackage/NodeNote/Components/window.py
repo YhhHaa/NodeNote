@@ -943,7 +943,6 @@ class NoteWindow(QtWidgets.QMainWindow):
                         if not item.scene().attribute_style_font and not item.attribute_widget.label_item.font_flag:
                             item.attribute_widget.label_item.document().setDefaultFont(font_type)
                             item.text_change_node_shape()
-                    self.font_label_changed(self.attribute_style_font_label, attribute.InputTextField.font)
 
                 elif current_index == 1:
                     self.view_widget.current_scene.attribute_style_font = font_type
@@ -953,8 +952,6 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.attribute_widget.label_item.document().setDefaultFont(font_type)
                             item.text_change_node_shape()
                             item.resize(20, 10)
-                    self.font_label_changed(self.attribute_style_font_label,
-                                            self.view_widget.current_scene.attribute_style_font)
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -962,8 +959,8 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.attribute_widget.label_item.document().setDefaultFont(font_type)
                             item.text_change_node_shape()
                             item.attribute_widget.label_item.font_flag = True
-                            self.font_label_changed(self.attribute_style_font_label,
-                                                    font_type)
+                
+                self.font_label_changed(self.attribute_style_font_label, font_type)
 
     def width_changed(self, widget_type, current_index):
         """
