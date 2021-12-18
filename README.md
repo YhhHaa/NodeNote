@@ -139,3 +139,14 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 # v.2.8.4
 ## Function:
 - Add thumbnails to index scene quickly.
+
+# todo
+## Debug: 
+- 光标消失的bug
+## Function:
+- 快捷键创建节点
+- 富文本索引
+- 复制剪切节点
+- 漂浮特效可关闭
+## Changed:
+- 安装通过homebrew

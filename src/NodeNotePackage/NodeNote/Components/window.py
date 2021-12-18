@@ -453,6 +453,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                                 not item.attribute_widget.label_item.font_color_flag:
                             attribute.InputTextField.font_color = font_color
                             item.attribute_widget.label_item.setDefaultTextColor(font_color)
+                            item.update()
                     self.color_label_changed(self.attribute_style_font_color_label, attribute.InputTextField.font_color)
 
                 elif current_index == 1:
@@ -461,6 +462,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                         if isinstance(item, attribute.AttributeWidget) \
                                 and not item.attribute_widget.label_item.font_color_flag:
                             item.attribute_widget.label_item.setDefaultTextColor(font_color)
+                            item.update()
                     self.color_label_changed(self.attribute_style_font_color_label,
                                              self.view_widget.current_scene.attribute_style_font_color)
 
@@ -470,6 +472,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.attribute_widget.label_item.font_color = font_color
                             item.attribute_widget.label_item.setDefaultTextColor(font_color)
                             item.attribute_widget.label_item.font_color_flag = True
+                            item.update()
                             self.color_label_changed(self.attribute_style_font_color_label,
                                                      font_color)
 
@@ -481,11 +484,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     attribute.AttributeWidget.color = color
                     self.color_label_changed(self.attribute_style_background_color_label,
                                              attribute.AttributeWidget.color)
+                    for item in self.view_widget.attribute_widgets:
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.attribute_style_background_color = color
                     self.color_label_changed(self.attribute_style_background_color_label,
                                              self.view_widget.current_scene.attribute_style_background_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.AttributeWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -494,6 +502,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.color_flag = True
                             self.color_label_changed(self.attribute_style_background_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Attribute_selected_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -503,11 +512,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     attribute.AttributeWidget.selected_color = color
                     self.color_label_changed(self.attribute_style_selected_background_color_label,
                                              attribute.AttributeWidget.selected_color)
+                    for item in self.view_widget.attribute_widgets:
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.attribute_style_selected_background_color = color
                     self.color_label_changed(self.attribute_style_selected_background_color_label,
                                              self.view_widget.current_scene.attribute_style_selected_background_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.AttributeWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -516,6 +530,8 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.selected_color_flag = True
                             self.color_label_changed(self.attribute_style_selected_background_color_label,
                                                      color)
+                            item.update()
+
 
         elif widget_type == "Attribute_border_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -525,11 +541,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     attribute.AttributeWidget.border_color = color
                     self.color_label_changed(self.attribute_style_border_color_label,
                                              attribute.AttributeWidget.border_color)
+                    for item in self.view_widget.attribute_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.attribute_style_border_color = color
                     self.color_label_changed(self.attribute_style_border_color_label,
                                              self.view_widget.current_scene.attribute_style_border_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.AttributeWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -538,6 +559,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.border_flag = True
                             self.color_label_changed(self.attribute_style_border_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Attribute_selected_border_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -547,11 +569,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     attribute.AttributeWidget.selected_border_color = color
                     self.color_label_changed(self.attribute_style_selected_border_color_label,
                                              attribute.AttributeWidget.selected_border_color)
+                    for item in self.view_widget.attribute_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.attribute_style_selected_border_color = color
                     self.color_label_changed(self.attribute_style_selected_border_color_label,
                                              self.view_widget.current_scene.attribute_style_selected_border_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.AttributeWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -560,6 +587,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.selected_border_flag = True
                             self.color_label_changed(self.attribute_style_selected_border_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Logic_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -569,11 +597,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     attribute.LogicWidget.background_color = color
                     self.color_label_changed(self.logic_style_background_color_label,
                                              attribute.LogicWidget.background_color)
+                    for item in self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.logic_style_background_color = color
                     self.color_label_changed(self.logic_style_background_color_label,
                                              self.view_widget.current_scene.logic_style_background_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.LogicWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -582,6 +615,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.background_color_flag = True
                             self.color_label_changed(self.logic_style_background_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Logic_selected_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -591,11 +625,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     attribute.LogicWidget.selected_background_color = color
                     self.color_label_changed(self.logic_style_selected_background_color_label,
                                              attribute.LogicWidget.selected_background_color)
+                    for item in self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.logic_style_selected_background_color = color
                     self.color_label_changed(self.logic_style_selected_background_color_label,
                                              self.view_widget.current_scene.logic_style_selected_background_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.LogicWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -604,6 +643,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.selected_background_color_flag = True
                             self.color_label_changed(self.logic_style_selected_background_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Logic_border_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -612,11 +652,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     attribute.LogicWidget.border_color = color
                     self.color_label_changed(self.logic_style_border_color_label, attribute.LogicWidget.border_color)
+                    for item in self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.logic_style_border_color = color
                     self.color_label_changed(self.logic_style_border_color_label,
                                              self.view_widget.current_scene.logic_style_border_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.LogicWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -625,6 +670,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.border_color_flag = True
                             self.color_label_changed(self.logic_style_border_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Logic_selected_border_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -634,11 +680,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     attribute.LogicWidget.selected_border_color = color
                     self.color_label_changed(self.logic_style_selected_border_color_label,
                                              attribute.LogicWidget.selected_border_color)
+                    for item in self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.logic_style_selected_border_color = color
                     self.color_label_changed(self.logic_style_selected_border_color_label,
                                              self.view_widget.current_scene.logic_style_selected_border_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, attribute.LogicWidget):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -647,6 +698,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.selected_border_color_flag = True
                             self.color_label_changed(self.logic_style_selected_border_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Pipe_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -655,11 +707,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     pipe.Pipe.color = color
                     self.color_label_changed(self.pipe_style_background_color_label, pipe.Pipe.color)
+                    for item in self.view_widget.pipes: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.pipe_style_background_color = color
                     self.color_label_changed(self.pipe_style_background_color_label,
                                              self.view_widget.current_scene.pipe_style_background_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, pipe.Pipe):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -668,6 +725,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.color_flag = True
                             self.color_label_changed(self.pipe_style_background_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Pipe_selected_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -676,11 +734,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     pipe.Pipe.selected_color = color
                     self.color_label_changed(self.pipe_style_selected_background_color_label, pipe.Pipe.selected_color)
+                    for item in self.view_widget.pipes: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.pipe_style_selected_background_color = color
                     self.color_label_changed(self.pipe_style_selected_background_color_label,
                                              self.view_widget.current_scene.pipe_style_selected_background_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, pipe.Pipe):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -689,6 +752,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.selected_color_flag = True
                             self.color_label_changed(self.pipe_style_selected_background_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Port_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -697,11 +761,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     port.Port.color = color
                     self.color_label_changed(self.port_style_color_label, port.Port.color)
+                    for item in self.view_widget.attribute_widgets + self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.port_style_color = color
                     self.color_label_changed(self.port_style_color_label,
                                              self.view_widget.current_scene.port_style_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget)):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -710,6 +779,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.color_flag = True
                             self.color_label_changed(self.port_style_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Port_border_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -718,11 +788,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     port.Port.border_color = color
                     self.color_label_changed(self.port_style_border_color_label, port.Port.border_color)
+                    for item in self.view_widget.attribute_widgets + self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.port_style_border_color = color
                     self.color_label_changed(self.port_style_border_color_label,
                                              self.view_widget.current_scene.port_style_border_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget)):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -731,6 +806,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.border_color_flag = True
                             self.color_label_changed(self.port_style_border_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Port_hovered_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -739,11 +815,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     port.Port.hovered_color = color
                     self.color_label_changed(self.port_style_hovered_color_label, port.Port.hovered_color)
+                    for item in self.view_widget.attribute_widgets + self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.port_style_hovered_color = color
                     self.color_label_changed(self.port_style_hovered_color_label,
                                              self.view_widget.current_scene.port_style_hovered_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget)):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -752,6 +833,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.hovered_color_flag = True
                             self.color_label_changed(self.port_style_hovered_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Port_hovered_border_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -760,11 +842,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     port.Port.hovered_border_color = color
                     self.color_label_changed(self.port_style_hovered_border_color_label, port.Port.hovered_border_color)
+                    for item in self.view_widget.attribute_widgets + self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.port_style_hovered_border_color = color
                     self.color_label_changed(self.port_style_hovered_border_color_label,
                                              self.view_widget.current_scene.port_style_hovered_border_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget)):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -773,6 +860,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.hovered_border_color_flag = True
                             self.color_label_changed(self.port_style_hovered_border_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Port_activated_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -781,11 +869,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                 if current_index == 0:
                     port.Port.activated_color = color
                     self.color_label_changed(self.port_style_activated_color_label, port.Port.activated_color)
+                    for item in self.view_widget.attribute_widgets + self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.port_style_activated_color = color
                     self.color_label_changed(self.port_style_activated_color_label,
                                              self.view_widget.current_scene.port_style_activated_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget)):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -794,6 +887,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.activated_color_flag = True
                             self.color_label_changed(self.port_style_activated_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "Port_activated_border_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
@@ -803,11 +897,16 @@ class NoteWindow(QtWidgets.QMainWindow):
                     port.Port.activated_border_color = color
                     self.color_label_changed(self.port_style_activated_border_color_label,
                                              port.Port.activated_border_color)
+                    for item in self.view_widget.attribute_widgets + self.view_widget.logic_widgets: 
+                        item.update()
 
                 elif current_index == 1:
                     self.view_widget.current_scene.port_style_activated_border_color = color
                     self.color_label_changed(self.port_style_activated_border_color_label,
                                              self.view_widget.current_scene.port_style_activated_border_color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget)):
+                            item.update()
 
                 elif current_index == 2:
                     for item in self.view_widget.current_scene.selectedItems():
@@ -816,6 +915,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.activated_border_color_flag = True
                             self.color_label_changed(self.port_style_activated_border_color_label,
                                                      color)
+                            item.update()
 
         elif widget_type == "draw_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color")

@@ -11,3 +11,4 @@ __pycache__
 /venv
 exception_log.txt
 /.obsidian
+/.history
