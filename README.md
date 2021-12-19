@@ -152,7 +152,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 
 - Press `Alt+Z` to redirect to last scene
 
-- 导出白色背景
+- Change the background into blank
 
 - 复制剪切节点
 - 漂浮特效可关闭
