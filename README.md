@@ -143,6 +143,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 # todo
 ## Debug: 
 - Show the text cursor while editing.
+- Create sub widgets in some area of sub view correctly.
 ## Function:
 - Press `Alt+Q` to create attribute widget
 - Press `Alt+W` to create logic widget
@@ -157,6 +158,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - Change the style of edit box of pipe widget
 
 - Press `Alt+X` to redirect to parent scene
+
 - 复制剪切节点
 - 漂浮特效可关闭
 ## Changed:
