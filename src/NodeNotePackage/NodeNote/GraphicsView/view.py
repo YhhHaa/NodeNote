@@ -785,7 +785,17 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.logic_widgets.remove(widget)
 
     def copy_items(self):
-        pass
+        copy_empty_view = serialize_pb2.ViewSerialization()
+        copy_empty_scene = copy_empty_view.scene_serialization.add()
+        for item in self.current_scene.selectedItems():
+            if isinstance(item, attribute.AttributeWidget):
+                item.serialize(copy_empty_scene.attr_serialization.add())
+            elif isinstance(item, attribute.LogicWidget):
+                item.serialize(copy_empty_scene.logic_serialization.add())
+            elif isinstance(item, pipe.Pipe):
+                item.serialize(copy_empty_scene.pipe_serialization.add())
+            elif isinstance(item, draw.Draw):
+                item.serialize(copy_empty_scene.draw_serialization.add())
 
     def paste_items(self):
         pass

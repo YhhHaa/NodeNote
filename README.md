@@ -134,7 +134,6 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 # v2.7.4:
 ## Debug:
 - Restore the scene rect.
-- Delete pipes correctly.
 
 # v.2.8.4
 ## Function:
@@ -144,6 +143,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Debug: 
 - Show the text cursor while editing.
 - Create sub widgets in some area of sub view correctly.
+- Delete pipes correctly.
 ## Function:
 - Press `Alt+Q` to create attribute widget
 - Press `Alt+W` to create logic widget

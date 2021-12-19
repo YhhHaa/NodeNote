@@ -279,13 +279,13 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             self.end_port.parentItem().layout.activate()
         self.update()
 
-    def boundingRect(self) -> QtCore.QRectF:
-        return QtCore.QRectF(
-            min(self.pos_source.x(), self.pos_destination.x()),
-            min(self.pos_source.y(), self.pos_destination.y()),
-            abs(self.pos_source.x() - self.pos_destination.x()),
-            abs(self.pos_source.y() - self.pos_destination.y()),
-        )
+    # def boundingRect(self) -> QtCore.QRectF:
+    #     return QtCore.QRectF(
+    #         min(self.pos_source.x(), self.pos_destination.x()),
+    #         min(self.pos_source.y(), self.pos_destination.y()),
+    #         abs(self.pos_source.x() - self.pos_destination.x()),
+    #         abs(self.pos_source.y() - self.pos_destination.y()),
+    #     )
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
         """
