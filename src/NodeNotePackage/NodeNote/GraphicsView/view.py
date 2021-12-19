@@ -1091,11 +1091,15 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             pic = QtGui.QPixmap(self.current_scene.sceneRect().width(), self.current_scene.sceneRect().height())
             painter = QtGui.QPainter(pic)
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
+            self.current_scene.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                    "../Resources/scene_background.png")))
             self.current_scene.removeItem(self.background_image)
             self.current_scene.render(painter)
+            self.current_scene.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                    "../Resources/common_background_image.png")))
             self.current_scene.addItem(self.background_image)
             painter.end()
-            name, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Save Image", "./", "Images (*.png *.jpg)")
+            name, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Save Image", "./"+str(time.time())+".png", "Image type(*.png *.jpg)")
             if name and ok:
                 pic.save(name)
         elif part == "Items":
@@ -1124,7 +1128,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                                           source=QtCore.QRectF(left, top, right - left, bottom - top))
                 self.current_scene.addItem(self.background_image)
                 painter.end()
-                name, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Save Image", "./", "Images (*.png *.jpg)")
+                name, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Save Image", "./"+str(time.time())+".png", "Image type(*.png *.jpg)")
                 if name and ok:
                     pic.save(name)
 

@@ -88,7 +88,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.port_style_activated_border_color = None
         #   =================================================
         self.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                    "../Resources/scene_background.png")))
+                                                    "../Resources/common_background_image.png")))
 
     def get_id_attribute(self, attribute_id) -> attribute.AttributeWidget:
         """

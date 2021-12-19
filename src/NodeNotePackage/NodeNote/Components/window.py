@@ -52,6 +52,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         # Scene list widget
         self.scene_thumbnails = QtWidgets.QWidget()
+        self.scene_thumbnails.setStyleSheet(stylesheet.STYLE_SCENE_THUMBNAILS)
         self.scene_thumbnails_layout = QtWidgets.QVBoxLayout()
         self.scene_thumbnails_layout.setSpacing(0)
         self.scene_thumbnails.setLayout(self.scene_thumbnails_layout)

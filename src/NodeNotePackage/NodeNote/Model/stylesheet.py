@@ -5,6 +5,12 @@ Stylesheet ui.
 import os
 
 
+STYLE_SCENE_THUMBNAILS = '''
+QWidget {
+    background-color: rgba(170, 255, 255, 100);
+}
+'''
+
 STYLE_QGROUPBOX = '''
 QGroupBox {
     background-color: rgba(0, 0, 0, 0);
