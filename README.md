@@ -143,7 +143,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Debug: 
 - Show the text cursor while editing.
 - Create sub widgets in some area of sub view correctly.
-- Delete pipes correctly.
+- Draw and delete any lines correctly.
 ## Function:
 - Press `Alt+Q` to create attribute widget
 - Press `Alt+W` to create logic widget
