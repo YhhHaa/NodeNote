@@ -751,12 +751,16 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             for item in self.scene().view.mainwindow.view_widget.attribute_widgets:
                 if item.id == int(hyperlink):
                     at_scene = item.scene()
+                    self.scene().view.mainwindow.view_widget.last_scene = self.scene().view.mainwindow.view_widget.current_scene
+                    self.scene().view.mainwindow.view_widget.last_scene_flag = self.scene().view.mainwindow.view_widget.current_scene_flag
+
                     self.scene().view.mainwindow.view_widget.current_scene = at_scene
                     self.scene().view.mainwindow.view_widget.current_scene_flag = at_scene.sub_scene_flag
                     self.scene().view.mainwindow.view_widget.background_image = at_scene.background_image
                     self.scene().view.mainwindow.view_widget.cutline = at_scene.cutline
                     self.scene().view.mainwindow.view_widget.setScene(at_scene)
                     self.scene().view.mainwindow.view_widget.centerOn(item.scenePos())
+                    item.setSelected(True)
                     return
         else:
             QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.PointingHandCursor)

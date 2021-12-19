@@ -1523,11 +1523,27 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.init_port(current_index)
         self.init_draw()
 
+    def redirect_last_scene(self):
+        temp_scene = self.view_widget.current_scene
+        temp_sceen_flag = self.view_widget.current_scene_flag
+
+        self.view_widget.current_scene = self.view_widget.last_scene
+        self.view_widget.current_scene_flag = self.view_widget.last_scene_flag
+        self.view_widget.setScene(self.view_widget.current_scene)
+        self.view_widget.background_image = self.view_widget.current_scene.background_image
+        self.view_widget.cutline = self.view_widget.current_scene.cutline
+
+        self.view_widget.last_scene = temp_scene
+        self.view_widget.last_scene_flag = temp_sceen_flag
+
     def resizeEvent(self, a0) -> None:
         super(NoteWindow, self).resizeEvent(a0)
         self.sky_widget.resize(self.width(), self.height())
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+        if a0.key() == QtCore.Qt.Key_Z and int(a0.modifiers()) & QtCore.Qt.AltModifier:
+            self.redirect_last_scene()
+            return
         if a0.key() == QtCore.Qt.Key_B and int(a0.modifiers()) & QtCore.Qt.ControlModifier:
             if self.toolbar.isVisible():
                 self.toolbar.setVisible(False)
@@ -1539,6 +1555,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                 self.view_widget.run_thumbnails.run()
                 self.time_id = self.view_widget.run_thumbnails.startTimer(500, timerType=QtCore.Qt.VeryCoarseTimer)
                 self.thumbnails.show()
+            return
         if a0.key() == QtCore.Qt.Key_Delete and len(self.scene_list.selectedItems()) == 1:
             self.view_widget.delete_sub_scene(self.scene_list.selectedItems()[0])
         super(NoteWindow, self).keyPressEvent(a0)

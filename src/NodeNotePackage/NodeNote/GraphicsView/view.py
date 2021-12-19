@@ -188,6 +188,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene = self.root_scene
         self.current_scene_flag = self.root_scene_flag
 
+        # Last scene
+        self.last_scene = self.root_scene
+        self.last_scene_flag = self.root_scene_flag
+
         # Search
         self.search_widget = QtWidgets.QWidget(self)
         self.search_widget.setVisible(False)
@@ -973,11 +977,17 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             sub_scene_flag.setData(0, QtCore.Qt.ToolTipRole, sub_scene)
 
             if self.root_flag:
+                self.last_scene = self.current_scene
+                self.last_scene_flag = self.current_scene_flag
+
                 self.current_scene.clearSelection()
                 self.setScene(sub_scene)
                 self.current_scene = sub_scene
                 self.current_scene_flag = sub_scene.sub_scene_flag
             else:
+                self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
+                self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
+
                 self.current_scene.clearSelection()
                 self.mainwindow.view_widget.current_scene.clearSelection()
                 self.mainwindow.view_widget.setScene(sub_scene)
@@ -988,6 +998,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             sub_scene = attribute_widget.sub_scene
 
             if self.root_flag:
+                self.last_scene = self.current_scene
+                self.last_scene_flag = self.current_scene_flag
+
                 self.current_scene.clearSelection()
                 self.setScene(sub_scene)
                 self.current_scene = sub_scene
@@ -995,6 +1008,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.background_image = self.current_scene.background_image
                 self.cutline = self.current_scene.cutline
             else:
+                self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
+                self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
+
                 self.current_scene.clearSelection()
                 self.mainwindow.view_widget.current_scene.clearSelection()
                 self.mainwindow.view_widget.setScene(sub_scene)
@@ -1020,12 +1036,18 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         """
 
         if self.root_flag:
+            self.last_scene = self.current_scene
+            self.last_scene_flag = self.current_scene_flag
+
             self.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
             self.current_scene_flag = sub_scene_item
             self.setScene(self.current_scene)
             self.background_image = self.current_scene.background_image
             self.cutline = self.current_scene.cutline
         else:
+            self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
+            self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
+
             self.mainwindow.view_widget.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
             self.mainwindow.view_widget.current_scene_flag = sub_scene_item
             self.mainwindow.view_widget.setScene(self.mainwindow.view_widget.current_scene)
@@ -1617,6 +1639,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     self.background_image = self.current_scene.background_image
                     self.cutline = self.current_scene.cutline
                     self.setScene(self.current_scene)
+
+                    self.last_scene = self.current_scene
+                    self.last_scene_flag = self.current_scene_flag
+
                     break
 
         return True

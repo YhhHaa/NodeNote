@@ -148,7 +148,11 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - Press `Alt+W` to create logic widget
 - Press `Alt+E` to create draw widget
 
-- Press `Alt+C` to copy the id of the attribute widget, and you can use it as hyperlink (`Ctrl+M`) to index the node
+- Press `Alt+C` to copy the id of the attribute widget, and you can use it as hyperlink (`Ctrl+M`) to index the node. You can edit the id after setting it as hyperlink
+
+- Press `Alt+Z` to redirect to last scene
+
+- 导出白色背景
 
 - 复制剪切节点
 - 漂浮特效可关闭
