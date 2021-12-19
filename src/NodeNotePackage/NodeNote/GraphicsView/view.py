@@ -1362,7 +1362,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.mouseDoubleClickEvent(leftbtn_press_event)
         from ..Components.sub_view import ProxyView
         from ..Components.todo import Todo
-        current_item = self.itemAt(event.pos())
+        if self.root_flag:
+            current_item = self.itemAt(event.pos())
+        else:
+            current_item = self.current_scene.itemAt(self.mapToScene(event.pos()), QtGui.QTransform())
+            print("sub view", current_item, event.pos())
         if isinstance(current_item, effect_background.EffectBackground):
             context_menu = QtWidgets.QMenu(self)
             # context list
