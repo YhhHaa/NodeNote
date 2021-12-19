@@ -784,6 +784,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene.removeItem(widget)
         self.logic_widgets.remove(widget)
 
+    def copy_items(self):
+        pass
+
+    def paste_items(self):
+        pass
+
     def remove_drag_pipe(self, port_widget, pipe_widget):
         """
         Delete pipes in port widget.
@@ -1269,6 +1275,13 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         from ..Components.attribute import InputTextField
         current_item = self.current_scene.itemAt(self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())), QtGui.QTransform())
 
+        if event.key() == QtCore.Qt.Key_A and int(event.modifiers()) & QtCore.Qt.AltModifier:
+            self.copy_items()
+            return
+        if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.AltModifier:
+            self.paste_items()
+            return
+
         if isinstance(current_item, effect_background.EffectBackground):
             if event.key() == QtCore.Qt.Key_Q and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.add_attribute_widget(pos=QtGui.QCursor.pos())
@@ -1601,10 +1614,13 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         pipe.Pipe.width = data.all_pipe_width
         pipe.Pipe.color.setRgba(data.all_pipe_color[0])
         pipe.Pipe.selected_color.setRgba(data.all_pipe_color[1])
-        pipe.Pipe.font_color.setRgba(data.all_pipe_color[2])
-        pipe.Pipe.font = QtGui.QFont()
-        pipe.Pipe.font.setFamily(data.all_pipe_font_family)
-        pipe.Pipe.font.setPointSize(data.all_pipe_font_size)
+        try:
+            pipe.Pipe.font_color.setRgba(data.all_pipe_color[2])
+            pipe.Pipe.font = QtGui.QFont()
+            pipe.Pipe.font.setFamily(data.all_pipe_font_family)
+            pipe.Pipe.font.setPointSize(data.all_pipe_font_size)
+        except Exception as e:
+            pass
 
         #   port widget
         port.Port.width = data.all_port_width
