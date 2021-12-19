@@ -154,8 +154,9 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 
 - Change the background into blank
 
-- 小文字
-- 返回上一层级
+- Change the style of edit box of pipe widget
+
+- Press `Alt+X` to redirect to parent scene
 - 复制剪切节点
 - 漂浮特效可关闭
 ## Changed:

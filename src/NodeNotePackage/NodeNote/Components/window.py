@@ -1625,12 +1625,19 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         self.view_widget.last_scene = temp_scene
         self.view_widget.last_scene_flag = temp_sceen_flag
+    
+    def rediect_parent_scene(self):
+        parent_flag = self.view_widget.current_scene_flag.parent()
+        if parent_flag:
+            self.view_widget.change_current_scene(parent_flag)
 
     def resizeEvent(self, a0) -> None:
         super(NoteWindow, self).resizeEvent(a0)
         self.sky_widget.resize(self.width(), self.height())
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+        if a0.key() == QtCore.Qt.Key_X and int(a0.modifiers()) & QtCore.Qt.AltModifier:
+            self.rediect_parent_scene()
         if a0.key() == QtCore.Qt.Key_Z and int(a0.modifiers()) & QtCore.Qt.AltModifier:
             self.redirect_last_scene()
             return
