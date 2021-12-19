@@ -1614,13 +1614,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         pipe.Pipe.width = data.all_pipe_width
         pipe.Pipe.color.setRgba(data.all_pipe_color[0])
         pipe.Pipe.selected_color.setRgba(data.all_pipe_color[1])
-        try:
+        if len(data.all_pipe_color) == 3:
             pipe.Pipe.font_color.setRgba(data.all_pipe_color[2])
             pipe.Pipe.font = QtGui.QFont()
             pipe.Pipe.font.setFamily(data.all_pipe_font_family)
             pipe.Pipe.font.setPointSize(data.all_pipe_font_size)
-        except Exception as e:
-            pass
 
         #   port widget
         port.Port.width = data.all_port_width

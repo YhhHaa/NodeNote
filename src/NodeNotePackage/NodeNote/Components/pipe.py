@@ -488,22 +488,20 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.selected_color = QtGui.QColor()
         self.selected_color.setRgba(data.self_pipe_color[1])
 
-        try:
+        if len(data.self_pipe_color) == 3:
             self.font_color = QtGui.QColor()
             self.font_color.setRgba(data.self_pipe_color[2])
 
             self.font = QtGui.QFont()
             self.font.setFamily(data.pipe_font_family)
             self.font.setPointSize(data.pipe_font_size)
-        except Exception as e:
-            pass
+            self.font_type_flag = data.pipe_flag[3]
+            self.font_color_flag = data.pipe_flag[4]
 
         # flag
         self.width_flag = data.pipe_flag[0]
         self.color_flag = data.pipe_flag[1]
         self.selected_color_flag = data.pipe_flag[2]
-        self.font_type_flag = data.pipe_flag[3]
-        self.font_color_flag = data.pipe_flag[4]
 
         self.update()
         return True

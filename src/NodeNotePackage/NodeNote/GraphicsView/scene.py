@@ -378,21 +378,18 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
             else:
                 self.pipe_style_selected_background_color = None
             
-            try:
-                if data.scene_pipe_font_color:
-                    self.pipe_style_font_color = QtGui.QColor()
-                    self.pipe_style_font_color.setRgba(data.scene_pipe_font_color)
-                else:
-                    self.pipe_style_font_color = None
-                
-                if data.scene_pipe_font_family and data.scene_pipe_font_size:
-                    self.pipe_style_font_type = QtGui.QFont()
-                    self.pipe_style_font_type.setFamily(data.scene_pipe_font_family)
-                    self.pipe_style_font_type.setPointSize(data.scene_pipe_font_size)
-                else:
-                    self.pipe_style_font_type = None
-            except Exception as e:
-                pass
+            if data.scene_pipe_font_color:
+                self.pipe_style_font_color = QtGui.QColor()
+                self.pipe_style_font_color.setRgba(data.scene_pipe_font_color)
+            else:
+                self.pipe_style_font_color = None
+            
+            if data.scene_pipe_font_family and data.scene_pipe_font_size:
+                self.pipe_style_font_type = QtGui.QFont()
+                self.pipe_style_font_type.setFamily(data.scene_pipe_font_family)
+                self.pipe_style_font_type.setPointSize(data.scene_pipe_font_size)
+            else:
+                self.pipe_style_font_type = None
 
             if data.scene_port_width:
                 self.port_style_width = data.scene_port_width
