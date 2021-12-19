@@ -1508,6 +1508,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         view_serialization.all_pipe_width = pipe.Pipe.width
         view_serialization.all_pipe_color.append(pipe.Pipe.color.rgba())
         view_serialization.all_pipe_color.append(pipe.Pipe.selected_color.rgba())
+        view_serialization.all_pipe_color.append(pipe.Pipe.font_color.rgba())
+        view_serialization.all_pipe_font_family = pipe.Pipe.font.family()
+        view_serialization.all_pipe_font_size = pipe.Pipe.font.pointSize()
 
         # port widget ui
         view_serialization.all_port_width = port.Port.width
@@ -1595,6 +1598,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         pipe.Pipe.width = data.all_pipe_width
         pipe.Pipe.color.setRgba(data.all_pipe_color[0])
         pipe.Pipe.selected_color.setRgba(data.all_pipe_color[1])
+        pipe.Pipe.font_color.setRgba(data.all_pipe_color[2])
+        pipe.Pipe.font = QtGui.QFont()
+        pipe.Pipe.font.setFamily(data.all_pipe_font_family)
+        pipe.Pipe.font.setPointSize(data.all_pipe_font_size)
 
         #   port widget
         port.Port.width = data.all_port_width

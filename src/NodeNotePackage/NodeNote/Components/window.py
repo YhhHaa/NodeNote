@@ -203,35 +203,49 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.pipe_style_width = None
         self.pipe_style_background_color = None
         self.pipe_style_selected_background_color = None
+        self.pipe_style_font_type = None
+        self.pipe_style_font_color = None
         #       Label widgets
         #           init
         self.pipe_style_label = QtWidgets.QLabel("Pipe Widgets")
         self.pipe_style_width_label = QtWidgets.QLabel("Width")
         self.pipe_style_background_color_label = QtWidgets.QLabel("Background Color")
         self.pipe_style_selected_background_color_label = QtWidgets.QLabel("Selected Background Color")
+        self.pipe_style_font_type_label = QtWidgets.QLabel("Font Type")
+        self.pipe_style_font_color_label = QtWidgets.QLabel("Font Color")
         #           added
         self.style_list_layout.addWidget(self.pipe_style_label, 13, 0, 1, -1)
         self.style_list_layout.addWidget(self.pipe_style_width_label, 14, 1)
         self.style_list_layout.addWidget(self.pipe_style_background_color_label, 15, 1)
         self.style_list_layout.addWidget(self.pipe_style_selected_background_color_label, 16, 1)
+        self.style_list_layout.addWidget(self.pipe_style_font_type_label, 17, 1)
+        self.style_list_layout.addWidget(self.pipe_style_font_color_label, 18, 1)
         #           stylesheet
         self.pipe_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
         self.pipe_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
         self.pipe_style_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         self.pipe_style_selected_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
+        self.pipe_style_font_type_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
+        self.pipe_style_font_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         #       Pushbutton widgets
         #           init
         self.pipe_style_width_button = QtWidgets.QPushButton("Change Width")
         self.pipe_style_background_color_button = QtWidgets.QPushButton("Change Background Color")
         self.pipe_style_selected_background_color_button = QtWidgets.QPushButton("Change Selected Background Color")
+        self.pipe_style_font_type_button = QtWidgets.QPushButton("Change Font Type")
+        self.pipe_style_font_color_button = QtWidgets.QPushButton("Change Font Color")
         #           added
         self.style_list_layout.addWidget(self.pipe_style_width_button, 14, 0)
         self.style_list_layout.addWidget(self.pipe_style_background_color_button, 15, 0)
         self.style_list_layout.addWidget(self.pipe_style_selected_background_color_button, 16, 0)
+        self.style_list_layout.addWidget(self.pipe_style_font_type_button, 17, 0)
+        self.style_list_layout.addWidget(self.pipe_style_font_color_button, 18, 0)
         #           stylesheet
         self.pipe_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.pipe_style_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.pipe_style_selected_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
+        self.pipe_style_font_type_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
+        self.pipe_style_font_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         #   Port Widgets
         #       Width and Color
@@ -253,14 +267,14 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.port_style_activated_color_label = QtWidgets.QLabel("Activated Background Color")
         self.port_style_activated_border_color_label = QtWidgets.QLabel("Activated Border Color")
         #           added
-        self.style_list_layout.addWidget(self.port_style_label, 17, 0, 1, -1)
-        self.style_list_layout.addWidget(self.port_style_width_label, 18, 1)
-        self.style_list_layout.addWidget(self.port_style_color_label, 19, 1)
-        self.style_list_layout.addWidget(self.port_style_border_color_label, 20, 1)
-        self.style_list_layout.addWidget(self.port_style_hovered_color_label, 21, 1)
-        self.style_list_layout.addWidget(self.port_style_hovered_border_color_label, 22, 1)
-        self.style_list_layout.addWidget(self.port_style_activated_color_label, 23, 1)
-        self.style_list_layout.addWidget(self.port_style_activated_border_color_label, 24, 1)
+        self.style_list_layout.addWidget(self.port_style_label, 19, 0, 1, -1)
+        self.style_list_layout.addWidget(self.port_style_width_label, 20, 1)
+        self.style_list_layout.addWidget(self.port_style_color_label, 21, 1)
+        self.style_list_layout.addWidget(self.port_style_border_color_label, 22, 1)
+        self.style_list_layout.addWidget(self.port_style_hovered_color_label, 23, 1)
+        self.style_list_layout.addWidget(self.port_style_hovered_border_color_label, 24, 1)
+        self.style_list_layout.addWidget(self.port_style_activated_color_label, 25, 1)
+        self.style_list_layout.addWidget(self.port_style_activated_border_color_label, 26, 1)
         #           stylesheet
         self.port_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
         self.port_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
@@ -280,13 +294,13 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.port_style_activated_color_button = QtWidgets.QPushButton("Change Activated Background Color")
         self.port_style_activated_border_color_button = QtWidgets.QPushButton("Change Activated Border Color")
         #           added
-        self.style_list_layout.addWidget(self.port_style_width_button, 18, 0)
-        self.style_list_layout.addWidget(self.port_style_color_button, 19, 0)
-        self.style_list_layout.addWidget(self.port_style_border_color_button, 20, 0)
-        self.style_list_layout.addWidget(self.port_style_hovered_color_button, 21, 0)
-        self.style_list_layout.addWidget(self.port_style_hovered_border_color_button, 22, 0)
-        self.style_list_layout.addWidget(self.port_style_activated_color_button, 23, 0)
-        self.style_list_layout.addWidget(self.port_style_activated_border_color_button, 24, 0)
+        self.style_list_layout.addWidget(self.port_style_width_button, 20, 0)
+        self.style_list_layout.addWidget(self.port_style_color_button, 21, 0)
+        self.style_list_layout.addWidget(self.port_style_border_color_button, 22, 0)
+        self.style_list_layout.addWidget(self.port_style_hovered_color_button, 23, 0)
+        self.style_list_layout.addWidget(self.port_style_hovered_border_color_button, 24, 0)
+        self.style_list_layout.addWidget(self.port_style_activated_color_button, 25, 0)
+        self.style_list_layout.addWidget(self.port_style_activated_border_color_button, 26, 0)
         #           stylesheet
         self.port_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.port_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
@@ -303,9 +317,9 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.draw_style_width_label = QtWidgets.QLabel("Width")
         self.draw_style_color_label = QtWidgets.QLabel("Color")
         #           added
-        self.style_list_layout.addWidget(self.draw_style_label, 25, 0, 1, -1)
-        self.style_list_layout.addWidget(self.draw_style_width_label, 26, 1)
-        self.style_list_layout.addWidget(self.draw_style_color_label, 27, 1)
+        self.style_list_layout.addWidget(self.draw_style_label, 27, 0, 1, -1)
+        self.style_list_layout.addWidget(self.draw_style_width_label, 28, 1)
+        self.style_list_layout.addWidget(self.draw_style_color_label, 29, 1)
         #           stylesheet
         self.draw_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
         self.draw_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
@@ -315,8 +329,8 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.draw_style_width_button = QtWidgets.QPushButton("Change Width")
         self.draw_style_color_button = QtWidgets.QPushButton("Change Color")
         #           added
-        self.style_list_layout.addWidget(self.draw_style_width_button, 26, 0)
-        self.style_list_layout.addWidget(self.draw_style_color_button, 27, 0)
+        self.style_list_layout.addWidget(self.draw_style_width_button, 28, 0)
+        self.style_list_layout.addWidget(self.draw_style_color_button, 29, 0)
         #           stylesheet
         self.draw_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.draw_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
@@ -331,9 +345,9 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.text_editor_length_box.setSingleStep(100)
         self.text_editor_length_box.setValue(-1)
         #       added
-        self.style_list_layout.addWidget(self.text_editor_label, 28, 0, 1, -1)
-        self.style_list_layout.addWidget(self.text_editor_length_box, 29, 0)
-        self.style_list_layout.addWidget(self.text_editor_length_label, 29, 1)
+        self.style_list_layout.addWidget(self.text_editor_label, 30, 0, 1, -1)
+        self.style_list_layout.addWidget(self.text_editor_length_box, 31, 0)
+        self.style_list_layout.addWidget(self.text_editor_length_label, 31, 1)
         #       stylesheet
         self.text_editor_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
         self.text_editor_length_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
@@ -917,6 +931,29 @@ class NoteWindow(QtWidgets.QMainWindow):
                             self.color_label_changed(self.port_style_activated_border_color_label,
                                                      color)
                             item.update()
+        
+        elif widget_type == "Pipe_font_color":
+            color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color",
+                                                    QtWidgets.QColorDialog.ShowAlphaChannel)
+            if color:
+                if current_index == 0:
+                    pipe.Pipe.font_color = color
+                    self.color_label_changed(self.pipe_style_font_color_label, color)
+                    for item in self.view_widget.pipes:
+                        item.update()
+                elif current_index == 1:
+                    self.view_widget.current_scene.pipe_style_font_color = color
+                    self.color_label_changed(self.pipe_style_font_color_label, color)
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, pipe.Pipe):
+                            item.update()
+                elif current_index == 2:
+                    for item in self.view_widget.current_scene.selectedItems():
+                        if isinstance(item, pipe.Pipe):
+                            item.font_color = color
+                            item.font_color_flag = True
+                            self.color_label_changed(self.pipe_style_font_color_label, color)
+                            item.update()
 
         elif widget_type == "draw_color":
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color")
@@ -962,6 +999,27 @@ class NoteWindow(QtWidgets.QMainWindow):
                             item.attribute_widget.label_item.font_flag = True
                 
                 self.font_label_changed(self.attribute_style_font_label, font_type)
+        elif widget_type == "Pipe_font":
+            font_type, ok = QtWidgets.QFontDialog.getFont()
+            if font_type and ok:
+                if current_index == 0:
+                    pipe.Pipe.font = font_type
+                    for item in self.view_widget.pipes:
+                        if not item.scene().pipe_style_font_type and not item.font_type_flag:
+                            item.edit.setFont(font_type)
+                elif current_index == 1:
+                    self.view_widget.current_scene.pipe_style_font_type = font_type
+                    for item in self.view_widget.current_scene.items():
+                        if isinstance(item, pipe.Pipe) and not item.font_type_flag:
+                            item.edit.setFont(font_type)
+                elif current_index == 2:
+                    for item in self.view_widget.current_scene.selectedItems():
+                        if isinstance(item, pipe.Pipe):
+                            item.font_type_flag = True
+                            item.font = font_type
+                            item.edit.setFont(font_type)
+                self.font_label_changed(self.pipe_style_font_type_label, font_type)
+                    
 
     def width_changed(self, widget_type, current_index):
         """
@@ -1269,6 +1327,8 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.width_label_changed(self.pipe_style_width_label, pipe.Pipe.width)
             self.color_label_changed(self.pipe_style_background_color_label, pipe.Pipe.color)
             self.color_label_changed(self.pipe_style_selected_background_color_label, pipe.Pipe.selected_color)
+            self.font_label_changed(self.pipe_style_font_type_label, pipe.Pipe.font)
+            self.color_label_changed(self.pipe_style_font_color_label, pipe.Pipe.font_color)
             #   change slots
             #       width
             self.pipe_style_width_button.disconnect()
@@ -1281,6 +1341,13 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.pipe_style_selected_background_color_button.disconnect()
             self.pipe_style_selected_background_color_button.clicked.connect(
                 lambda x: self.color_changed("Pipe_selected_color", current_index))
+            
+            #       font
+            self.pipe_style_font_type_button.disconnect()
+            self.pipe_style_font_type_button.clicked.connect(lambda x: self.font_changed("Pipe_font", current_index))
+
+            self.pipe_style_font_color_button.disconnect()
+            self.pipe_style_font_color_button.clicked.connect(lambda x: self.color_changed("Pipe_font_color", current_index))
 
         elif current_index == 1:
             #   change current parameters
@@ -1301,6 +1368,17 @@ class NoteWindow(QtWidgets.QMainWindow):
                                          self.view_widget.current_scene.pipe_style_selected_background_color)
             else:
                 self.color_label_changed(self.pipe_style_selected_background_color_label, pipe.Pipe.selected_color)
+            
+            #       font
+            if self.view_widget.current_scene.pipe_style_font_type:
+                self.font_label_changed(self.pipe_style_font_type_label, self.view_widget.current_scene.pipe_style_font_type)
+            else:
+                self.font_label_changed(self.pipe_style_font_type_label, pipe.Pipe.font)
+            
+            if self.view_widget.current_scene.pipe_style_font_color:
+                self.color_label_changed(self.pipe_style_font_color_label, self.view_widget.current_scene.pipe_style_font_color)
+            else:
+                self.color_label_changed(self.pipe_style_font_color_label, pipe.Pipe.font_color)
 
             #   change slots
             #       width
@@ -1314,6 +1392,11 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.pipe_style_selected_background_color_button.disconnect()
             self.pipe_style_selected_background_color_button.clicked.connect(
                 lambda x: self.color_changed("Pipe_selected_color", current_index))
+            #       font
+            self.pipe_style_font_type_button.disconnect()
+            self.pipe_style_font_type_button.clicked.connect(lambda x: self.font_changed("Pipe_font", current_index))
+            self.pipe_style_font_color_button.disconnect()
+            self.pipe_style_font_color_button.clicked.connect(lambda x: self.color_changed("Pipe_font_color", current_index))
 
         elif current_index == 2:
             #   change slots
@@ -1328,6 +1411,11 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.pipe_style_selected_background_color_button.disconnect()
             self.pipe_style_selected_background_color_button.clicked.connect(
                 lambda x: self.color_changed("Pipe_selected_color", current_index))
+            #       font
+            self.pipe_style_font_type_button.disconnect()
+            self.pipe_style_font_type_button.clicked.connect(lambda x: self.font_changed("Pipe_font", current_index))
+            self.pipe_style_font_color_button.disconnect()
+            self.pipe_style_font_color_button.clicked.connect(lambda x: self.color_changed("Pipe_font_color", current_index))
 
     def init_port(self, current_index):
         """
@@ -1504,7 +1592,8 @@ class NoteWindow(QtWidgets.QMainWindow):
     def text_width_changed(self, value: float):
         attribute.AttributeWidget.width_flag = value
         for attribute_item in self.view_widget.attribute_widgets:
-            attribute_item.attribute_widget.label_item.setTextWidth(attribute.AttributeWidget.width_flag)
+            if not attribute_item.mouse_flag:
+                attribute_item.attribute_widget.label_item.setTextWidth(attribute.AttributeWidget.width_flag)
             attribute_item.resize(0, 0)
             if not attribute_item.parentItem():
                 attribute_item.text_change_node_shape()

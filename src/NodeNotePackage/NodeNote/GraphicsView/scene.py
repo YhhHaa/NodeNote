@@ -74,6 +74,10 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         #       color
         self.pipe_style_background_color = None
         self.pipe_style_selected_background_color = None
+        #       font
+        self.pipe_style_font_type = None
+        self.pipe_style_font_color = None
+
         #   =================================================
 
         #   =============== port widget==========================
@@ -223,6 +227,11 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         if self.pipe_style_selected_background_color:
             scene_serialization.scene_pipe_style_selected_background_color = \
                 self.pipe_style_selected_background_color.rgba()
+        if self.pipe_style_font_color:
+            scene_serialization.scene_pipe_font_color = self.pipe_style_font_color.rgba()
+        if self.pipe_style_font_type:
+            scene_serialization.scene_pipe_font_family = self.pipe_style_font_type.family()
+            scene_serialization.scene_pipe_font_size = self.pipe_style_font_type.pointSize()
 
         # port widget ui
         if self.port_style_width:
@@ -368,6 +377,19 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 self.pipe_style_selected_background_color.setRgba(data.scene_pipe_style_selected_background_color)
             else:
                 self.pipe_style_selected_background_color = None
+            
+            if data.scene_pipe_font_color:
+                self.pipe_style_font_color = QtGui.QColor()
+                self.pipe_style_font_color.setRgba(data.scene_pipe_font_color)
+            else:
+                self.pipe_style_font_color = None
+            
+            if data.scene_pipe_font_family and data.scene_pipe_font_size:
+                self.pipe_style_font_type = QtGui.QFont()
+                self.pipe_style_font_type.setFamily(data.scene_pipe_font_family)
+                self.pipe_style_font_type.setPointSize(data.scene_pipe_font_size)
+            else:
+                self.pipe_style_font_type = None
 
             if data.scene_port_width:
                 self.port_style_width = data.scene_port_width

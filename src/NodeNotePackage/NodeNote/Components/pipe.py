@@ -23,6 +23,8 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
     width = 2
     color = QtGui.QColor(0, 255, 204, 128)
     selected_color = QtGui.QColor(0, 153, 121, 255)
+    font = QtWidgets.QApplication([]).font()
+    font_color = QtGui.QColor(0, 0, 0, 255)
 
     def __init__(self, start_port=None, end_port=None, node=None):
         """
@@ -74,8 +76,8 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         # EDIT
         self.edit = attribute.SimpleTextField("info", self)
-        self.edit.setFont(QtGui.QFont("等距更纱黑体 SC", 6))
-        self.edit.setDefaultTextColor(QtCore.Qt.black)
+        self.edit.setFont(self.font)
+        self.edit.setDefaultTextColor(self.font_color)
         bound_rect_width, bound_rect_height = self.edit.boundingRect().width(), self.edit.boundingRect().height()
         self.edit.setPos(self.path().pointAtPercent(0.5).x() - (bound_rect_width // 2),
                          self.path().pointAtPercent(0.5).y() - (bound_rect_height // 2))
@@ -92,6 +94,8 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.width_flag = False
         self.color_flag = False
         self.selected_color_flag = False
+        self.font_type_flag = False
+        self.font_color_flag = False
 
     def perform_evaluation_feedback(self):
         """
@@ -302,6 +306,15 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
                 self.color = self.scene().pipe_style_background_color
             if self.scene().pipe_style_selected_background_color and not self.selected_color_flag:
                 self.selected_color = self.scene().pipe_style_selected_background_color
+            if self.scene().pipe_style_font_type and not self.font_type_flag:
+                self.font = self.scene().pipe_style_font_type
+            if self.scene().pipe_style_font_color and not self.font_color_flag:
+                self.font_color = self.scene().pipe_style_font_color
+        
+        # font
+        self.edit.setFont(self.font)
+        self.edit.setDefaultTextColor(self.font_color)
+
         # DEFAULT PEN
         pen = QtGui.QPen(self.color if not self.isSelected() else self.selected_color)
         pen.setWidth(self.width)
@@ -426,11 +439,16 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         pipe_serialization.self_pipe_width = self.width
         pipe_serialization.self_pipe_color.append(self.color.rgba())
         pipe_serialization.self_pipe_color.append(self.selected_color.rgba())
+        pipe_serialization.self_pipe_color.append(self.font_color.rgba())
+        pipe_serialization.pipe_font_family = self.font.family()
+        pipe_serialization.pipe_font_size = self.font.pointSize()
 
         # flag
         pipe_serialization.pipe_flag.append(self.width_flag)
         pipe_serialization.pipe_flag.append(self.color_flag)
         pipe_serialization.pipe_flag.append(self.selected_color_flag)
+        pipe_serialization.pipe_flag.append(self.font_type_flag)
+        pipe_serialization.pipe_flag.append(self.font_color_flag)
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         """
@@ -470,10 +488,19 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.selected_color = QtGui.QColor()
         self.selected_color.setRgba(data.self_pipe_color[1])
 
+        self.font_color = QtGui.QColor()
+        self.font_color.setRgba(data.self_pipe_color[2])
+
+        self.font = QtGui.QFont()
+        self.font.setFamily(data.pipe_font_family)
+        self.font.setPointSize(data.pipe_font_size)
+
         # flag
         self.width_flag = data.pipe_flag[0]
         self.color_flag = data.pipe_flag[1]
         self.selected_color_flag = data.pipe_flag[2]
+        self.font_type_flag = data.pipe_flag[3]
+        self.font_color_flag = data.pipe_flag[4]
 
         self.update()
         return True

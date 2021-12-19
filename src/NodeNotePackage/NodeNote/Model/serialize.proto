@@ -143,6 +143,11 @@ message ViewSerialization {
 
       // flag
       repeated bool pipe_flag = 12;
+
+      // v2.8.2
+      // font
+      optional string pipe_font_family = 15;
+      optional int32 pipe_font_size = 16;
     }
     repeated PipeSerialization pipe_serialization = 4;
 
@@ -195,6 +200,12 @@ message ViewSerialization {
     optional float y = 29;
     optional float width = 30;
     optional float height = 31;
+
+    // v2.8.2
+    // pipe font
+    optional string scene_pipe_font_family = 32;
+    optional int32 scene_pipe_font_size = 33;
+    optional int64 scene_pipe_font_color = 34;
   }
 
   repeated SceneSerialization scene_serialization = 1;
@@ -233,4 +244,9 @@ message ViewSerialization {
   // flag
   optional bool line_flag = 17;
   optional bool undo_flag = 18;
+
+  // v2.8.2版本
+  // pipe font type
+  optional string all_pipe_font_family = 19;
+  optional int32 all_pipe_font_size = 20;
 }

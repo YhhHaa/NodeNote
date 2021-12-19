@@ -272,7 +272,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
     edit_finished = QtCore.pyqtSignal(bool)
     start_editing = QtCore.pyqtSignal()
 
-    font = QtGui.QFont("等距更纱黑体 SC", 8)
+    font = QtWidgets.QApplication([]).font()
     font_color = QtGui.QColor(0, 0, 0, 255)
 
     def __init__(self, text, node, parent=None, single_line=False):
