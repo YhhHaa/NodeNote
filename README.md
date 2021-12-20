@@ -41,10 +41,23 @@ Set the sidebar visible or invisible : `Ctrl+B`
 
 ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.12.png)
 
-you can add widgets by the context menu : `Attribute Widget` and  `Logic Widget` and `Draw Widget` 
+- you can add widgets by the context menu : `Attribute Widget` and  `Logic Widget` and `Draw Widget` 
+- or you can add widgets by shortcur keys like `Alt+Q`->`Attribute Widget`, `Alt+W`->`Logic Wdiegt`, `Alt+E`->`Draw Widget`
 > `Attribute Widget`: 
 - Input and output: Four ports.
 - Text input field : Rich text support.
+
+    |Python highlighter : `Ctrl+9`| Clear alignment: `Ctrl+P` | Bold: `Ctrl+W` |
+    | ---- |---- | ---- |
+    | Align left : `Ctrl+[`  |Align right : `Ctrl+]`   | Align center : `Ctrl+ \ ` |
+    |  Italic : `Ctrl+Q` | Underline : `Ctrl+R`  | Strikethrough: `Ctrl+/` |
+    | Increase the font: `Ctrl+G` | Decrease the font: `Ctrl+H` | Change the font color: `Ctrl+N` |
+    | Hyper link: `Ctrl+M` | mathematical formula ($LaTeX$): `Ctrl+I` | Clear format: `Ctrl + L`|
+    | Undo: `Crtl+Z` | Redo: `Ctrl+Y` | Table: `Ctrl+1` |
+    | Add a row in a table: `Ctrl+3` | Add a column in a table : `Ctrl+2` | Delete a row in a table : `Ctrl+5` |
+    | Delete a column in a table : `Ctrl+4` | Merge Table: `Ctrl+6` | Spilt Table: `Ctrl+7` |
+    |Add a list : `Ctrl+8` |  Resize the image : `Ctrl+U` | Enter the sub scene : `Alt+left_mouse_press` |
+    | indent: `Tab` or `Ctrl+Tab`| 
 - Expansion and reduction: Press `Shift` and `Lmb` to expand or reduce the attribute widget.
 
     ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.17.gif)
@@ -53,17 +66,9 @@ you can add widgets by the context menu : `Attribute Widget` and  `Logic Widget`
 
     ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.13.png)
 
-|Python highlighter : `Ctrl+9`| Clear alignment: `Ctrl+P` | Bold: `Ctrl+W` |
-| ---- |---- | ---- |
-| Align left : `Ctrl+[`  |Align right : `Ctrl+]`   | Align center : `Ctrl+ \ ` |
-|  Italic : `Ctrl+Q` | Underline : `Ctrl+R`  | Strikethrough: `Ctrl+/` |
-| Increase the font: `Ctrl+G` | Decrease the font: `Ctrl+H` | Change the font color: `Ctrl+N` |
-| Hyper link: `Ctrl+M` | mathematical formula ($LaTeX$): `Ctrl+I` | Clear format: `Ctrl + L`|
-| Undo: `Crtl+Z` | Redo: `Ctrl+Y` | Table: `Ctrl+1` |
-| Add a row in a table: `Ctrl+3` | Add a column in a table : `Ctrl+2` | Delete a row in a table : `Ctrl+5` |
-| Delete a column in a table : `Ctrl+4` | Merge Table: `Ctrl+6` | Spilt Table: `Ctrl+7` |
-|Add a list : `Ctrl+8` |  Resize the image : `Ctrl+U` | Enter the sub scene : `Alt+left_mouse_press` |
-| indent: `Tab` or `Ctrl+Tab`| 
+- Copy and paste: You can copy one attribute widget by `Alt+R` and paste it anywhere you want by `Alt+T`
+
+- Node hyperlink: You can press `Alt+C` to copy the special node id, and then paste the id which is used as hyperlink by pressing `Ctrl+M` in other node. After that, you can click the hyperlink to navigate to other node.
 
 > `Logic Widget`:
 - Input and output: two ports.
@@ -77,25 +82,28 @@ you can add widgets by the context menu : `Attribute Widget` and  `Logic Widget`
 - Press `Ctrl 0` at pipe widget or attribute widget to turn on the animation. 
 - You can change the pipe position with two controller points.
 
-## 4. The tablet support.
+## 4. Scene operations.
+- You can redirect back to your last scene by `Alt+Z`.
+- You can redirect to your parent scene by `Alt+X`.
+
+## 5. The tablet support.
 
 ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.1tablet.gif)
 - you can create a draw widget to draw with a tablet.
 
 - The style which contains the width and the color depends on the draw widget style. 
 
-## 5. Other functions.
+## 6. Other functions.
+![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.1collision_detection.gif)
 - collision detection
 - Auxiliary line alignment
-
-![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/Node_Note_0.1collision_detection.gif)
-
 - The view zoom in and zoom out: `Ctrl + -` 和 `Ctrl + +`
 - Search everywhere: `Crtl + F`
 - Change background image(svg format) and background flowing image(png format): `Resources/Background` and `Resources`
 - Save and load: `Ctrl S`(auto sava when close the application) and `Ctrl O` to load `.note` file.
 - print items in this scene to image: `Ctrl Alt p`
 - print selected items to image: `Ctrl Shift p`
+- You can close the flowing image effect function by `F11`
 
 # 3. How to note your knowledge 
 For the four ports of the specified `attribute widget`, the left side of the two represents the input, and the two represent the output on the right.
@@ -118,6 +126,36 @@ Also, We can use tablet to help us note sth that text/logic can not express.
 # 4. Finally
 If you meet any problems or want to give a valuable suggestion, please email to `helper033@163.com` or create an issue.
 
+## Shortcut Table:
+| This is operations of rich text| | |
+| ---- |---- | ---- |
+|Python highlighter : `Ctrl+9`| Clear alignment: `Ctrl+P` | Bold: `Ctrl+W` |
+| Align left : `Ctrl+[`  |Align right : `Ctrl+]`   | Align center : `Ctrl+ \ ` |
+|  Italic : `Ctrl+Q` | Underline : `Ctrl+R`  | Strikethrough: `Ctrl+/` |
+| Increase the font: `Ctrl+G` | Decrease the font: `Ctrl+H` | Change the font color: `Ctrl+N` |
+| Hyper link: `Ctrl+M` | mathematical formula ($LaTeX$): `Ctrl+I` | Clear format: `Ctrl + L`|
+| Undo: `Crtl+Z` | Redo: `Ctrl+Y` | Table: `Ctrl+1` |
+| Add a row in a table: `Ctrl+3` | Add a column in a table : `Ctrl+2` | Delete a row in a table : `Ctrl+5` |
+| Delete a column in a table : `Ctrl+4` | Merge Table: `Ctrl+6` | Spilt Table: `Ctrl+7` |
+|Add a list : `Ctrl+8` |  Resize the image : `Ctrl+U` | indent: `Tab` or `Ctrl+Tab`| 
+
+| This is operations of widgets | | |
+| --- | --- | --- |
+| Copy node: `Alt+R` | Paste node: `Alt+T` | Copy node id: `Alt+C` |
+| Create node: `Alt+Q` | Create logic widget: `Alt+W` | Create draw widget: `Alt+E` |
+| Enter the sub scene of node: `Alt+left_mouse_press` | | |
+
+| This is operations of scene | | |
+| --- | --- | --- |
+| Expand scene: `F3/4/5/6` | Narrow scene: `F7/8/9/10` | |
+| Auxiliary line alignment: `F1` | Undo&&Redo: `F2` | Flowing image effect: `F11` |
+| Redirect back to last scene: `Alt+Z` | Redirect to parent scene: `Alt+X` |
+
+
+| This is operations of file | | |
+| --- | --- | --- |
+| Save(auto): `Ctrl+S` | Load: `Ctrl+O` |
+| Export scene: `Ctrl+Alt+P` | Export selected items: `Ctrl+Shift+P`|
 
 # v2.7.2:
 ## Function:
@@ -139,7 +177,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Function:
 - Add thumbnails to index scene quickly.
 
-# todo
+# v.2.19.7
 ## Debug: 
 - Show the text cursor while editing.
 - Create sub widgets in some area of sub view correctly.
@@ -152,16 +190,14 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - Press `Alt+C` to copy the id of the attribute widget, and you can use it as hyperlink (`Ctrl+M`) to index the node. You can edit the id after setting it as hyperlink
 
 - Press `Alt+Z` to redirect to last scene
-
-- Change the background into blank
-
-- Change the style of edit box of pipe widget
-
 - Press `Alt+X` to redirect to parent scene
+
+- You can change the style of edit box of pipe widget
 
 - Press `Alt+R` to copy one attribute widget, Press `Alt+T` to paste your widget
 
 - Press `F11` to close flowing image effect.
 
-## Changed:
-- 安装通过homebrew
+## Changes:
+- Change the background into blank
+- Intall NodeNote by homebrew
