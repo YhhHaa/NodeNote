@@ -820,10 +820,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         """
 
+        self.mainwindow.view_widget.copy_attribute_widget = dict()
         copy_empty_scene = serialize_pb2.ViewSerialization().scene_serialization.add()
         parent_flag = None
 
         # Find parent attribute widget.
+        selected_items = list(self.current_scene.selectedItems())
         for item in self.current_scene.selectedItems():
             if isinstance(item, attribute.AttributeWidget):
                 if not parent_flag and not item.parentItem():
@@ -832,6 +834,14 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     self.mainwindow.view_widget.copy_attribute_widget[0] = copy_attribute_widget
                     parent_flag = item
                     break
+                elif not parent_flag and item.parentItem():
+                    parent = item.parentItem()
+                    if parent not in selected_items:
+                        copy_attribute_widget = copy_empty_scene.attr_serialization.add()
+                        item.serialize(copy_attribute_widget)
+                        self.mainwindow.view_widget.copy_attribute_widget[0] = copy_attribute_widget
+                        parent_flag = item
+                        break
         
         if parent_flag:
             self.get_all_children(parent_flag)
