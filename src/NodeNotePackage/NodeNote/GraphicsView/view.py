@@ -244,7 +244,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         # thumbnails
         self.run_thumbnails = DisplayThumbnailsThread(self)
-        self.run_thumbnails.start()
+        # self.run_thumbnails.start()
         # self.startTimer(100, timerType=QtCore.Qt.VeryCoarseTimer)
 
         # flowing image
