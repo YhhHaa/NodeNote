@@ -4,13 +4,6 @@ Stylesheet ui.
 
 import os
 
-
-STYLE_SCENE_THUMBNAILS = '''
-QWidget {
-    background-color: rgba(170, 255, 255, 100);
-}
-'''
-
 STYLE_QGROUPBOX = '''
 QGroupBox {
     background-color: rgba(0, 0, 0, 0);
@@ -222,44 +215,115 @@ STYLE_VSCROLLBAR = '''
              }
 '''
 
+STYLE_QMAINWIDNOW = '''
+QMainWindow {
+    background-color: rgba(255, 192, 241, 255);
+    margin: 2px;
+    spacing: 3px;
+}
+QMainWindow::separator {
+    background: yellow;
+    width: 10px;
+    height: 10px;
+}
+
+QMainWindow::separator:hover {
+    background: red;
+}
+'''
+
 STYLE_QTOOLBAR = '''
 QToolBar {
-    background: rgba(204, 255, 255, 100);
+    background-color: rgba(246, 237, 170, 255);
+    margin: 2px;
+    padding: 2px;
+    border: 5px solid rgba(253, 248, 147, 255);
+    border-radius: 25px;
     spacing: 3px;
 }
 
 QToolBar::handle {
     image: url(%s);
+    spacing: 3px;
 }
-''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Flowers.png")).replace('\\', r'/')
+''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/horse.png")).replace('\\', r'/')
+
+STYLE_QTABWIDGET = '''
+QTabWidget::pane {
+    border: 4px solid rgba(254, 210, 190, 255);
+    border-radius: 10px;
+}
+
+QTabWidget::tab-bar {
+    left: 10px;
+}
+
+QTabBar::tab {
+    border: 2px solid #FCA53C;
+    border-bottom-color: rgba(254, 210, 190, 255); /* same as the pane color */
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    min-width: 8ex;
+    padding: 2px;
+    border-radius: 15px;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0.8, y2: 1,
+                                stop: 0 #FFD2B6, stop: 0.4 #FCA52C,
+                                stop: 0.2 #FEFBC8, stop: 1.0 #F6EDAB);
+}
+
+QTabBar::tab:selected {
+    border-color: rgba(255, 192, 241, 255);
+    border-bottom-color: rgba(254, 210, 190, 255); /* same as pane color */
+}
+
+QTabBar::tab:!selected {
+    margin-top: 2px; /* make non-selected tabs look smaller */
+}
+'''
+
+STYLE_SCENE_THUMBNAILS = '''
+QWidget {
+    background-color: #F6EDAB;
+    boder: 2px solid #F6EDAB;
+    border-radius: 6px;
+}
+'''
 
 STYLE_QTREEWIDGET = '''
 QTreeWidget {
-    alternate-background-color: yellow;
-    background-color: rgba(204, 255, 255, 100);
-}
-
-QTreeWidget {
+    alternate-background-color: rgba(240, 251, 158, 180);
+    background-color: rgba(245, 250, 199, 255);
     show-decoration-selected: 1;
 }
 
 QTreeWidget::item {
-     border: 1px solid #d9d9d9;
+    border: 1px solid #FCD554;
     border-top-color: transparent;
     border-bottom-color: transparent;
+
 }
 
 QTreeWidget::item:hover {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
+    background: qlineargradient(x1: 0, y1: 0, x2: 0.8, y2: 1,
+                                stop: 0 #FFD2B6, stop: 0.4 #FCA52C,
+                                stop: 0.2 #FEFBC8, stop: 1.0 #F6EDAB);
     border: 1px solid #bfcde4;
 }
 
 QTreeWidget::item:selected {
     border: 1px solid #567dbc;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0.8, y2: 1,
+                                stop: 0 #F29627, stop: 0.4 #FCA52C,
+                                stop: 0.2 #FEFBC8, stop: 1.0 #F6EDAB);
 }
 
 QTreeWidget::item:selected:active{
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
+    background: qlineargradient(x1: 0, y1: 0, x2: 0.8, y2: 1,
+                                stop: 0 #F0FB9E, stop: 0.4 #E6C1BD,
+                                stop: 0.2 #FCD554, stop: 1.0 #FFD2B6);
 }
 
 QTreeWidget::item:selected:!active {
@@ -267,35 +331,35 @@ QTreeWidget::item:selected:!active {
 }
 
 QTreeWidget::branch {
-        background: palette(base);
+        background: #FFD2B6;
 }
 
 QTreeWidget::branch:has-siblings:!adjoins-item {
-        background: cyan;
+        background: #E2D14E;
 }
 
 QTreeWidget::branch:has-siblings:adjoins-item {
-        background: red;
+        background: #76B8B6;
 }
 
 QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-        background: blue;
+        background: #B9D644;
 }
 
 QTreeWidget::branch:closed:has-children:has-siblings {
-        background: pink;
+        background: #FCD554;
 }
 
 QTreeWidget::branch:has-children:!has-siblings:closed {
-        background: gray;
+        background: #DAC3A4;
 }
 
 QTreeWidget::branch:open:has-children:has-siblings {
-        background: magenta;
+        background: #E0EEB3;
 }
 
 QTreeWidget::branch:open:has-children:!has-siblings {
-        background: green;
+        background: #949D6F;
 }
 QTreeWidget::branch:has-siblings:!adjoins-item {
     border-image: url(%s) 0;

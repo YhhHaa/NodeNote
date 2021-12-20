@@ -41,12 +41,14 @@ class NoteWindow(QtWidgets.QMainWindow):
             (QtWidgets.QDesktopWidget().screenGeometry().width() - self.geometry().width()) // 2,
             (QtWidgets.QDesktopWidget().screenGeometry().height() - self.geometry().height()) // 2
         )
+        self.setStyleSheet(stylesheet.STYLE_QMAINWIDNOW)
 
         # Tool bar
         self.toolbar = QtWidgets.QToolBar()
         self.toolbar.setStyleSheet(stylesheet.STYLE_QTOOLBAR)
         self.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolbar)
         self.tab_widget = QtWidgets.QTabWidget()
+        self.tab_widget.setStyleSheet(stylesheet.STYLE_QTABWIDGET)
         self.toolbar.addWidget(self.tab_widget)
         self.toolbar.setVisible(False)
 
@@ -55,6 +57,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_thumbnails.setStyleSheet(stylesheet.STYLE_SCENE_THUMBNAILS)
         self.scene_thumbnails_layout = QtWidgets.QVBoxLayout()
         self.scene_thumbnails_layout.setSpacing(0)
+        self.scene_thumbnails_layout.setContentsMargins(5, 5, 5, 5)
         self.scene_thumbnails.setLayout(self.scene_thumbnails_layout)
 
         self.scene_list_bottom = QtWidgets.QWidget(self.scene_thumbnails)
@@ -65,6 +68,8 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_list_scroll = QtWidgets.QScrollArea(self.scene_list_bottom)
         self.scene_list_scroll.setWidgetResizable(True)
         self.scene_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.scene_list_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.scene_list_scroll.setStyleSheet(stylesheet.STYLE_VSCROLLBAR + stylesheet.STYLE_HSCROLLBAR)
         self.scene_list_bottom_layout.addWidget(self.scene_list_scroll)
 
         self.scene_list = QtWidgets.QTreeWidget()
@@ -377,8 +382,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         # thumbnails
         self.thumbnails = QtWidgets.QLabel()
-        self.thumbnails.setMinimumSize(self.style_list.sizeHint().width(), 200)
-        self.thumbnails.setMaximumSize(self.style_list.sizeHint().width(), 200)
+        self.thumbnails.setMinimumSize(300, 260)
         self.thumbnails.setStyleSheet("border:1px solid red")
         self.scene_thumbnails_layout.addWidget(self.thumbnails)
         self.time_id = 0

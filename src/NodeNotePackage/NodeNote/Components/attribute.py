@@ -1543,7 +1543,7 @@ class BaseWidget(QtWidgets.QGraphicsWidget):
             self.context_flag = False
 
 class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
-    background_color = QtGui.QColor(229, 255, 255, 125)
+    background_color = QtGui.QColor(240, 251, 158, 255)
     selected_background_color = QtGui.QColor(255, 255, 255, 30)
     border_color = QtGui.QColor(46, 57, 66, 255)
     selected_border_color = QtGui.QColor(254, 207, 42, 255)
@@ -2411,7 +2411,7 @@ class NoneWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
 class AttributeWidget(BaseWidget, serializable.Serializable):
     display_name_changed = QtCore.pyqtSignal(str)
     draw_label = None
-    color = QtGui.QColor(229, 255, 255, 125)
+    color = QtGui.QColor(252, 165, 44, 255)
     selected_color = QtGui.QColor(255, 255, 255, 30)
     border_color = QtGui.QColor(46, 57, 66, 255)
     selected_border_color = QtGui.QColor(254, 207, 42, 255)

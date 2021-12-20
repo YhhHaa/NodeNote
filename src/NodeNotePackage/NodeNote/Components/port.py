@@ -10,11 +10,11 @@ class Port(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
     """
 
-    width = 12.0
-    color = QtGui.QColor(49, 115, 100, 255)
-    border_color = QtGui.QColor(29, 202, 151, 255)
-    hovered_color = QtGui.QColor(17, 43, 82, 255)
-    hovered_border_color = QtGui.QColor(136, 255, 35, 255)
+    width = 10.0
+    color = QtGui.QColor(245, 237, 171, 255)
+    border_color = QtGui.QColor(118, 184, 182, 255)
+    hovered_color = QtGui.QColor(118, 184, 182, 255)
+    hovered_border_color = QtGui.QColor(99, 180, 255, 255)
     activated_color = QtGui.QColor(14, 45, 59, 255)
     activated_border_color = QtGui.QColor(107, 166, 193, 255)
 

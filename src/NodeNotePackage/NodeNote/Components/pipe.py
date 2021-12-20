@@ -21,9 +21,10 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
     """
 
     width = 2
-    color = QtGui.QColor(0, 255, 204, 128)
+    color = QtGui.QColor(225, 192, 241, 255)
     selected_color = QtGui.QColor(0, 153, 121, 255)
     font = QtWidgets.QApplication([]).font()
+    font.setPointSize(6)
     font_color = QtGui.QColor(0, 0, 0, 255)
 
     def __init__(self, start_port=None, end_port=None, node=None):
@@ -312,8 +313,10 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
                 self.font_color = self.scene().pipe_style_font_color
         
         # font
-        self.edit.setFont(self.font)
-        self.edit.setDefaultTextColor(self.font_color)
+        if not self.font.family() == self.edit.font().family() or not self.font.pointSize() == self.edit.font().pointSize():
+            self.edit.setFont(self.font)
+        if self.edit.defaultTextColor().rgba() != self.font_color.rgba():
+            self.edit.setDefaultTextColor(self.font_color)
 
         # DEFAULT PEN
         pen = QtGui.QPen(self.color if not self.isSelected() else self.selected_color)

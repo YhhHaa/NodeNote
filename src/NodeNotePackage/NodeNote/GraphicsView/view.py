@@ -79,13 +79,13 @@ class DisplayThumbnailsThread(QtCore.QThread):
     
     def timerEvent(self, a0: 'QtCore.QTimerEvent') -> None:
         area = self.view.mainwindow.view_widget.current_scene.scene_rect
-        image = QtGui.QImage(self.view.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32)
+        image = QtGui.QImage(self.view.mainwindow.thumbnails.size() - QtCore.QSize(10, 10) , QtGui.QImage.Format_ARGB32)
         painter = QtGui.QPainter(image)
         self.view.mainwindow.view_widget.current_scene.render(
             painter, 
             QtCore.QRectF(
                 0, 0,
-                self.view.mainwindow.thumbnails.size().width(), self.view.mainwindow.thumbnails.size().height()
+                image.size().width(), image.size().height()
             ),
             area,
             QtCore.Qt.IgnoreAspectRatio)
