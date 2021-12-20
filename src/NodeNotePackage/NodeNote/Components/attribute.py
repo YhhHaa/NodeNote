@@ -904,7 +904,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                 cursor.clearSelection()
                 self.setTextCursor(cursor)
 
-    def copy(self):
+    def copy(self, export_flag=False):
         """
         Ctrl C
 
@@ -913,10 +913,16 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         text_cursor = self.textCursor()
         clipboard = QtWidgets.QApplication.clipboard()
         if text_cursor.hasSelection():
-            mime_data = QtCore.QMimeData()
-            html_data = text_cursor.selection().toHtml(bytes())
-            mime_data.setHtml(html_data)
-            clipboard.setMimeData(mime_data)
+            if not export_flag:
+                mime_data = QtCore.QMimeData()
+                html_data = text_cursor.selection().toHtml(bytes())
+                mime_data.setHtml(html_data)
+                clipboard.setMimeData(mime_data)
+            else:
+                mime_data = QtCore.QMimeData()
+                text_data = text_cursor.selection().toPlainText()
+                mime_data.setText(text_data)
+                clipboard.setMimeData(mime_data)
 
     @staticmethod
     def paste(cursor):
@@ -978,6 +984,9 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         current_cursor = self.textCursor()
 
         # restore text before editing and return.
+        if current_key == QtCore.Qt.Key_C and event.modifiers() & QtCore.Qt.ControlModifier and event.modifiers() & QtCore.Qt.ShiftModifier:
+            self.copy(export_flag=True)
+            return
         if current_key == QtCore.Qt.Key_Escape:
             self.clearFocus()
             super(InputTextField, self).keyPressEvent(event)
@@ -1093,7 +1102,7 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                 self.paste(self.textCursor())
                 return False
             elif event.matches(QtGui.QKeySequence.Copy):
-                self.copy()
+                self.copy(export_flag=False)
                 return False
             elif event.key() == QtCore.Qt.Key_Tab:
                 if event.modifiers() == QtCore.Qt.ControlModifier:

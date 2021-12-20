@@ -138,6 +138,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 | Add a row in a table: `Ctrl+3` | Add a column in a table : `Ctrl+2` | Delete a row in a table : `Ctrl+5` |
 | Delete a column in a table : `Ctrl+4` | Merge Table: `Ctrl+6` | Spilt Table: `Ctrl+7` |
 |Add a list : `Ctrl+8` |  Resize the image : `Ctrl+U` | indent: `Tab` or `Ctrl+Tab`| 
+| Copy html text: `Ctrl+C` | Copy plain text: `Ctrl+Shift+C` | Paste: `Ctrl+V` |
 
 | This is operations of widgets | | |
 | --- | --- | --- |
