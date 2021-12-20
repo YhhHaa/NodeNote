@@ -9,7 +9,7 @@ import os
 from PyQt5 import QtGui, QtCore, QtWidgets, sip
 from .scene import Scene
 from ..Components import effect_water, attribute, port, pipe, effect_cutline, effect_background, effect_snow, \
-    draw
+    draw, todo, sub_view
 from ..Model import constants, stylesheet, serializable, serialize_pb2
 
 
@@ -125,6 +125,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         super(View, self).__init__(parent)
         if self.root_flag:
             self.line_flag = False
+            self.copy_attribute_widget = dict()
         self.undo_flag = False
         # BASIC SETTINGS
         self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
@@ -246,6 +247,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.run_thumbnails.start()
         # self.startTimer(100, timerType=QtCore.Qt.VeryCoarseTimer)
 
+        # flowing image
+        self.flowing_flag = True
+
     def expand(self, expand_flag: str):
         if expand_flag == "left":
             self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(-200, 0, 0, 0)
@@ -302,18 +306,25 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if image_name != "":
             self.background_image.change_svg(os.path.relpath(os.path.abspath(image_name)))
 
-    def change_flowing_image(self):
+    def change_flowing_image(self, close=False):
         """
         - Change the flowing image whose format is "PNG".
         - the default image is the flower.
 
         """
-
-        image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select png", "", "*.png")
-        if image_name != "":
-            image_name = os.path.relpath(os.path.abspath(image_name))
-            self.image_path = image_name
-            effect_snow.SnowWidget.image_path = image_name
+        if not close:
+            image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select png", "", "*.png")
+            if image_name != "":
+                image_name = os.path.relpath(os.path.abspath(image_name))
+                self.image_path = image_name
+                effect_snow.SnowWidget.image_path = image_name
+        else:
+            if self.mainwindow.sky_widget.isVisible():
+                self.mainwindow.sky_widget.hide()
+                self.flowing_flag = False
+            else:
+                self.mainwindow.sky_widget.show()
+                self.flowing_flag = True
 
     def change_scale(self, event):
         """
@@ -784,21 +795,179 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.current_scene.removeItem(widget)
         self.logic_widgets.remove(widget)
 
-    def copy_items(self):
-        copy_empty_view = serialize_pb2.ViewSerialization()
-        copy_empty_scene = copy_empty_view.scene_serialization.add()
+    def get_all_children(self, parent_flag):
+        """
+        Put all sub attribute widgets into dict.
+
+        Args:
+            attribute_widget: Parent widget.
+            copy_empty_scene: For serialization.
+
+        """
+        copy_empty_scene = serialize_pb2.ViewSerialization().scene_serialization.add()
+
+        # Find chidren of parent attribute widget.
+        for item in parent_flag.attribute_sub_widgets:
+            if isinstance(item, attribute.AttributeWidget):
+                copy_attribute_widget = copy_empty_scene.attr_serialization.add()
+                item.serialize(copy_attribute_widget)
+                self.mainwindow.view_widget.copy_attribute_widget[item.id] = copy_attribute_widget
+                self.get_all_children(item)
+
+    def copy_item(self):
+        """
+        Used to copy selected item.
+
+        """
+
+        copy_empty_scene = serialize_pb2.ViewSerialization().scene_serialization.add()
+        parent_flag = None
+
+        # Find parent attribute widget.
         for item in self.current_scene.selectedItems():
             if isinstance(item, attribute.AttributeWidget):
-                item.serialize(copy_empty_scene.attr_serialization.add())
-            elif isinstance(item, attribute.LogicWidget):
-                item.serialize(copy_empty_scene.logic_serialization.add())
-            elif isinstance(item, pipe.Pipe):
-                item.serialize(copy_empty_scene.pipe_serialization.add())
-            elif isinstance(item, draw.Draw):
-                item.serialize(copy_empty_scene.draw_serialization.add())
+                if not parent_flag and not item.parentItem():
+                    copy_attribute_widget = copy_empty_scene.attr_serialization.add()
+                    item.serialize(copy_attribute_widget)
+                    self.mainwindow.view_widget.copy_attribute_widget[0] = copy_attribute_widget
+                    parent_flag = item
+                    break
+        
+        if parent_flag:
+            self.get_all_children(parent_flag)
 
-    def paste_items(self):
-        pass
+
+    def create_attribute_from_data(self, data):
+        """
+        Used to create attribute from serialization to paste item.
+
+        Args:
+            data: Serialization of attribute widget.
+
+        """
+        node_widget = attribute.AttributeWidget()
+
+        # Added into current scene and view
+        self.current_scene.addItem(node_widget)
+        self.attribute_widgets.append(self)
+
+        # position
+        pos = self.mapToScene(self.mapFromGlobal(QtGui.QCursor().pos()))
+        size = QtCore.QSizeF(data.size[0], data.size[1])
+        node_widget.setGeometry(QtCore.QRectF(pos, size))
+
+        # content
+        node_widget.attribute_widget.label_item.setHtml(data.contents)
+
+        # layout
+        node_widget.item_row = data.attr_location[0]
+        node_widget.item_column = data.attr_location[1]
+        node_widget.current_row = data.next_location[0]
+        node_widget.current_column = data.next_location[1]
+
+        # highlighter
+        if data.highlighter:
+            node_widget.attribute_widget.label_item.pythonlighter = \
+                attribute.PythonHighlighter(node_widget.attribute_widget.label_item.document())
+        
+        # style
+        font = QtGui.QFont()
+        font.setFamily(data.self_attr_font_family)
+        font.setPointSize(data.self_attr_font_size)
+        node_widget.attribute_widget.label_item.font = font
+        node_widget.attribute_widget.label_item.document().setDefaultFont(font)
+
+        node_widget.attribute_widget.label_item.font_color = QtGui.QColor()
+        node_widget.attribute_widget.label_item.font_color.setRgba(data.self_attr_color[0])
+        node_widget.attribute_widget.label_item.setDefaultTextColor(node_widget.attribute_widget.label_item.font_color)
+
+        node_widget.color = QtGui.QColor()
+        node_widget.color.setRgba(data.self_attr_color[1])
+
+        node_widget.selected_color = QtGui.QColor()
+        node_widget.selected_color.setRgba(data.self_attr_color[2])
+
+        node_widget.border_color = QtGui.QColor()
+        node_widget.border_color.setRgba(data.self_attr_color[3])
+
+        node_widget.selected_border_color = QtGui.QColor()
+        node_widget.selected_border_color.setRgba(data.self_attr_color[4])
+
+        node_widget.attribute_widget.label_item.font_flag = data.attr_flag[0]
+        node_widget.attribute_widget.label_item.font_color_flag = data.attr_flag[1]
+
+        node_widget.color_flag = data.attr_flag[2]
+        node_widget.selected_color_flag = data.attr_flag[3]
+        node_widget.border_flag = data.attr_flag[4]
+        node_widget.selected_border_flag = data.attr_flag[5]
+
+        # text width
+        node_widget.mouse_flag = data.mouse_flag
+        if node_widget.mouse_flag:
+            node_widget.attribute_widget.label_item.setTextWidth(data.mouse_text_width)
+            node_widget.text_change_node_shape()
+            node_widget.resize(0, node_widget.size().height())
+
+        # sub items
+        for attribute_sub_id in data.sub_attr:
+            sub_attribute_widget = self.create_attribute_from_data(self.mainwindow.view_widget.copy_attribute_widget.get(attribute_sub_id))
+            node_widget.attribute_sub_widgets.append(sub_attribute_widget)
+            node_widget.attribute_layout.addItem(sub_attribute_widget,
+                                            sub_attribute_widget.item_row,
+                                            sub_attribute_widget.item_column)
+        for attribute_sub_file in data.file_serialization:
+            attribute_sub = attribute.AttributeFile(node_widget)
+            temp_id = attribute_sub.id
+            attribute_sub.deserialize(attribute_sub_file, hashmap={}, view=self, flag=True)
+            attribute_sub.id = temp_id
+            node_widget.attribute_sub_widgets.append(attribute_sub)
+            node_widget.attribute_layout.addItem(attribute_sub,
+                                            attribute_sub.item_row,
+                                            attribute_sub.item_column)
+        for attribute_sub_todo in data.todo_serialization:
+            attribute_sub = todo.Todo(node_widget)
+            temp_id = attribute_sub.id
+            attribute_sub.deserialize(attribute_sub_todo, hashmap={}, view=None, flag=True)
+            attribute_sub.id = temp_id
+            node_widget.attribute_sub_widgets.append(attribute_sub)
+            node_widget.attribute_layout.addItem(attribute_sub,
+                                            attribute_sub.item_row,
+                                            attribute_sub.item_column)
+        for attribute_sub_view in data.subview_serialization:
+            attribute_sub = sub_view.ProxyView(self.mainwindow)
+            temp_id = attribute_sub.id
+            attribute_sub.deserialize(attribute_sub_view, hashmap={},
+                                        view=attribute_sub.sub_view_widget_view, flag=True)
+            attribute_sub.id = temp_id
+            node_widget.attribute_sub_widgets.append(attribute_sub)
+            node_widget.attribute_layout.addItem(attribute_sub,
+                                            attribute_sub.item_row,
+                                            attribute_sub.item_column)
+        for attribute_none_widget in data.none_serialization:
+            attribute_none = attribute.NoneWidget(attribute_none_widget.none_pos[0],
+                                                    attribute_none_widget.none_pos[1],
+                                                    node_widget)
+            temp_id = attribute_none.id
+            attribute_none.deserialize(attribute_none_widget, hashmap={}, view=None, flag=True)
+            attribute_none.id = temp_id
+            node_widget.attribute_sub_widgets.append(attribute_none)
+            node_widget.attribute_layout.addItem(attribute_none,
+                                            attribute_none.item_row,
+                                            attribute_none.item_column)
+
+        node_widget.text_change_node_shape()
+
+        return node_widget
+
+    def paste_item(self):
+        """
+        Used to paste selected items.
+
+        """
+        if self.mainwindow.view_widget.copy_attribute_widget:
+            # Deserialize parent attribute widget.
+            data = self.mainwindow.view_widget.copy_attribute_widget[0]
+            self.create_attribute_from_data(data)
 
     def remove_drag_pipe(self, port_widget, pipe_widget):
         """
@@ -1203,7 +1372,15 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if not self.tablet_used:
 
             try:
-                self.itemAt(event.pos()).scenePos()  # debug for scale, i don't understand but it works
+                temp = self.itemAt(event.pos())
+                if temp:
+                    temp.scenePos()  # debug for scaling, i don't understand but it works
+                
+                # debug for sub scene, i don't understand but it works
+                if not self.root_flag:
+                    temp = self.scene().scene_rect.adjusted(0, 0, 1, 1)
+                    self.scene().setSceneRect(temp)
+                    self.scene().setSceneRect(temp.adjusted(0, 0, -1, -1))
             except AttributeError:
                 pass
             if constants.DEBUG_DRAW_PIPE:
@@ -1285,11 +1462,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         from ..Components.attribute import InputTextField
         current_item = self.current_scene.itemAt(self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())), QtGui.QTransform())
 
-        if event.key() == QtCore.Qt.Key_A and int(event.modifiers()) & QtCore.Qt.AltModifier:
-            self.copy_items()
-            return
-        if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.AltModifier:
-            self.paste_items()
+        if event.key() == QtCore.Qt.Key_R and int(event.modifiers()) & QtCore.Qt.AltModifier:
+            self.copy_item()
             return
 
         if isinstance(current_item, effect_background.EffectBackground):
@@ -1305,6 +1479,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.key() == QtCore.Qt.Key_Delete and isinstance(self.scene().focusItem(), InputTextField):
                 if self.scene().focusItem().objectName() == 'MouseLocked':
                     return
+            if event.key() == QtCore.Qt.Key_T and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.paste_item()
+                return
         if self.mode == constants.MODE_PIPE_DRAG and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.drag_pipe_release(None)
             self.mode = constants.MODE_NOOP
@@ -1376,6 +1553,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             return
         if event.key() == QtCore.Qt.Key_F10 and self.root_flag:
             self.narrow("bottom")
+            return
+        if event.key() == QtCore.Qt.Key_F11:
+            self.change_flowing_image(True)
             return
 
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
@@ -1559,6 +1739,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             view_serialization.line_flag = self.line_flag
         view_serialization.undo_flag = self.undo_flag
 
+        # flowing image
+        view_serialization.flowing_flag = self.flowing_flag
+
         return view_serialization.SerializeToString()
 
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
@@ -1656,6 +1839,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.line_flag = data.line_flag
         if data.undo_flag:
             self.undo_flag = data.undo_flag
+
+        if data.HasField("flowing_flag"):
+            self.flowing_flag = data.flowing_flag
+            if not self.flowing_flag:
+                self.mainwindow.sky_widget.hide()
 
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
         self.mainwindow.style_switch_combox.setCurrentIndex(0)

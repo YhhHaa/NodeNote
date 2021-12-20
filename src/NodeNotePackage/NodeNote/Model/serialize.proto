@@ -249,4 +249,7 @@ message ViewSerialization {
   // pipe font type
   optional string all_pipe_font_family = 19;
   optional int32 all_pipe_font_size = 20;
+
+  // flowing image flag
+  optional bool flowing_flag = 21;
 }

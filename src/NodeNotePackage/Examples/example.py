@@ -28,7 +28,7 @@ def message_output(msg_type, context, msg):
     try:
         with open("exception_log.txt", "a", encoding="utf-8") as log:
             log.write(f"{msg},{msg_type} from {context.file},{context.function},{context.line}\n")
-    except PermissionError:
+    except Exception as e:
         pass
 
 

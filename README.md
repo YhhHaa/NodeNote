@@ -159,7 +159,9 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 
 - Press `Alt+X` to redirect to parent scene
 
-- 复制剪切节点
-- 漂浮特效可关闭
+- Press `Alt+R` to copy one attribute widget, Press `Alt+T` to paste your widget
+
+- Press `F11` to close flowing image effect.
+
 ## Changed:
 - 安装通过homebrew

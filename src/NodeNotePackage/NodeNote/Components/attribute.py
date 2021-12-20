@@ -3571,7 +3571,8 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         if event.key() == QtCore.Qt.Key_C and event.modifiers() & QtCore.Qt.AltModifier:
-            QtWidgets.QApplication.clipboard().setText(str(self.id))
+            if self.isSelected():
+                QtWidgets.QApplication.clipboard().setText(str(self.id))
         return super().keyPressEvent(event)
 
     def mouseReleaseEvent(self, event) -> None:
