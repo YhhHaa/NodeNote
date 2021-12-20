@@ -313,9 +313,9 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
                 self.font_color = self.scene().pipe_style_font_color
         
         # font
-        if not self.font.family() == self.edit.font().family() or not self.font.pointSize() == self.edit.font().pointSize():
+        if not self.font != self.edit.font():
             self.edit.setFont(self.font)
-        if self.edit.defaultTextColor().rgba() != self.font_color.rgba():
+        if self.edit.defaultTextColor()!= self.font_color:
             self.edit.setDefaultTextColor(self.font_color)
 
         # DEFAULT PEN
