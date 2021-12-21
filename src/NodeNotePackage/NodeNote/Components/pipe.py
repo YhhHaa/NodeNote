@@ -281,6 +281,7 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             self.end_port.parentItem().layout.activate()
 
     def boundingRect(self) -> QtCore.QRectF:
+
         src_point = self.mapFromScene(self.pos_source)
         des_point = self.mapFromScene(self.pos_destination)
         con1_point = self.mapFromScene(self.source_item.scenePos())
