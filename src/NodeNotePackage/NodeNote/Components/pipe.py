@@ -280,13 +280,14 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             self.end_port.parentItem().layout.activate()
         self.update()
 
-    # def boundingRect(self) -> QtCore.QRectF:
-    #     return QtCore.QRectF(
-    #         min(self.pos_source.x(), self.pos_destination.x()),
-    #         min(self.pos_source.y(), self.pos_destination.y()),
-    #         abs(self.pos_source.x() - self.pos_destination.x()),
-    #         abs(self.pos_source.y() - self.pos_destination.y()),
-    #     )
+    def boundingRect(self) -> QtCore.QRectF:
+        x_min = min(self.pos_source.x(), self.source_item.scenePos().x(), self.destination_item.scenePos().x(), self.pos_destination.x())
+        y_min = min(self.pos_source.y(), self.source_item.scenePos().y(), self.destination_item.scenePos().y(), self.pos_destination.y())
+        x_max = max(self.pos_source.x(), self.source_item.scenePos().x(), self.destination_item.scenePos().x(), self.pos_destination.x())
+        y_max = max(self.pos_source.y(), self.source_item.scenePos().y(), self.destination_item.scenePos().y(), self.pos_destination.y())
+        width = x_max - x_min
+        height = y_max - y_min
+        return QtCore.QRectF(x_min, y_min, width, height)
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
         """
