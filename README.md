@@ -212,5 +212,5 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Function:
 - [ ] Support markdown.
 ## Changes:
-- [ ] Change UI.
+- [x] Change UI.
 - [ ] Rewrite undo&&redo logic.

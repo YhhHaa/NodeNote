@@ -11,6 +11,11 @@ from ..GraphicsView.view import View
 __all__ = ["NoteWindow"]
 
 
+class SideBar(QtWidgets.QWidget):
+    def sizeHint(self) -> QtCore.QSize:
+        return QtCore.QSize(0, 0)
+
+
 class NoteWindow(QtWidgets.QMainWindow):
     """
     Main window of the application:
@@ -53,7 +58,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.toolbar.setVisible(False)
 
         # Scene list widget
-        self.scene_thumbnails = QtWidgets.QWidget()
+        self.scene_thumbnails = SideBar()
         self.scene_thumbnails.setStyleSheet(stylesheet.STYLE_SCENE_THUMBNAILS)
         self.scene_thumbnails_layout = QtWidgets.QVBoxLayout()
         self.scene_thumbnails_layout.setSpacing(0)
