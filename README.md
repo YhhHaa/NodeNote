@@ -202,3 +202,15 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Changes:
 - Change the background into blank
 - Intall NodeNote by homebrew
+
+
+# todo
+## Debug:
+- [ ] Relative path raise an exception when the file is across the drive.
+- [ ] Pipe not shows in sub view.
+- [x] Set Control points at center of pipe.
+## Function:
+- [ ] Support markdown.
+## Changes:
+- [ ] Change UI.
+- [ ] Rewrite undo&&redo logic.

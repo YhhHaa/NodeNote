@@ -280,13 +280,13 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
             self.end_port.parentItem().layout.activate()
         self.update()
 
-    # def boundingRect(self) -> QtCore.QRectF:
-    #     return QtCore.QRectF(
-    #         min(self.pos_source.x(), self.pos_destination.x()),
-    #         min(self.pos_source.y(), self.pos_destination.y()),
-    #         abs(self.pos_source.x() - self.pos_destination.x()),
-    #         abs(self.pos_source.y() - self.pos_destination.y()),
-    #     )
+    def boundingRect(self) -> QtCore.QRectF:
+        return QtCore.QRectF(
+            min(self.pos_source.x(), self.pos_destination.x()),
+            min(self.pos_source.y(), self.pos_destination.y()),
+            abs(self.pos_source.x() - self.pos_destination.x()),
+            abs(self.pos_source.y() - self.pos_destination.y()),
+        )
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:
         """
@@ -540,7 +540,7 @@ class ControlPoint(QtWidgets.QGraphicsItem):
         self.setVisible(False)
 
     def boundingRect(self) -> QtCore.QRectF:
-        return QtCore.QRectF(0, 0, self.control_point_radius, self.control_point_radius)
+        return QtCore.QRectF(-self.control_point_radius/2, -self.control_point_radius/2, self.control_point_radius, self.control_point_radius)
 
     def paint(self, painter, option, widget=None) -> None:
         painter.setBrush(self.control_point_color)
