@@ -207,7 +207,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 # todo
 ## Debug:
 - [ ] Relative path raise an exception when the file is across the drive.
-- [ ] Pipe not shows in sub view.
+- [x] Pipe not shows in sub view.
 - [x] Set Control points at center of pipe.
 ## Function:
 - [ ] Support markdown.

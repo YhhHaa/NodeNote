@@ -257,6 +257,8 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         """
 
+        self.prepareGeometryChange()
+
         # source pos
         if self.start_port:
             self.pos_source = self.start_port.parentItem().get_port_position(self.start_port.port_type,
@@ -274,18 +276,26 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         else:
             self.pos_destination = self.pos_source
 
-        self.prepareGeometryChange()
         self.start_port.parentItem().layout.activate()
         if self.end_port:
             self.end_port.parentItem().layout.activate()
-        self.update()
 
     def boundingRect(self) -> QtCore.QRectF:
+        src_point = self.mapFromScene(self.pos_source)
+        des_point = self.mapFromScene(self.pos_destination)
+        con1_point = self.mapFromScene(self.source_item.scenePos())
+        con2_point = self.mapFromScene(self.destination_item.scenePos())
+
+        x_min = min(src_point.x(), des_point.x(), con1_point.x(), con2_point.x())
+        y_min = min(src_point.y(), des_point.y(), con1_point.y(), con2_point.y())
+        x_max = max(src_point.x(), des_point.x(), con1_point.x(), con2_point.x())
+        y_max = max(src_point.y(), des_point.y(), con1_point.y(), con2_point.y())
+
         return QtCore.QRectF(
-            min(self.pos_source.x(), self.pos_destination.x()),
-            min(self.pos_source.y(), self.pos_destination.y()),
-            abs(self.pos_source.x() - self.pos_destination.x()),
-            abs(self.pos_source.y() - self.pos_destination.y()),
+            x_min,
+            y_min,
+            abs(x_max - x_min),
+            abs(y_max - y_min),
         )
 
     def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget=None) -> None:

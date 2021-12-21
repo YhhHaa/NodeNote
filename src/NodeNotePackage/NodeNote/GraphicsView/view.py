@@ -653,6 +653,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
             if not history_flag and self.undo_flag:
                 self.current_scene.history.store_history("Delete Widgets")
+            
+            # Restore scene.
+            temp = self.scene().scene_rect.adjusted(0, 0, 1, 1)
+            self.scene().setSceneRect(temp)
+            self.scene().setSceneRect(temp.adjusted(0, 0, -1, -1))
 
     def delete_pipe(self, item):
         """
@@ -1092,6 +1097,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 print("delete drag pipe case 2 from port: ", self.item)
             self.remove_drag_pipe(self.item, self.drag_pipe)
             self.item = None
+
+            # Restore scene.
+            temp = self.scene().scene_rect.adjusted(0, 0, 1, 1)
+            self.scene().setSceneRect(temp)
+            self.scene().setSceneRect(temp.adjusted(0, 0, -1, -1))
 
     def judge_same_pipe(self, item):
         """
