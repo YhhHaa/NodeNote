@@ -2418,6 +2418,8 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
 
     width_flag = -1
 
+    export_sub_scene_flag = True
+
     def __init__(self):
         super(BaseWidget, self).__init__()
         # SET BASIC FUNCTION.
@@ -3714,7 +3716,7 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
                 attribute_sub_widget.serialize(attr_serialization.none_serialization.add())
 
         # sub scene
-        if self.sub_scene:
+        if self.sub_scene and AttributeWidget.export_sub_scene_flag:
             self.sub_scene.serialize(attr_serialization.sub_scene_serialization.add())
 
         # highlighter

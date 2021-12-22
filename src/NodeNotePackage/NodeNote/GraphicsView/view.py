@@ -1337,24 +1337,34 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 name, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Save Image", "./"+str(time.time())+".png", "Image type(*.png *.jpg)")
                 if name and ok:
                     pic.save(name)
+    
+    def export_current_scene(self, include=True):
+        """
+        export current scene to .note file
 
-    # def timerEvent(self, a0: 'QtCore.QTimerEvent') -> None:
-    #     area = self.current_scene.scene_rect
-    #     image = QtGui.QImage(self.mainwindow.thumbnails.size(), QtGui.QImage.Format_ARGB32_Premultiplied)
-    #     painter = QtGui.QPainter(image)
-    #     self.current_scene.render(
-    #         painter, 
-    #         QtCore.QRectF(
-    #             0, 0,
-    #             self.mainwindow.thumbnails.size().width(), self.mainwindow.thumbnails.size().height()
-    #         ),
-    #         area,
-    #         QtCore.Qt.IgnoreAspectRatio)
-    #     painter.end()
-    #     self.mainwindow.thumbnails.setPixmap(QtGui.QPixmap.fromImage(image))
-    #     for item in self.current_scene.items():
-    #         item.update()
-    #     return super().timerEvent(a0)
+        Args:
+            include: if include sub scene.
+        """
+        if self.root_flag:
+            if include:
+                attribute.AttributeWidget.export_sub_scene_flag = True
+                filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                                    "Export current scene including sub scene to note file", "./"+".note",
+                                                                    "note (*.note)")
+                if filename and ok:
+                    with open(filename, 'wb') as file:
+                        file.write(self.serialize(export_current_scene=True))   
+            else:
+                attribute.AttributeWidget.export_sub_scene_flag = False
+
+                filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                                        "Export current scene not including sub scene to note file", "./"+".note",
+                                                                        "note (*.note)")
+                if filename and ok:
+                    with open(filename, 'wb') as file:
+                        file.write(self.serialize(export_current_scene=True))
+                
+                attribute.AttributeWidget.export_sub_scene_flag = True
 
         
     def tabletEvent(self, a0: QtGui.QTabletEvent) -> None:
@@ -1545,6 +1555,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.print_item(part="Items")
             return
+        if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.AltModifier:
+            self.export_current_scene(include=True)
+            return
+        if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            self.export_current_scene(include=False)
+            return
         if event.key() == QtCore.Qt.Key_F1 and self.root_flag:
             self.line_flag = not self.line_flag
             return
@@ -1658,6 +1674,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 file.write(protobuf_data)
 
         if self.root_flag:
+            attribute.AttributeWidget.export_sub_scene_flag = True
+
             if not self.filename:
                 filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
                                                                      "Save serialization note file", "./",
@@ -1697,7 +1715,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         self.filename = filename
                         self.mainwindow.setWindowTitle(filename + "-Life")
 
-    def serialize(self, view_serialization=None):
+    def serialize(self, view_serialization=None, export_current_scene=False):
         """
         Serialization.
 
@@ -1710,7 +1728,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if not view_serialization:
             view_serialization = serialize_pb2.ViewSerialization()
         # root scene
-        self.root_scene.serialize(view_serialization.scene_serialization.add())
+        if not export_current_scene:
+            self.root_scene.serialize(view_serialization.scene_serialization.add())
+        else:
+            self.current_scene.serialize(view_serialization.scene_serialization.add())
+
         view_serialization.current_scene_id = self.current_scene.id
 
         # ui serialization

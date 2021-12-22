@@ -85,6 +85,8 @@ Set the sidebar visible or invisible : `Ctrl+B`
 ## 4. Scene operations.
 - You can redirect back to your last scene by `Alt+Z`.
 - You can redirect to your parent scene by `Alt+X`.
+- You can export current scene without sub scene to .note file by `Shift+S`.
+- You can export current scene with sub scene to .note file by `Alt+S`.
 
 ## 5. The tablet support.
 
@@ -156,7 +158,8 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 | This is operations of file | | |
 | --- | --- | --- |
 | Save(auto): `Ctrl+S` | Load: `Ctrl+O` |
-| Export scene: `Ctrl+Alt+P` | Export selected items: `Ctrl+Shift+P`|
+| Export scene to pic: `Ctrl+Alt+P` | Export selected items to pic: `Ctrl+Shift+P`|
+| Export scene to .note without sub scene: `Shift+S`| Export scene to .note with sub scene: `Alt+S`| 
 
 | This is operations of window | |
 | --- | --- |
@@ -215,7 +218,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Set Control points at center of pipe.
 ## Function:
 - [ ] Support markdown.
-- [ ] Export current scene to .note file.
+- [x] Export current scene to .note file.
 ## Changes:
 - [x] Change UI.
 - [x] Delete Draw widget of sub view which not works.
