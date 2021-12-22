@@ -61,21 +61,15 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_thumbnails = SideBar()
         self.scene_thumbnails.setStyleSheet(stylesheet.STYLE_SCENE_THUMBNAILS)
         self.scene_thumbnails_layout = QtWidgets.QVBoxLayout()
-        self.scene_thumbnails_layout.setSpacing(0)
         self.scene_thumbnails_layout.setContentsMargins(5, 5, 5, 5)
         self.scene_thumbnails.setLayout(self.scene_thumbnails_layout)
 
-        self.scene_list_bottom = QtWidgets.QWidget(self.scene_thumbnails)
-        self.scene_list_bottom_layout = QtWidgets.QVBoxLayout()
-        self.scene_list_bottom.setLayout(self.scene_list_bottom_layout)
-        self.scene_thumbnails_layout.addWidget(self.scene_list_bottom)
-
-        self.scene_list_scroll = QtWidgets.QScrollArea(self.scene_list_bottom)
+        self.scene_list_scroll = QtWidgets.QScrollArea(self.scene_thumbnails)
         self.scene_list_scroll.setWidgetResizable(True)
         self.scene_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scene_list_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scene_list_scroll.setStyleSheet(stylesheet.STYLE_VSCROLLBAR + stylesheet.STYLE_HSCROLLBAR)
-        self.scene_list_bottom_layout.addWidget(self.scene_list_scroll)
+        self.scene_thumbnails_layout.addWidget(self.scene_list_scroll)
 
         self.scene_list = QtWidgets.QTreeWidget()
         self.scene_list.setSortingEnabled(True)
@@ -95,6 +89,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_scroll = QtWidgets.QScrollArea(self.style_list_bottom)
         self.style_list_scroll.setWidgetResizable(True)
         self.style_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.style_list_scroll.setStyleSheet(stylesheet.STYLE_HSCROLLBAR + stylesheet.STYLE_VSCROLLBAR)
         self.style_list_bottom_layout.addWidget(self.style_list_scroll)
 
         self.style_list = QtWidgets.QWidget()
@@ -386,10 +381,10 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.timer.start(180000)
 
         # thumbnails
-        self.thumbnails = QtWidgets.QLabel()
-        self.thumbnails.setMinimumSize(300, 260)
-        self.thumbnails.setStyleSheet("border:1px solid red")
-        self.scene_thumbnails_layout.addWidget(self.thumbnails)
+        self.thumbnails = QtWidgets.QLabel(self.view_widget)
+        self.thumbnails.setStyleSheet(stylesheet.STYLE_QLABEL_THUMBNAILS)
+        self.thumbnails.setGeometry(0, 0, 300, 300)
+        self.thumbnails.hide()
         self.time_id = 0
 
     def time_update(self):
@@ -402,10 +397,14 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.view_widget.save_to_file()
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-
         if self.view_widget.filename:
             todo.Todo.close_flag = True
             self.view_widget.save_to_file()
+
+        self.view_widget.run_thumbnails.killTimer(self.time_id) 
+        self.view_widget.run_thumbnails.exit(0)
+        
+        super().closeEvent(a0)
 
     @staticmethod
     def color_label_changed(label, color):
@@ -1650,17 +1649,21 @@ class NoteWindow(QtWidgets.QMainWindow):
         if a0.key() == QtCore.Qt.Key_Z and int(a0.modifiers()) & QtCore.Qt.AltModifier:
             self.redirect_last_scene()
             return
-        if a0.key() == QtCore.Qt.Key_B and int(a0.modifiers()) & QtCore.Qt.ControlModifier:
-            if self.toolbar.isVisible():
-                self.toolbar.setVisible(False)
+        if a0.key() == QtCore.Qt.Key_B and int(a0.modifiers()) & QtCore.Qt.ShiftModifier:
+            if self.thumbnails.isVisible():
                 self.view_widget.run_thumbnails.wait()
                 self.view_widget.run_thumbnails.killTimer(self.time_id)
                 self.thumbnails.hide()
             else:
-                self.toolbar.setVisible(True)
                 self.view_widget.run_thumbnails.run()
                 self.time_id = self.view_widget.run_thumbnails.startTimer(500, timerType=QtCore.Qt.VeryCoarseTimer)
                 self.thumbnails.show()
+            return
+        if a0.key() == QtCore.Qt.Key_B and int(a0.modifiers()) & QtCore.Qt.ControlModifier:
+            if self.toolbar.isVisible():
+                self.toolbar.setVisible(False)
+            else:
+                self.toolbar.setVisible(True)
             return
         if a0.key() == QtCore.Qt.Key_Delete and len(self.scene_list.selectedItems()) == 1:
             self.view_widget.delete_sub_scene(self.scene_list.selectedItems()[0])

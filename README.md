@@ -158,6 +158,10 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 | Save(auto): `Ctrl+S` | Load: `Ctrl+O` |
 | Export scene: `Ctrl+Alt+P` | Export selected items: `Ctrl+Shift+P`|
 
+| This is operations of window | |
+| --- | --- |
+| Show side bar: `Ctrl+B` | Show thumbnails: `Shift+B` |
+
 # v2.7.2:
 ## Function:
 - Press Control and left mouse button to drag `attribute widget` into next line of others.(Control must be pressed after left mouse button!!)
@@ -209,8 +213,12 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Relative path raise an exception when the file is across the drive.
 - [x] Pipe not shows in sub view.
 - [x] Set Control points at center of pipe.
+- [ ] Draw widget not works in sub view.
 ## Function:
 - [ ] Support markdown.
+- [ ] Export current scene to .note file.
 ## Changes:
 - [x] Change UI.
+- [ ] Multi languages.
+- [ ] Higher frame rate of thumbnails.
 - [ ] Rewrite undo&&redo logic.

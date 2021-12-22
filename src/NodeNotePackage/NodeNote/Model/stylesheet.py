@@ -7,9 +7,8 @@ import os
 STYLE_QGROUPBOX = '''
 QGroupBox {
     background-color: rgba(0, 0, 0, 0);
-    border: 2px solid rgba(0, 0, 0, 255);
     margin-top: 1px;
-    padding-top: $PADDING_TOP;
+    padding-top: 10px;
     padding-bottom: 2px;
     padding-left: 5px;
     padding-right: 5px;
@@ -27,6 +26,8 @@ QGroupBox::title {
 
 STYLE_QCOMBOBOX = '''
 QComboBox {
+    color: white;
+    font: 12px;
     border: 1px solid rgba(255, 255, 255, 50);
     border-radius: 0px;
     margin-left: 2px;
@@ -40,21 +41,21 @@ QComboBox:hover {
     border: 1px solid rgba(255, 255, 255, 80);
 }
 QComboBox:editable {
-    color: rgba(255, 255, 255, 150);
-    background: rgba(10, 10, 10, 80);
+    background: white;
 }
-QComboBox:!editable,
-QComboBox::drop-down:editable {
-    color: rgba(255, 255, 255, 150);
-    background: rgba(80, 80, 80, 80);
+QComboBox:!editable, QComboBox::drop-down:editable {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                 stop: 0 #005AA7, stop: 1.0 #FFFDE4);
 }
 /* QComboBox gets the "on" state when the popup is open */
 QComboBox:!editable:on,
 QComboBox::drop-down:editable:on {
-    background: rgba(150, 150, 150, 150);
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #C6FFDD, stop: 0.4 #FBD786, stop: 1.0 #f7797d);
 }
 QComboBox::drop-down {
-    background: rgba(80, 80, 80, 80);
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #C6FFDD, stop: 0.4 #FBD786, stop: 1.0 #f7797d);
     border-left: 1px solid rgba(80, 80, 80, 255);
     width: 20px;
 }
@@ -152,17 +153,17 @@ QMenu::item:selected {
 STYLE_HSCROLLBAR = '''
                 QScrollBar:horizontal {
                     border: 2px solid grey;
-                    background: #32CC99;
+                    background: #FFC6BF;
                     height: 8px;
                     margin: 0px 20px 0 20px;
                 }
                 QScrollBar::handle:horizontal {
-                    background: rgba(204, 255, 255, 200);
+                    background: #FF7FAE;
                     min-width: 20px;
                 }
                 QScrollBar::add-line:horizontal {
                     border: 2px solid grey;
-                    background: #32CC99;
+                    background: #8333E9;
                     width: 20px;
                     subcontrol-position: right;
                     subcontrol-origin: margin;
@@ -170,27 +171,34 @@ STYLE_HSCROLLBAR = '''
                 
                 QScrollBar::sub-line:horizontal {
                     border: 2px solid grey;
-                    background: #32CC99;
+                    background: #8333E9;
                     width: 20px;
                     subcontrol-position: left;
                     subcontrol-origin: margin;
                 }
+
+                QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
+                 border: 2px solid grey;
+                 width: 3px;
+                 height: 3px;
+                 background: white;
+             }
 '''
 
 STYLE_VSCROLLBAR = '''
              QScrollBar:vertical {
                  border: 2px solid grey;
-                 background: #32CC99;
+                 background: #FFC6BF;
                  width: 8px;
                  margin: 22px 0 22px 0;
              }
              QScrollBar::handle:vertical {
-                 background: rgba(204, 255, 255, 200);
+                 background: #FF7FAE;
                  min-height: 20px;
              }
              QScrollBar::add-line:vertical {
                  border: 2px solid grey;
-                 background: #32CC99;
+                 background: #8333E9;
                  height: 20px;
                  subcontrol-position: bottom;
                  subcontrol-origin: margin;
@@ -198,7 +206,7 @@ STYLE_VSCROLLBAR = '''
             
              QScrollBar::sub-line:vertical {
                  border: 2px solid grey;
-                 background: #32CC99;
+                 background: #8333E9;
                  height: 20px;
                  subcontrol-position: top;
                  subcontrol-origin: margin;
@@ -238,7 +246,7 @@ QToolBar {
     margin: 2px;
     padding: 2px;
     border: 5px solid rgba(253, 248, 147, 255);
-    border-radius: 25px;
+    /* border-radius: 25px; */
     spacing: 3px;
 }
 
@@ -397,6 +405,15 @@ QTreeWidget::branch:open:has-children:has-siblings  {
                     ).replace('\\', r'/')
 )
 
+STYLE_QLABEL_THUMBNAILS = '''
+QLabel {
+    border-style: ridge;
+    border-width: 4px;
+    border-radius: 2px;
+    border-color: rgba(255, 153, 153, 255);
+}
+'''
+
 STYLE_QTOOLBUTTON = '''
 QToolButton {
     background-color: rgba(26, 255, 255, 100);
@@ -416,7 +433,8 @@ QToolButton:pressed {
 
 STYLE_QPUSHBUTTON = '''
 QPushButton {
-    background-color: rgba(26, 255, 255, 100);
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #C6FFDD, stop: 0.4 #FBD786, stop: 1.0 #f7797d);
     border-style: outset;
     border-width: 1px;
     border-radius: 10px;
@@ -470,12 +488,14 @@ QLabel {
 
 STYLE_QLABEL_TITLE = '''
 QLabel {
-    background-color: rgba(51, 102, 153, 200);
+    color: white;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #2980B9, stop: 0.4 #6DD5FA, stop: 1.0 #FFFFFF);
     border-style: outset;
     border-width: 1px;
     border-radius: 10px;
     border-color: beige;
-    font: bold 8px;
+    font: bold 12px;
     padding: 6px;
 }
 '''
