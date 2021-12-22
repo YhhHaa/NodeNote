@@ -108,6 +108,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         - Serialization and deserialization.
     """
 
+    tablet_used = False
+
     def __init__(self, mainwindow, parent=None, root_flag=True, proxy_widget=None):
         """
         Create a manager for components.
@@ -238,7 +240,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.pipe_true_item = None
 
         # tablet
-        self.tablet_used = False
         self.mouse_effect = True
         self.setAttribute(QtCore.Qt.WA_TabletTracking)
 
@@ -1365,6 +1366,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         """
 
+        View.tablet_used = False
+
         # Send to the draw widge
         item = self.itemAt(a0.pos().x(),
                            a0.pos().y())
@@ -1378,12 +1381,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                                                                                         10)
             cursor = QtGui.QCursor(cursor_style, 5, 5)
             QtWidgets.QApplication.setOverrideCursor(cursor)
-
+        
         if isinstance(item, (draw.Canvas, draw.Draw)):
             # Make other mouse events not work
-            self.tablet_used = True
-
-            # Draw
+            View.tablet_used = True
             item.tablet_event(a0)
 
         a0.accept()
@@ -1493,7 +1494,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.key() == QtCore.Qt.Key_W and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.add_truth_widget(pos=QtGui.QCursor.pos())
                 return
-            if event.key() == QtCore.Qt.Key_E and int(event.modifiers()) & QtCore.Qt.AltModifier:
+            if self.root_flag and event.key() == QtCore.Qt.Key_E and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.add_draw_widget(pos=QtGui.QCursor.pos())
                 return
             if event.key() == QtCore.Qt.Key_Delete and isinstance(self.scene().focusItem(), InputTextField):
@@ -1599,9 +1600,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             create_truth_widget.setIcon(
                 (QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                           "../Resources/Truth Widget.png")))))
-            create_canvas_widget = context_menu.addAction("Create Canvas Widget")
-            create_canvas_widget.setIcon(
-                QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/draw_widget.png"))))
+            if self.root_flag:
+                create_canvas_widget = context_menu.addAction("Create Canvas Widget")
+                create_canvas_widget.setIcon(
+                    QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/draw_widget.png"))))
             change_background_image = context_menu.addAction("Change Background Image")
             change_background_image.setIcon(QtGui.QIcon(
                 os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Change Background Image.png"))))
@@ -1615,7 +1617,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.add_attribute_widget(event)
             elif action == create_truth_widget:
                 self.add_truth_widget(event)
-            elif action == create_canvas_widget:
+            elif self.root_flag and action == create_canvas_widget:
                 self.add_draw_widget(event)
             elif action == change_background_image:
                 self.change_svg_image()
