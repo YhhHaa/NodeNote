@@ -7,8 +7,10 @@ import os
 import time
 
 from PyQt5 import QtWidgets, QtCore, QtGui
+
+from ..Model.Stylesheets import stylesheet
 from ..Components.attribute import AttributeWidget, BaseWidget
-from ..Model import serializable, constants, stylesheet
+from ..Model import serializable, constants
 
 
 __all__ = ['Todo']

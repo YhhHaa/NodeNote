@@ -7,10 +7,12 @@ import re
 import os
 
 from PyQt5 import QtGui, QtCore, QtWidgets, sip
+
+from ..Model.Stylesheets import stylesheet
 from .scene import Scene
 from ..Components import effect_water, attribute, port, pipe, effect_cutline, effect_background, effect_snow, \
     draw, todo, sub_view
-from ..Model import constants, stylesheet, serializable, serialize_pb2
+from ..Model import constants, serializable, serialize_pb2
 
 
 __all__ = ["View", "TreeWidgetItem"]
@@ -1609,21 +1611,21 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if isinstance(current_item, effect_background.EffectBackground):
             context_menu = QtWidgets.QMenu(self)
             # context list
-            create_attribute_widget = context_menu.addAction("Create Attribute Widget")
+            create_attribute_widget = context_menu.addAction(QtCore.QCoreApplication.translate("View", "create attribute widget"))
             create_attribute_widget.setIcon(QtGui.QIcon(
                 os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Attribute Widget.png"))))
-            create_truth_widget = context_menu.addAction("Create Truth Widget")
+            create_truth_widget = context_menu.addAction(QtCore.QCoreApplication.translate("View", "create truth widget"))
             create_truth_widget.setIcon(
                 (QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                           "../Resources/Truth Widget.png")))))
             if self.root_flag:
-                create_canvas_widget = context_menu.addAction("Create Canvas Widget")
+                create_canvas_widget = context_menu.addAction(QtCore.QCoreApplication.translate("View", "create canvas widget"))
                 create_canvas_widget.setIcon(
                     QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/draw_widget.png"))))
-            change_background_image = context_menu.addAction("Change Background Image")
+            change_background_image = context_menu.addAction(QtCore.QCoreApplication.translate("View", "change background image"))
             change_background_image.setIcon(QtGui.QIcon(
                 os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Change Background Image.png"))))
-            change_snow_image = context_menu.addAction("Change flowing Image")
+            change_snow_image = context_menu.addAction(QtCore.QCoreApplication.translate("View", "change flowing image"))
             change_snow_image.setIcon(
                 QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                          "../Resources/Change flowing.png"))))

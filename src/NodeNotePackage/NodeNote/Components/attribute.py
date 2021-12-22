@@ -11,7 +11,9 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageOps, ImageQt
 import numpy as np
 from PyQt5 import QtCore, QtWidgets, QtGui, sip
-from ..Model import constants, stylesheet, serializable
+
+from ..Model.Stylesheets import stylesheet
+from ..Model import constants, serializable
 from ..Components import port, pipe
 
 __all__ = ["InputTextField", "SimpleTextField",
@@ -29,7 +31,7 @@ class SizeDialog(QtWidgets.QDialog):
 
         super(SizeDialog, self).__init__(parent)
         self.resize(100, 80)
-        self.setWindowTitle("Set Image Width and Height")
+        self.setWindowTitle(QtCore.QCoreApplication.translate("SizeDialog", "Set Image Width and Height"))
         self.setWindowIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                     "../Resources/Plane.png"))))
         self.num_width = QtWidgets.QLineEdit(parent=self)
@@ -37,8 +39,8 @@ class SizeDialog(QtWidgets.QDialog):
         self.num_height = QtWidgets.QLineEdit(parent=self)
         self.num_height.setValidator(QtGui.QDoubleValidator())
         grid = QtWidgets.QGridLayout()
-        grid.addWidget(QtWidgets.QLabel("Width: ", parent=self), 0, 0, 1, 1)
-        grid.addWidget(QtWidgets.QLabel("Height: ", parent=self), 1, 0, 1, 1)
+        grid.addWidget(QtWidgets.QLabel(QtCore.QCoreApplication.translate("SizeDialog", "Width: "), parent=self), 0, 0, 1, 1)
+        grid.addWidget(QtWidgets.QLabel(QtCore.QCoreApplication.translate("SizeDialog", "Height: "), parent=self), 1, 0, 1, 1)
         grid.addWidget(self.num_width, 0, 1, 1, 1)
         grid.addWidget(self.num_height, 1, 1, 1, 1)
 
@@ -57,8 +59,8 @@ class SizeDialog(QtWidgets.QDialog):
         self.setLayout(layout)
 
     def closeEvent(self, event):
-        reply = QtWidgets.QMessageBox.question(self, 'Close Message',
-                                               "Are you sure to quit?", QtWidgets.QMessageBox.Yes |
+        reply = QtWidgets.QMessageBox.question(self, QtCore.QCoreApplication.translate("SizeDialog", 'Close Message'),
+                                               QtCore.QCoreApplication.translate("SizeDialog", "Are you sure to quit?"), QtWidgets.QMessageBox.Yes |
                                                QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             event.accept()
@@ -1528,10 +1530,10 @@ class BaseWidget(QtWidgets.QGraphicsWidget):
         if self.context_flag:
             menu = QtWidgets.QMenu()
             menu.setStyleSheet(stylesheet.STYLE_QMENU)
-            move_up = menu.addAction("Move Up")
+            move_up = menu.addAction(QtCore.QCoreApplication.translate("BaseWidget", "move up"))
             move_up.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                      "../Resources/up.png"))))
-            move_down = menu.addAction("Move Down")
+            move_down = menu.addAction(QtCore.QCoreApplication.translate("BaseWidget", "move down"))
             move_down.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                        "../Resources/down.png"))))
 
@@ -1565,7 +1567,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.setZValue(constants.Z_VAL_NODE)
         self.logic_combobox_input = ComboBox()
         self.logic_combobox_output = ComboBox()
-        self.logic_combobox_input.setStyleSheet(stylesheet.STYLE_QCOMBOBOX)
+        self.logic_combobox_input.setStyleSheet(stylesheet.STYLE_QCOMBOBOX_LOGIC)
         self.logic_combobox_input.setMaximumHeight(20)
         logic_list_input = QtWidgets.QListView(self.logic_combobox_input)
         logic_list_input.setStyleSheet(stylesheet.STYLE_QLISTVIEW)
@@ -1573,7 +1575,7 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.logic_combobox_input.addItems(("And", "Or", "Not"))
         self.logic_combobox_input.clearFocus()
 
-        self.logic_combobox_output.setStyleSheet(stylesheet.STYLE_QCOMBOBOX)
+        self.logic_combobox_output.setStyleSheet(stylesheet.STYLE_QCOMBOBOX_LOGIC)
         self.logic_combobox_output.setMaximumHeight(20)
         logic_list_output = QtWidgets.QListView(self.logic_combobox_output)
         logic_list_output.setStyleSheet(stylesheet.STYLE_QLISTVIEW)
@@ -3609,36 +3611,36 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         if self.context_flag:
             menu = QtWidgets.QMenu()
             menu.setStyleSheet(stylesheet.STYLE_QMENU)
-            add_line_subwidget = menu.addAction("Add Line Subwidget")
+            add_line_subwidget = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add current-line subwidget"))
             add_line_subwidget.setIcon(QtGui.QIcon(
                 os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              "../Resources/add_line_widget.PNG"))))
-            add_subwidget = menu.addAction("Add Subwidget")
+            add_subwidget = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add next-line subwidget"))
             add_subwidget.setIcon(
                 QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                          "../Resources/add_widget.png"))))
-            add_line_file = menu.addAction("Add Line File")
+            add_line_file = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add current-line file"))
             add_line_file.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                            "../Resources/add_line_video.png"))))
-            add_file = menu.addAction("Add File")
+            add_file = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add next-line file"))
             add_file.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                       "../Resources/add_video.png"))))
-            add_line_view = menu.addAction("Add Line View")
+            add_line_view = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add current-line view"))
             add_line_view.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                            "../Resources/sub view.png"))))
-            add_view = menu.addAction("Add View")
+            add_view = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add next-line view"))
             add_view.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                       "../Resources/sub view.png"))))
-            add_todo_line = menu.addAction("Add Todo Inline")
+            add_todo_line = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add current-line todo"))
             add_todo_line.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                            "../Resources/Todo.png"))))
-            add_todo = menu.addAction("Add Todo")
+            add_todo = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add next-line todo"))
             add_todo.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                       "../Resources/Todo.png"))))
-            move_up = menu.addAction("Move Up")
+            move_up = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "move up"))
             move_up.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                      "../Resources/up.png"))))
-            move_down = menu.addAction("Move Down")
+            move_down = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "move down"))
             move_down.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                        "../Resources/down.png"))))
             result = menu.exec(event.globalPos())

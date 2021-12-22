@@ -220,8 +220,11 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 ## Function:
 - [ ] Support markdown.
 - [x] Export current scene to .note file.
+- [ ] Open with nodenote.
+- [ ] Set default background image.
 ## Changes:
 - [x] Change UI.
 - [x] Delete Draw widget of sub view which not works.
-- [ ] Multi languages.
+- [x] Multi languages.
+- [ ] Different stylesheet.
 - [ ] Rewrite undo&&redo logic.

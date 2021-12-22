@@ -2,7 +2,7 @@ from . import constants
 from . import history
 from . import serializable
 from . import serialize_pb2
-from . import stylesheet
+from .Stylesheets import stylesheet
 
 
 __all__ = ['constants',

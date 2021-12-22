@@ -21,7 +21,7 @@ from src.NodeNotePackage.NodeNote.Components.window import NoteWindow
 from src.NodeNotePackage.NodeNote.GraphicsView.app import TabletApplication
 from PyQt5.QtWidgets import QSplashScreen
 from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt, qInstallMessageHandler
+from PyQt5.QtCore import Qt, qInstallMessageHandler, QTranslator, QLocale
 
 
 def message_output(msg_type, context, msg):
@@ -38,6 +38,14 @@ if __name__ == '__main__':
 
     app = TabletApplication([])
 
+    # load language
+    local = QLocale()
+    lan = QLocale.language(local)
+    trans = QTranslator()
+    if lan == QLocale.Chinese:
+        trans.load("../NodeNote/src/NodeNotePackage/NodeNote\Model/MultiLanguages/zh_CN")
+        app.installTranslator(trans)
+
     # slash
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         splash = QSplashScreen(QPixmap(os.path.join(os.path.dirname(__file__),
@@ -51,7 +59,7 @@ if __name__ == '__main__':
     app.processEvents()
 
     # main
-    window = NoteWindow(sys.argv, app)
+    window = NoteWindow(sys.argv, app, trans)
     window.load_data(splash)
     window.show()
     splash.finish(window)

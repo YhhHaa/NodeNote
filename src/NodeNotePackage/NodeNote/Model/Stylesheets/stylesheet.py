@@ -27,6 +27,50 @@ QGroupBox::title {
 STYLE_QCOMBOBOX = '''
 QComboBox {
     color: white;
+    font: 20px;
+    border: 1px solid rgba(255, 255, 255, 50);
+    border-radius: 0px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+QComboBox:hover {
+    border: 1px solid rgba(255, 255, 255, 80);
+}
+QComboBox:editable {
+    background: white;
+}
+QComboBox:!editable, QComboBox::drop-down:editable {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                 stop: 0 #005AA7, stop: 1.0 #FFFDE4);
+}
+/* QComboBox gets the "on" state when the popup is open */
+QComboBox:!editable:on,
+QComboBox::drop-down:editable:on {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #C6FFDD, stop: 0.4 #FBD786, stop: 1.0 #f7797d);
+}
+QComboBox::drop-down {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+                                stop: 0 #C6FFDD, stop: 0.4 #FBD786, stop: 1.0 #f7797d);
+    border-left: 1px solid rgba(80, 80, 80, 255);
+    width: 20px;
+}
+QComboBox::down-arrow {
+    image: url(%s);
+}
+QComboBox::down-arrow:on {
+    /* shift the arrow when popup is open */
+    top: 1px;
+    left: 1px;
+}''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/down_arrow.png")).replace('\\', r'/')
+
+STYLE_QCOMBOBOX_LOGIC = '''
+QComboBox {
+    color: white;
     font: 12px;
     border: 1px solid rgba(255, 255, 255, 50);
     border-radius: 0px;
@@ -66,7 +110,7 @@ QComboBox::down-arrow:on {
     /* shift the arrow when popup is open */
     top: 1px;
     left: 1px;
-}''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/down_arrow.png")).replace('\\', r'/')
+}''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/down_arrow.png")).replace('\\', r'/')
 
 STYLE_QLISTVIEW = '''
 QListView {
@@ -123,8 +167,8 @@ QCheckBox::indicator:unchecked {
 image: url(%s);
 }
 ''' % (
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/True.png")).replace('\\', r'/'),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/False.png")).replace('\\', r'/')
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/True.png")).replace('\\', r'/'),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/False.png")).replace('\\', r'/')
 )
 
 STYLE_QTEXTEDIT = '''
@@ -254,7 +298,7 @@ QToolBar::handle {
     image: url(%s);
     spacing: 3px;
 }
-''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/horse.png")).replace('\\', r'/')
+''' % os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/horse.png")).replace('\\', r'/')
 
 STYLE_QTABWIDGET = '''
 QTabWidget::pane {
@@ -393,15 +437,15 @@ QTreeWidget::branch:open:has-children:has-siblings  {
         image: url(%s);
 }
 ''' % (
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-vline.png")
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/stylesheet-vline.png")
                     ).replace('\\', r'/'),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-more.png")
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/stylesheet-branch-more.png")
                     ).replace('\\', r'/'),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-end.png")
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/stylesheet-branch-end.png")
                     ).replace('\\', r'/'),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-closed.png")
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/stylesheet-branch-closed.png")
                     ).replace('\\', r'/'),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/stylesheet-branch-open.png")
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../../Resources/stylesheet-branch-open.png")
                     ).replace('\\', r'/')
 )
 
@@ -439,7 +483,7 @@ QPushButton {
     border-width: 1px;
     border-radius: 10px;
     border-color: beige;
-    font: bold 8px;
+    font: bold 12px italic large;
     padding: 6px;
 }
 
@@ -456,7 +500,7 @@ QLabel {
     border-width: 1px;
     border-radius: 0px;
     border-color: beige;
-    font: bold 12px;
+    font: bold 12px italic large;
     padding: 6px;
 }
 '''
@@ -466,9 +510,9 @@ QLabel {
     background-color: rgba(255, 204, 0, 200);
     border-style: outset;
     border-width: 1px;
-    border-radius: 10px;
+    border-radius: 1px;
     border-color: beige;
-    font: bold 8px;
+    font: bold 12px italic large;
     padding: 6px;
 }
 '''
@@ -480,7 +524,7 @@ QLabel {
     border-width: 1px;
     border-radius: 10px;
     border-color: beige;
-    font: bold 8px;
+    font: bold 12px italic large;
     padding: 6px;
 }
 '''
@@ -495,7 +539,7 @@ QLabel {
     border-width: 1px;
     border-radius: 10px;
     border-color: beige;
-    font: bold 12px;
+    font: bold 14px italic large;
     padding: 6px;
 }
 '''
@@ -507,7 +551,7 @@ QLabel {
     border-width: 1px;
     border-radius: 10px;
     border-color: beige;
-    font: bold 16px;
+    font: bold 12px italic large;
     padding: 6px;
 }
 '''
@@ -520,7 +564,7 @@ QLabel {
     border-width: 1px;
     border-radius: 5px;
     border-color: beige;
-    font: bold 8px;
+    font: bold 12px italic large;
     padding: 6px;
 }
 '''
