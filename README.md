@@ -36,6 +36,7 @@
 
 ## 1. Interface Settings
 Set the sidebar visible or invisible : `Ctrl+B`
+Set the thumbnails visible or invisible: `Shift+B`
 
 ## 2. How to add widgets and use them.
 
