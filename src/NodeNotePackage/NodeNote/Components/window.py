@@ -11,6 +11,25 @@ from ..GraphicsView.view import View
 __all__ = ["NoteWindow"]
 
 
+class SceneList(QtWidgets.QTreeWidget):
+    def __init__(self, mainwindow, parent=None) -> None:
+        super().__init__(parent=parent)
+        self.mainwindow = mainwindow
+    
+    def contextMenuEvent(self, a0: QtGui.QContextMenuEvent) -> None:
+        context_menu = QtWidgets.QMenu(self)
+        context_menu.setStyleSheet(stylesheet.STYLE_QMENU)
+        delete_scene = context_menu.addAction(QtCore.QCoreApplication.translate("SceneList", "delete this scene"))
+        delete_scene.setIcon(QtGui.QIcon(
+                os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/sidebar_delete.png"))))
+
+        action = context_menu.exec_(a0.globalPos())
+        if action == delete_scene:
+            self.mainwindow.view_widget.delete_sub_scene(self.selectedItems()[0])
+
+        a0.accept()
+
+
 class NoteWindow(QtWidgets.QMainWindow):
     """
     Main window of the application:
@@ -67,7 +86,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_list_scroll.setStyleSheet(stylesheet.STYLE_VSCROLLBAR + stylesheet.STYLE_HSCROLLBAR)
         self.scene_thumbnails_layout.addWidget(self.scene_list_scroll)
 
-        self.scene_list = QtWidgets.QTreeWidget()
+        self.scene_list = SceneList(self)
         self.scene_list.setSortingEnabled(True)
         self.scene_list.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.scene_list.setStyleSheet(stylesheet.STYLE_QTREEWIDGET)
@@ -1678,12 +1697,15 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.init_background(current_index)
 
     def redirect_last_scene(self):
+        self.scene_list.clearSelection()
+
         temp_scene = self.view_widget.current_scene
         temp_sceen_flag = self.view_widget.current_scene_flag
 
         self.view_widget.current_scene = self.view_widget.last_scene
         self.view_widget.current_scene_flag = self.view_widget.last_scene_flag
         self.view_widget.setScene(self.view_widget.current_scene)
+        self.view_widget.current_scene_flag.setSelected(True)
         self.view_widget.background_image = self.view_widget.current_scene.background_image
         self.view_widget.cutline = self.view_widget.current_scene.cutline
 
@@ -1691,9 +1713,12 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.view_widget.last_scene_flag = temp_sceen_flag
     
     def rediect_parent_scene(self):
+        self.scene_list.clearSelection()
+
         parent_flag = self.view_widget.current_scene_flag.parent()
         if parent_flag:
             self.view_widget.change_current_scene(parent_flag)
+            parent_flag.setSelected(True)
 
     def resizeEvent(self, a0) -> None:
         super(NoteWindow, self).resizeEvent(a0)
@@ -1721,8 +1746,8 @@ class NoteWindow(QtWidgets.QMainWindow):
             else:
                 self.toolbar.setVisible(True)
             return
-        if a0.key() == QtCore.Qt.Key_Delete and len(self.scene_list.selectedItems()) == 1:
-            self.view_widget.delete_sub_scene(self.scene_list.selectedItems()[0])
+        # if a0.key() == QtCore.Qt.Key_Delete and len(self.scene_list.selectedItems()) == 1:
+        #     self.view_widget.delete_sub_scene(self.scene_list.selectedItems()[0])
         super(NoteWindow, self).keyPressEvent(a0)
 
     def load_data(self, splash: QtWidgets.QSplashScreen):

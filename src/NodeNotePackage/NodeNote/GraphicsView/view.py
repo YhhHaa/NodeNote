@@ -1179,10 +1179,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             attribute_widget: attribute.AttributeWidget which is pressed.
 
         """
+        self.mainwindow.scene_list.clearSelection()
 
         if not attribute_widget.sub_scene:
             sub_scene_flag = TreeWidgetItem(self.current_scene_flag,
                                             (attribute_widget.attribute_widget.label_item.toPlainText(),))
+            self.current_scene_flag.setExpanded(True)
             sub_scene = Scene(sub_scene_flag, self, attribute_widget)
             if self.root_flag:
                 self.background_image = sub_scene.background_image
@@ -1203,6 +1205,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.setScene(sub_scene)
                 self.current_scene = sub_scene
                 self.current_scene_flag = sub_scene.sub_scene_flag
+                self.current_scene_flag.setSelected(True)
             else:
                 self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
                 self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
@@ -1212,6 +1215,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.mainwindow.view_widget.setScene(sub_scene)
                 self.mainwindow.view_widget.current_scene = sub_scene
                 self.mainwindow.view_widget.current_scene_flag = sub_scene.sub_scene_flag
+                self.mainwindow.view_widget.current_scene_flag.setSelected(True)
         else:
 
             sub_scene = attribute_widget.sub_scene
@@ -1224,6 +1228,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.setScene(sub_scene)
                 self.current_scene = sub_scene
                 self.current_scene_flag = sub_scene.sub_scene_flag
+                self.current_scene_flag.setSelected(True)
                 self.background_image = self.current_scene.background_image
                 self.cutline = self.current_scene.cutline
             else:
@@ -1235,6 +1240,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.mainwindow.view_widget.setScene(sub_scene)
                 self.mainwindow.view_widget.current_scene = sub_scene
                 self.mainwindow.view_widget.current_scene_flag = sub_scene.sub_scene_flag
+                self.mainwindow.view_widget.current_scene_flag.setSelected(True)
                 self.mainwindow.view_widget.background_image = self.mainwindow.view_widget.current_scene.background_image
                 self.mainwindow.view_widget.cutline = self.mainwindow.view_widget.current_scene.cutline
 
@@ -1245,21 +1251,28 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if self.undo_flag:
             self.current_scene.history.store_history("Create Sub Scene")
 
-    def change_current_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem):
+    def change_current_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem, remove_flag=False):
         """
         Enter different sub scene in different attribute widget.
 
         Args:
             sub_scene_item: The item in scene list.
+            remove_flag: Whether delete sub scene.
 
         """
+        self.mainwindow.scene_list.clearSelection()
 
         if self.root_flag:
-            self.last_scene = self.current_scene
-            self.last_scene_flag = self.current_scene_flag
+            if not remove_flag:
+                self.last_scene = self.current_scene
+                self.last_scene_flag = self.current_scene_flag
+            else:
+                self.last_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
+                self.last_scene_flag = sub_scene_item
 
             self.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
             self.current_scene_flag = sub_scene_item
+            self.current_scene_flag.setSelected(True)
             self.setScene(self.current_scene)
             self.background_image = self.current_scene.background_image
             self.cutline = self.current_scene.cutline
@@ -1269,6 +1282,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
             self.mainwindow.view_widget.current_scene = sub_scene_item.data(0, QtCore.Qt.ToolTipRole)
             self.mainwindow.view_widget.current_scene_flag = sub_scene_item
+            self.mainwindow.view_widget.current_scene_flag.setSelected(True)
             self.mainwindow.view_widget.setScene(self.mainwindow.view_widget.current_scene)
             self.mainwindow.view_widget.background_image = self.mainwindow.view_widget.current_scene.background_image
             self.mainwindow.view_widget.cutline = self.mainwindow.view_widget.current_scene.cutline
@@ -1290,7 +1304,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         if parent_flag:
             # change current scene
-            self.change_current_scene(parent_flag)
+            self.change_current_scene(parent_flag, remove_flag=True)
             # delete
             parent_flag.removeChild(sub_scene_item)
             sub_scene_item.data(0, QtCore.Qt.ToolTipRole).attribute_widget.sub_scene = None
