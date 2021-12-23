@@ -223,6 +223,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Export current scene to .note file.
 - [ ] Open with nodenote.
 - [x] Set default background image.
+- [x] Delete sub scene at sidebar and change selection.
 ## Changes:
 - [x] Change UI.
 - [x] Delete Draw widget of sub view which not works.
