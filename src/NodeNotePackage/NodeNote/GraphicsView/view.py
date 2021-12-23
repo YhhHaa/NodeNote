@@ -1733,6 +1733,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                                                                      "Open serialization json file", "./",
                                                                      "note (*.note)")
                 if filename and ok:
+                    
+                    if self.filename:
+                        self.save_to_file()
+
                     with open(filename, "rb") as file:
                         view_serialization = serialize_pb2.ViewSerialization()
                         view_serialization.ParseFromString(file.read())
