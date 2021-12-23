@@ -217,11 +217,12 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Relative path raise an exception when the file is across the drive.
 - [x] Pipe not shows in sub view.
 - [x] Set Control points at center of pipe.
+- [x] Without `Assets` folder, the draw widget can't save to file.
 ## Function:
 - [ ] Support markdown.
 - [x] Export current scene to .note file.
 - [ ] Open with nodenote.
-- [ ] Set default background image.
+- [x] Set default background image.
 ## Changes:
 - [x] Change UI.
 - [x] Delete Draw widget of sub view which not works.

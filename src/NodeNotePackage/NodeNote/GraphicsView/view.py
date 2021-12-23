@@ -181,6 +181,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.pipes = list()
         self.draw_widgets = list()
 
+        # Temp for indexing
+        if self.root_flag:
+            self.children_view = dict()
+
         # SUB SCENE
         if self.root_flag:
             self.root_scene_flag = TreeWidgetItem(self.mainwindow.scene_list,
@@ -307,6 +311,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select svg", "", "*.svg")
         if image_name != "":
+            self.current_scene.background_image_flag = True
             self.background_image.change_svg(os.path.abspath(image_name))
 
     def change_flowing_image(self, close=False):
@@ -595,6 +600,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             last_widget.remove_next_attribute(item)
         for last_widget in item.last_logic:
             last_widget.remove_next_attribute(item)
+
+        # delete sub view from view dict
+        from ..Components.sub_view import ProxyView
+        for sub_item in item.attribute_sub_widgets:
+            if isinstance(sub_item, ProxyView):
+                self.mainwindow.view_widget.children_view.pop(sub_item.id, 'not found')
 
         if item.sub_scene:
             iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
@@ -1265,8 +1276,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.mainwindow.style_switch_combox.setCurrentIndex(0)
         self.mainwindow.style_switch_combox.setCurrentIndex(1)
 
-        self.mainwindow.scene_list.selectionModel().clearSelection()
-
     def delete_sub_scene(self, sub_scene_item: QtWidgets.QTreeWidgetItem):
         """
         Delete sub scene in attribute widget
@@ -1780,6 +1789,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         # text widget ui
         view_serialization.text_width = attribute.AttributeWidget.width_flag
 
+        # background image
+        view_serialization.all_background_image = effect_background.EffectBackground.name
+
         # flag
         if self.root_flag:
             view_serialization.line_flag = self.line_flag
@@ -1871,6 +1883,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         #   draw widget
         draw.Draw.pen_width = data.all_draw_width
         draw.Draw.color.setRgb(data.all_draw_color)
+
+        #   background image
+        if data.HasField("all_background_image"):
+            effect_background.EffectBackground.name = data.all_background_image
 
         #   text widget
         try:

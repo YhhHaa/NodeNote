@@ -206,6 +206,9 @@ message ViewSerialization {
     optional string scene_pipe_font_family = 32;
     optional int32 scene_pipe_font_size = 33;
     optional int64 scene_pipe_font_color = 34;
+
+    // v.2.10->
+    optional bool background_image_flag = 35;
   }
 
   repeated SceneSerialization scene_serialization = 1;
@@ -252,4 +255,7 @@ message ViewSerialization {
 
   // flowing image flag
   optional bool flowing_flag = 21;
+
+  // v2.10->
+  optional string all_background_image = 22;
 }

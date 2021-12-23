@@ -39,6 +39,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.history = history.History(self.view)
 
         # background image
+        self.background_image_flag = False
         self.background_image = effect_background.EffectBackground(self.view)
         self.background_image.resize(self.view.size().width(), self.view.size().width())
         self.background_image.setPos(self.view.mapToScene(0, 0).x(), self.view.mapToScene(0, 0).y())
@@ -189,6 +190,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                 item.serialize(scene_serialization.draw_serialization.add())
 
         # ui serialization
+        scene_serialization.background_image_flag = self.background_image_flag
         scene_serialization.background_image = self.background_image.name
 
         # attribute widget ui
@@ -297,6 +299,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
             for draw_data in data.draw_serialization:
                 draw.Draw().deserialize(draw_data, hashmap, view, flag)
             # background image
+            if data.HasField("background_image_flag"):
+                self.background_image_flag = data.background_image_flag
             self.background_image.change_svg(data.background_image)
             # style
             if data.scene_attr_font_family and data.scene_attr_font_size:
@@ -466,6 +470,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
                                 attribute_sub = ProxyView(self.view.mainwindow)
                                 attribute_sub.deserialize(attribute_sub_view, hashmap,
                                                           attribute_sub.sub_view_widget_view, flag=True)
+                                self.view.mainwindow.view_widget.children_view[attribute_sub.id] = attribute_sub
                                 item.attribute_sub_widgets.append(attribute_sub)
                                 item.attribute_layout.addItem(attribute_sub,
                                                               attribute_sub.item_row,

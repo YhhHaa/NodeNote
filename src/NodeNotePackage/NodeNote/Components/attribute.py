@@ -2777,6 +2777,7 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         elif flag == "view":
             from .sub_view import ProxyView
             subwidget = ProxyView(self.scene().view.mainwindow)
+            self.scene().view.mainwindow.view_widget.children_view[subwidget.id] = subwidget
         elif flag == "todo":
             from .todo import Todo
             subwidget = Todo(self)
