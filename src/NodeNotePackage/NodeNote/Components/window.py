@@ -4,7 +4,7 @@ import os
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from ..Components.effect_snow import EffectSkyWidget
-from ..Components import attribute, pipe, port, draw, todo
+from ..Components import attribute, pipe, port, draw, todo, effect_background
 from ..Model.Stylesheets import stylesheet
 from ..GraphicsView.view import View
 
@@ -331,6 +331,20 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.draw_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.draw_init_flag = True
 
+        # Background image
+        #       widgets
+        self.background_image_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Background Image"))
+        self.background_image_path_label = QtWidgets.QLabel()
+        self.background_image_path_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Image"))
+        #       added
+        self.style_list_layout.addWidget(self.background_image_label, 30, 0, 1, -1)
+        self.style_list_layout.addWidget(self.background_image_path_label, 31, 1)
+        self.style_list_layout.addWidget(self.background_image_path_button, 31, 0)
+        #       stylesheet
+        self.background_image_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
+        self.background_image_path_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
+        self.background_image_path_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
+
         # Text editor
         #       widgets
         self.text_editor_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Text Editor(All scene)"))
@@ -340,9 +354,9 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.text_editor_length_box.setSingleStep(100)
         self.text_editor_length_box.setValue(-1)
         #       added
-        self.style_list_layout.addWidget(self.text_editor_label, 30, 0, 1, -1)
-        self.style_list_layout.addWidget(self.text_editor_length_box, 31, 0)
-        self.style_list_layout.addWidget(self.text_editor_length_label, 31, 1)
+        self.style_list_layout.addWidget(self.text_editor_label, 32, 0, 1, -1)
+        self.style_list_layout.addWidget(self.text_editor_length_box, 33, 0)
+        self.style_list_layout.addWidget(self.text_editor_length_label, 33, 1)
         #       stylesheet
         self.text_editor_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
         self.text_editor_length_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
@@ -1083,6 +1097,24 @@ class NoteWindow(QtWidgets.QMainWindow):
             if width and ok:
                 draw.Draw.pen_width = width
                 self.width_label_changed(self.draw_style_width_label, width)
+    
+    def path_changed(self, current_index):
+        """
+        Update background image path.
+
+        """
+
+        filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                            "Select background image", "./",
+                                                            "Svg background image (*.svg)")
+        if filename and ok:
+            if current_index == 0:
+                effect_background.EffectBackground.name = os.path.abspath(filename)
+            elif current_index == 1:
+                self.view_widget.current_scene.background_image.name = os.path.abspath(filename)
+
+        self.background_image_label.setText(os.path.basename(filename))
+
 
     def init_attribute(self, current_index):
         """
@@ -1567,6 +1599,22 @@ class NoteWindow(QtWidgets.QMainWindow):
             self.port_style_activated_border_color_button.disconnect()
             self.port_style_activated_border_color_button.clicked.connect(
                 lambda x: self.color_changed("Port_activated_border_color", current_index))
+    
+    def init_background(self, current_index):
+        """
+        Init background image.
+
+        Args:
+            current_index: The current drop-down box index on the top of the style list.
+        """
+
+        if current_index == 0:
+            self.background_image_path_label.setText(os.path.basename(effect_background.EffectBackground.name))
+        elif current_index == 1:
+            self.background_image_label.setText(os.path.basename(self.view_widget.current_scene.background_image.name))
+
+        self.background_image_path_button.disconnect()
+        self.background_image_path_button.clicked.connect(lambda x: self.path_changed(current_index))
 
     def init_draw(self):
         """
@@ -1612,6 +1660,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.init_pipe(current_index)
         self.init_port(current_index)
         self.init_draw()
+        self.init_background(current_index)
 
     def redirect_last_scene(self):
         temp_scene = self.view_widget.current_scene

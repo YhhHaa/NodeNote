@@ -239,6 +239,8 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def serialize(self, draw_serialization=None):
         # Path
         if not self.canvas_item.path:
+            if not os.path.exists("Assets"):
+                os.makedirs("Assets")
             self.canvas_item.path = os.path.join("Assets",
                                                  time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
         self.canvas_item.save_to_path(self.canvas_item.path)
