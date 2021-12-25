@@ -9,10 +9,12 @@ from . import port
 from . import sub_view
 from . import todo
 from . import window
+from . import markdown_edit
 
 
 __all__ = ['draw',
            'pipe', 'port', 'attribute',
            'sub_view', 'todo',
            'effect_background', 'effect_cutline', 'effect_snow', 'effect_water',
-           'window']
+           'window',
+           "markdown_edit"]

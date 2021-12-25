@@ -5,6 +5,7 @@ View.py - Control components logic.
 import time
 import re
 import os
+import sqlite3
 
 from PyQt5 import QtGui, QtCore, QtWidgets, sip
 
@@ -256,6 +257,22 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         # flowing image
         self.flowing_flag = True
+
+        # markdown database
+        if self.root_flag:
+            self.conn_md_base = None
+            self.markdown_cursor = None
+            self.mark_attr_dict = dict()
+
+    def magic(self):
+        """
+        Magic for debugging
+
+        """
+
+        temp = self.scene().scene_rect.adjusted(0, 0, 1, 1)
+        self.scene().setSceneRect(temp)
+        self.scene().setSceneRect(temp.adjusted(0, 0, -1, -1))
 
     def expand(self, expand_flag: str):
         if expand_flag == "left":
@@ -669,9 +686,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.current_scene.history.store_history("Delete Widgets")
             
             # Restore scene.
-            temp = self.scene().scene_rect.adjusted(0, 0, 1, 1)
-            self.scene().setSceneRect(temp)
-            self.scene().setSceneRect(temp.adjusted(0, 0, -1, -1))
+            self.magic()
 
     def delete_pipe(self, item):
         """
@@ -699,6 +714,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         output_port.remove_pipes(item)
 
         self.current_scene.removeItem(item)
+        self.magic()
         if item in self.pipes:
             self.pipes.remove(item)
 
@@ -717,6 +733,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             basic_widget.setPos(self.mapToScene(event.pos()))
         elif pos:
             basic_widget.setPos(self.mapToScene(self.mapFromGlobal(pos)))
+        self.mainwindow.view_widget.mark_attr_dict[basic_widget.id] = basic_widget
         self.attribute_widgets.append(basic_widget)
         if self.undo_flag:
             self.current_scene.history.store_history("Add Attribute Widget")
@@ -799,6 +816,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         """
 
         self.current_scene.removeItem(widget)
+        self.mainwindow.view_widget.mark_attr_dict.pop(widget.id, "404")
         if widget in self.attribute_widgets:
             self.attribute_widgets.remove(widget)
 
@@ -1113,9 +1131,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.item = None
 
             # Restore scene.
-            temp = self.scene().scene_rect.adjusted(0, 0, 1, 1)
-            self.scene().setSceneRect(temp)
-            self.scene().setSceneRect(temp.adjusted(0, 0, -1, -1))
+            self.magic()
 
     def judge_same_pipe(self, item):
         """
@@ -1434,9 +1450,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 
                 # debug for sub scene, i don't understand but it works
                 if not self.root_flag:
-                    temp = self.scene().scene_rect.adjusted(0, 0, 1, 1)
-                    self.scene().setSceneRect(temp)
-                    self.scene().setSceneRect(temp.adjusted(0, 0, -1, -1))
+                    self.magic()
             except AttributeError:
                 pass
             if constants.DEBUG_DRAW_PIPE:
@@ -1688,6 +1702,71 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.background_image.setPos(self.mapToScene(0, 0).x(), self.mapToScene(0, 0).y())
         self.background_image.resize(self.size().width() * zoom_factor, self.size().height() * zoom_factor)
 
+    def connect_markdown_base(self):
+        """
+        Create markdown databse.
+        
+        """
+
+        if not os.path.exists("Assets"):
+            os.mkdir("Assets")
+        if not self.conn_md_base:
+            self.conn_md_base = sqlite3.connect(os.path.join("Assets", str(self.root_scene.id) + ".sqlite3"))
+            self.markdown_cursor = self.conn_md_base.cursor()
+            self.markdown_cursor.execute("""
+                CREATE TABLE IF NOT EXISTS marktext(
+                    id INTEGER PROMIARY KEY,
+                    markdown TEXT
+                );
+            """)
+    
+    def close_markdown_base(self):
+        """
+        Close markdown database.
+
+        """
+
+        if self.conn_md_base:
+            self.conn_md_base.commit()
+            self.conn_md_base.close()
+
+            self.conn_md_base = None
+            self.markdown_cursor = None
+
+    def save_markdown(self, dict_id: dict, mark_text: str):
+        """
+        Save last attr markdown text and load next attr markdown text
+
+        Args:
+            dict_id: {last_attr_id, new_attr_id}.
+            mark_text: markdown text from html.
+
+        """
+
+        old_item_id = dict_id.get("old_focus_item")
+        new_item_id = dict_id.get("new_focus_item")
+
+        old_item = self.mark_attr_dict.get(old_item_id)
+        new_item = self.mark_attr_dict.get(new_item_id)
+
+        if self.conn_md_base:
+            pass
+        else:
+            # save last attr markdown text
+            if old_item:
+                old_item.markdown_text = mark_text
+
+                if constants.DEBUG_MARKDOWN:
+                    print(f"4 View emit change flag to save old text {mark_text}")
+
+            # show new attr markdown text
+            if new_item:
+                
+                self.mainwindow.markdown_document.change_js_markdown_signal.emit(new_item.markdown_text)
+
+                if constants.DEBUG_MARKDOWN:
+                    print(f"4 View emit change flag to show new text {new_item.markdown_text}")
+
     def save_to_file(self):
         """
         Save .note file.
@@ -1709,6 +1788,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     self.filename = filename
                     self.first_open = False
 
+                    self.connect_markdown_base()
+
             if self.filename:
                 _save_to_file(self.filename, self.serialize())
                 self.mainwindow.setWindowTitle(self.filename)
@@ -1728,6 +1809,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     self.deserialize(view_serialization, {}, self, True)
                     self.mainwindow.setWindowTitle(self.filename + "-Life")
 
+                    self.close_markdown_base()
+                    self.connect_markdown_base()
+
             else:
                 filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
                                                                      "Open serialization json file", "./",
@@ -1743,6 +1827,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         self.deserialize(view_serialization, {}, self, True)
                         self.filename = filename
                         self.mainwindow.setWindowTitle(filename + "-Life")
+
+                        self.close_markdown_base()
+                        self.connect_markdown_base()
 
     def serialize(self, view_serialization=None, export_current_scene=False):
         """
@@ -1843,6 +1930,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.logic_widgets = list()
         self.pipes = list()
         self.draw_widgets = list()
+        self.mainwindow.view_widget.mark_attr_dict.clear()
 
         # image path
         if data.image_path:

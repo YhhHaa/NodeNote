@@ -95,6 +95,34 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                     "../Resources/common_background_image.png")))
 
+        # show markdown text
+        self.focusItemChanged.connect(self.change_markdown)
+    
+    def change_markdown(self, new_focus_item, old_focus_item, reason):
+        """
+        change markdown whenever focus of attribute widget changed.
+
+        """
+
+        if self.view.mainwindow.markdown_toolbar.isVisible():
+            send_id = dict()
+
+            # data
+            if isinstance(old_focus_item, attribute.AttributeWidget):
+                send_id["old_focus_item"] = old_focus_item.id
+            else:
+                send_id["old_focus_item"] = 0
+            if isinstance(new_focus_item, attribute.AttributeWidget):
+                send_id["new_focus_item"] = new_focus_item.id
+            else:
+                send_id["new_focus_item"] = 0
+
+            # send data to js
+            if constants.DEBUG_MARKDOWN:
+                print(f"1 Scene send send_id{send_id} to MarkdownDocument emit_save_flag")
+
+            self.view.mainwindow.markdown_document.emit_save_flag(send_id)
+
     def get_id_attribute(self, attribute_id) -> attribute.AttributeWidget:
         """
         For Serialization to get attribute widget.
@@ -185,7 +213,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
             elif isinstance(item, attribute.LogicWidget):
                 item.serialize(scene_serialization.logic_serialization.add())
             elif isinstance(item, pipe.Pipe):
-                item.serialize(scene_serialization.pipe_serialization.add())
+                if item.start_port and item.end_port:
+                    item.serialize(scene_serialization.pipe_serialization.add())
             elif isinstance(item, draw.Draw):
                 item.serialize(scene_serialization.draw_serialization.add())
 

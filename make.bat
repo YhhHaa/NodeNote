@@ -4,3 +4,6 @@ lrelease ./src/NodeNotePackage/NodeNote/Model/MultiLanguages/zh_CN.ts
 
 :: google protoc
 protoc -I./src/NodeNotePackage/NodeNote/Model/ --python_out=./src/NodeNotePackage/NodeNote/Model/ serialize.proto
+
+:: package
+pyinstaller --noconfirm ./example.spec

@@ -2541,6 +2541,10 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         # text
         self.mouse_flag = False
 
+        # markdown
+        self.markdown_text = ""
+        self.markdown_saved_flag = False
+
     def paint(self, painter, option, widget=None) -> None:
         painter.save()
 
@@ -2772,6 +2776,7 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         if flag == "attr":
             subwidget = AttributeWidget()
             self.scene().view.attribute_widgets.append(subwidget)
+            self.scene().view.mainwindow.view_widget.mark_attr_dict[subwidget.id] = subwidget
         elif flag == "file":
             subwidget = AttributeFile(self)
         elif flag == "view":

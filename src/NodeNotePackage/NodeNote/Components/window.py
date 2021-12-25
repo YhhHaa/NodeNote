@@ -1,14 +1,11 @@
 import math
-import time
 import os
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui, QtWebEngineWidgets, QtWebChannel
 from ..Components.effect_snow import EffectSkyWidget
-from ..Components import attribute, pipe, port, draw, todo, effect_background
+from ..Components import attribute, pipe, port, draw, todo, effect_background, markdown_edit
 from ..Model.Stylesheets import stylesheet
 from ..GraphicsView.view import View
-
-__all__ = ["NoteWindow"]
 
 
 class SceneList(QtWidgets.QTreeWidget):
@@ -24,8 +21,8 @@ class SceneList(QtWidgets.QTreeWidget):
                 os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/sidebar_delete.png"))))
 
         action = context_menu.exec_(a0.globalPos())
-        if action == delete_scene:
-            self.mainwindow.view_widget.delete_sub_scene(self.selectedItems()[0])
+        if action == delete_scene and len(self.selectedItems()) >= 1:
+                self.mainwindow.view_widget.delete_sub_scene(self.selectedItems()[0])
 
         a0.accept()
 
@@ -62,9 +59,11 @@ class NoteWindow(QtWidgets.QMainWindow):
             (QtWidgets.QDesktopWidget().screenGeometry().height() - self.geometry().height()) // 2
         )
         self.setStyleSheet(stylesheet.STYLE_QMAINWIDNOW)
+        self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
         # Tool bar
         self.toolbar = QtWidgets.QToolBar()
+        self.toolbar.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.toolbar.setStyleSheet(stylesheet.STYLE_QTOOLBAR)
         self.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolbar)
         self.tab_widget = QtWidgets.QTabWidget()
@@ -409,6 +408,32 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.thumbnails.setGeometry(0, 0, 300, 300)
         self.thumbnails.hide()
         self.time_id = 0
+
+        # markdown
+        #   tool bar
+        self.markdown_toolbar = QtWidgets.QToolBar()
+        self.markdown_toolbar.setStyleSheet(stylesheet.STYLE_QTOOLBAR)
+        self.addToolBar(QtCore.Qt.RightToolBarArea, self.markdown_toolbar)
+
+        #   web engine
+        #       view
+        self.markdown_view = QtWebEngineWidgets.QWebEngineView()
+        self.markdown_view.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.markdown_view.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.markdown_toolbar.addWidget(self.markdown_view)
+        #       page
+        self.markdown_page = QtWebEngineWidgets.QWebEnginePage()
+        self.markdown_view.setPage(self.markdown_page)
+        #       document
+        self.markdown_document = markdown_edit.MarkdownDocument(self.markdown_page)
+        #       channel
+        self.markdown_chanel = QtWebChannel.QWebChannel()
+        self.markdown_chanel.registerObject("saveSignal", self.markdown_document)
+        self.markdown_page.setWebChannel(self.markdown_chanel)
+        #       slots
+        self.markdown_document.text_changed_signal.connect(self.view_widget.save_markdown)
+        #       show
+        self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/vditor/markdown.html"))))
 
     def time_update(self):
         """

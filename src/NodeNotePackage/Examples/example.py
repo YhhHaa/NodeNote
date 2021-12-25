@@ -12,6 +12,7 @@ Distributed under MPL-2.0 license. See LICENSE for more information
 
 import sys
 import os
+import time
 
 sys.path.insert(0, os.path.abspath(os.path.join(__file__, "../../../../")))
 sys.path.insert(0, os.path.abspath(os.path.join(__file__, "../../../")))
@@ -28,7 +29,7 @@ def message_output(msg_type, context, msg):
     try:
         if msg_type >= 2:
             with open("exception_log.txt", "a", encoding="utf-8") as log:
-                log.write(f"{msg},{msg_type} from {context.file},{context.function},{context.line}\n")
+                log.write(f"{msg}, type: {msg_type} at {time.asctime(time.localtime(time.time()))}\n")
     except Exception as e:
         pass
 

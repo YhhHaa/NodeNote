@@ -175,8 +175,7 @@ STYLE_QTEXTEDIT = '''
 QTextEdit {
     border: 1px solid rgba(255, 255, 255, 50);
     border-radius: 5px;
-    color: rgba(255, 255, 255, 150);
-    background: rgba(0, 0, 0, 80);
+    background-color: rgba(255, 248, 220, 255);
     selection-background-color: rgba(255, 198, 10, 155);
 }
 '''
