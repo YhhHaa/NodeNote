@@ -233,6 +233,6 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Change UI.
 - [x] Delete Draw widget of sub view which not works.
 - [x] Multi languages.
-- [ ] Different stylesheet interface.
+- [x] Different stylesheet interface.
 - [ ] Rewrite undo&&redo logic.
 - [ ] Show MIT License.
