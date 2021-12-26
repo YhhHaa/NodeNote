@@ -501,14 +501,21 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         """
 
         if self.search_list:
+            self.mainwindow.scene_list.clearSelection()
 
             self.search_position += 1
             if self.search_position > len(self.search_list) - 1:
                 self.search_position = len(self.search_list) - 1
 
             at_scene = self.search_list[self.search_position].scene()
+
+            self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
+            self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
+
             self.current_scene = at_scene
             self.current_scene_flag = at_scene.sub_scene_flag
+            self.current_scene_flag.setSelected(True)
+
             self.background_image = at_scene.background_image
             self.cutline = at_scene.cutline
             self.setScene(at_scene)
@@ -525,13 +532,21 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         """
 
         if self.search_list:
+            self.mainwindow.scene_list.clearSelection()
+
             self.search_position -= 1
             if self.search_position < 0:
                 self.search_position = 0
 
             at_scene = self.search_list[self.search_position].scene()
+
+            self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
+            self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
+
             self.current_scene = at_scene
             self.current_scene_flag = at_scene.sub_scene_flag
+            self.current_scene_flag.setSelected(True)
+            
             self.background_image = at_scene.background_image
             self.cutline = at_scene.cutline
             self.setScene(at_scene)
