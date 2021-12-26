@@ -27,6 +27,31 @@ class SceneList(QtWidgets.QTreeWidget):
         a0.accept()
 
 
+class FileView(QtWidgets.QTreeView):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent=parent)
+        self.mainwindow = parent
+
+    def contextMenuEvent(self, a0: QtGui.QContextMenuEvent) -> None:
+        context_menu = QtWidgets.QMenu(self)
+        context_menu.setStyleSheet(stylesheet.STYLE_QMENU)
+        create_dir = context_menu.addAction(QtCore.QCoreApplication.translate("FileView", "create new dir"))
+        create_dir.setIcon(QtGui.QIcon(
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/file_view_create.png"))))
+        delete_dir_file = context_menu.addAction(QtCore.QCoreApplication.translate("FileView", "delete file"))
+        delete_dir_file.setIcon(QtGui.QIcon(
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/file_view_delete.png"))))
+        
+        action = context_menu.exec_(a0.globalPos())
+        if action == delete_dir_file:
+            if self.mainwindow.file_model.type(self.currentIndex()) == "Directory":
+                self.mainwindow.file_model.rmdir(self.currentIndex())
+            else:
+                self.mainwindow.file_model.remove(self.currentIndex())
+        elif action == create_dir:
+            self.mainwindow.file_model.mkdir(self.currentIndex(), QtCore.QCoreApplication.translate("FileView", "new dir"))
+        
+
 class NoteWindow(QtWidgets.QMainWindow):
     """
     Main window of the application:
@@ -70,6 +95,22 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.tab_widget.setStyleSheet(stylesheet.STYLE_QTABWIDGET)
         self.toolbar.addWidget(self.tab_widget)
         self.toolbar.setVisible(False)
+
+        # dir view
+        #   model
+        self.file_model = QtWidgets.QFileSystemModel()
+        self.file_model.setReadOnly(False)
+        #   view
+        self.file_view = FileView(self)
+        self.file_view.setModel(self.file_model)
+        self.file_view.setRootIndex(self.file_model.setRootPath("./"))
+        #       layout
+        self.file_view.setAnimated(False)
+        self.file_view.setIndentation(20)
+        self.file_view.setSortingEnabled(True)
+        self.file_view.resize(self.file_view.screen().availableGeometry().size() / 2)
+        self.file_view.setColumnWidth(0, self.file_view.width() / 3)
+        self.tab_widget.addTab(self.file_view, QtCore.QCoreApplication.translate("NoteWindow", "work dir"))
 
         # Scene list widget
         self.scene_thumbnails = QtWidgets.QWidget()
