@@ -219,7 +219,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Set Control points at center of pipe.
 - [x] Without `Assets` folder, the draw widget can't save to file.
 - [x] Saving raises exception when you are dragging pipe.
-- [ ] 搜索跨场景返回
+- [x] Search and redirect to last scene.
 ## Function:
 - [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).
 - [x] Export current scene to .note file.
