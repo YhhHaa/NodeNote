@@ -5,11 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets, sip
 from ..Model.constants import DEBUG_EFFECT_SNOW
 
 
-__all__ = ["EffectSkyWidget"]
-
-
 class EffectSkyWidget(QtWidgets.QWidget):
-    timer = QtCore.QTimer()
 
     def __init__(self, view_widget, parent=None):
         """
@@ -25,6 +21,7 @@ class EffectSkyWidget(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self.path_list = list()
         self.index = 0
+        self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.snow_create)
         self.timer.start(6000)
 

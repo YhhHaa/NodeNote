@@ -9,14 +9,10 @@ import sqlite3
 
 from PyQt5 import QtGui, QtCore, QtWidgets, sip
 
-from ..Model.Stylesheets import stylesheet
 from .scene import Scene
 from ..Components import effect_water, attribute, port, pipe, effect_cutline, effect_background, effect_snow, \
     draw, todo, sub_view
 from ..Model import constants, serializable, serialize_pb2
-
-
-__all__ = ["View", "TreeWidgetItem"]
 
 
 class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
@@ -165,10 +161,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.horizontal_scrollbar = QtWidgets.QScrollBar()
-        self.horizontal_scrollbar.setStyleSheet(stylesheet.STYLE_HSCROLLBAR)
         self.setHorizontalScrollBar(self.horizontal_scrollbar)
         self.vertical_scrollbar = QtWidgets.QScrollBar()
-        self.vertical_scrollbar.setStyleSheet(stylesheet.STYLE_VSCROLLBAR)
         self.setVerticalScrollBar(self.vertical_scrollbar)
 
         # DRAW LINE
@@ -206,15 +200,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.search_widget = QtWidgets.QWidget(self)
         self.search_widget.setVisible(False)
         self.text_widget = QtWidgets.QLineEdit(self.search_widget)
-        self.text_widget.setStyleSheet(stylesheet.STYLE_QLINEEDIT)
         self.label_widget = QtWidgets.QLabel("Search: ", self.search_widget)
-        self.label_widget.setStyleSheet(stylesheet.STYLE_QLABEL)
         self.search_button = QtWidgets.QPushButton("Search", self.search_widget)
-        self.search_widget.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.next_button = QtWidgets.QPushButton("Next", self.search_widget)
-        self.next_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.last_button = QtWidgets.QPushButton("Last", self.search_widget)
-        self.last_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         search_layout = QtWidgets.QHBoxLayout()
         self.search_widget.setLayout(search_layout)
@@ -1854,6 +1843,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         # ui serialization
         if self.image_path:
             view_serialization.image_path = self.image_path
+        
+        view_serialization.style_path = self.mainwindow.runtime_style.path
 
         # attribute widget ui
         view_serialization.all_attr_font_family = attribute.InputTextField.font.family()
@@ -1936,6 +1927,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if data.image_path:
             effect_snow.SnowWidget.image_path = data.image_path
             self.image_path = data.image_path
+        
+        if data.HasField("style_path"):
+            self.mainwindow.runtime_style.path = data.style_path
+            print(data.style_path)
 
         # set root scene
         if self.root_flag:

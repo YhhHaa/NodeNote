@@ -12,7 +12,6 @@ from PIL import Image, ImageOps, ImageQt
 import numpy as np
 from PyQt5 import QtCore, QtWidgets, QtGui, sip
 
-from ..Model.Stylesheets import stylesheet
 from ..Model import constants, serializable
 from ..Components import port, pipe
 
@@ -1102,21 +1101,21 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         if event.type() == QtCore.QEvent.KeyPress:
             if event.matches(QtGui.QKeySequence.Paste):
                 self.paste(self.textCursor())
-                return False
+                return True
             elif event.matches(QtGui.QKeySequence.Copy):
                 self.copy(export_flag=False)
-                return False
+                return True
             elif event.key() == QtCore.Qt.Key_Tab:
                 if event.modifiers() == QtCore.Qt.ControlModifier:
                     if constants.DEBUG_RICHTEXT:
                         print("CTRL + TAB")
                     self.dedent()
-                    return False
+                    return True
                 else:
                     if constants.DEBUG_RICHTEXT:
                         print("TAB")
                     self.indent()
-                    return False
+                    return True
             else:
                 return super(InputTextField, self).sceneEvent(event)
         else:
@@ -1215,8 +1214,9 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             self.setTextCursor(cursor)
             self.font_size_editing = False
         self.mouseMoveEvent = self.node.mouseMoveEvent
-        if self.node.scene().view.undo_flag:
-            self.node.scene().history.store_history("Editing")
+        if self.node.scene():
+            if self.node.scene().view.undo_flag:
+                self.node.scene().history.store_history("Editing")
 
 
 class SubConstituteWidget(QtWidgets.QGraphicsWidget):
@@ -1294,9 +1294,7 @@ class GroupWidget(QtWidgets.QGroupBox):
         if text == '':
             margin = (0, 2, 0, 0)
             padding_top = '2px'
-        style = stylesheet.STYLE_QGROUPBOX.replace('$PADDING_TOP', padding_top)
         self.layout().setContentsMargins(*margin)
-        self.setStyleSheet(style)
         super(GroupWidget, self).setTitle(text)
 
     def add_node_widget(self, widget):
@@ -1365,7 +1363,6 @@ class TruthWidget(QtWidgets.QGraphicsWidget):
         # new checkbox
         self.truth_checkbox = QtWidgets.QCheckBox("Truth")
         self.truth_checkbox.setChecked(truth)
-        self.truth_checkbox.setStyleSheet(stylesheet.STYLE_QCHECKBOX)
 
         # set font
         font = self.truth_checkbox.font()
@@ -1529,7 +1526,6 @@ class BaseWidget(QtWidgets.QGraphicsWidget):
     def contextMenuEvent(self, event) -> None:
         if self.context_flag:
             menu = QtWidgets.QMenu()
-            menu.setStyleSheet(stylesheet.STYLE_QMENU)
             move_up = menu.addAction(QtCore.QCoreApplication.translate("BaseWidget", "move up"))
             move_up.setIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                                      "../Resources/up.png"))))
@@ -1567,18 +1563,14 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.setZValue(constants.Z_VAL_NODE)
         self.logic_combobox_input = ComboBox()
         self.logic_combobox_output = ComboBox()
-        self.logic_combobox_input.setStyleSheet(stylesheet.STYLE_QCOMBOBOX_LOGIC)
         self.logic_combobox_input.setMaximumHeight(20)
         logic_list_input = QtWidgets.QListView(self.logic_combobox_input)
-        logic_list_input.setStyleSheet(stylesheet.STYLE_QLISTVIEW)
         self.logic_combobox_input.setView(logic_list_input)
         self.logic_combobox_input.addItems(("And", "Or", "Not"))
         self.logic_combobox_input.clearFocus()
 
-        self.logic_combobox_output.setStyleSheet(stylesheet.STYLE_QCOMBOBOX_LOGIC)
         self.logic_combobox_output.setMaximumHeight(20)
         logic_list_output = QtWidgets.QListView(self.logic_combobox_output)
-        logic_list_output.setStyleSheet(stylesheet.STYLE_QLISTVIEW)
         self.logic_combobox_output.setView(logic_list_output)
         self.logic_combobox_output.addItems(("And", "Or", "Not"))
         self.logic_combobox_output.clearFocus()
@@ -2235,7 +2227,7 @@ class ChangeImageOrVideo(QtWidgets.QLabel):
         super(ChangeImageOrVideo, self).__init__(text)
         self.label_type = label_type
         self.parent = parent
-        self.setStyleSheet(stylesheet.STYLE_QLABEL_FILE)
+        self.setObjectName("file_label")
 
     def mousePressEvent(self, ev: QtGui.QMouseEvent) -> None:
         super(ChangeImageOrVideo, self).mousePressEvent(ev)
@@ -3616,7 +3608,6 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
         if self.context_flag:
             menu = QtWidgets.QMenu()
-            menu.setStyleSheet(stylesheet.STYLE_QMENU)
             add_line_subwidget = menu.addAction(QtCore.QCoreApplication.translate("AttributeWidget", "add current-line subwidget"))
             add_line_subwidget.setIcon(QtGui.QIcon(
                 os.path.abspath(os.path.join(os.path.dirname(__file__),

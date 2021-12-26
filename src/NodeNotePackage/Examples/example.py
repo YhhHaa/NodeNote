@@ -44,7 +44,7 @@ if __name__ == '__main__':
     lan = QLocale.language(local)
     trans = QTranslator()
     if lan == QLocale.Chinese:
-        trans.load("../NodeNote/src/NodeNotePackage/NodeNote\Model/MultiLanguages/zh_CN")
+        trans.load("../NodeNote/src/NodeNotePackage/NodeNote/Resources/MultiLanguages/zh_CN")
         app.installTranslator(trans)
 
     # slash

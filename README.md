@@ -219,17 +219,20 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Set Control points at center of pipe.
 - [x] Without `Assets` folder, the draw widget can't save to file.
 - [x] Saving raises exception when you are dragging pipe.
+- [ ] 搜索跨场景返回
 ## Function:
 - [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).
 - [x] Export current scene to .note file.
-- [ ] Open with nodenote.
+- [x] Open with nodenote.
 - [x] Set default background image.
 - [x] Delete sub scene at sidebar and change selection.
 - [ ] Show and hide special tag node.
+- [ ] 文件版本管理
+- [ ] 导出pdf矢量
 ## Changes:
 - [x] Change UI.
 - [x] Delete Draw widget of sub view which not works.
 - [x] Multi languages.
-- [ ] Different stylesheet.
+- [ ] Different stylesheet interface.
 - [ ] Rewrite undo&&redo logic.
 - [ ] Show MIT License.

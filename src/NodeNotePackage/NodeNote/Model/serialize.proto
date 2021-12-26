@@ -258,4 +258,7 @@ message ViewSerialization {
 
   // v2.10->
   optional string all_background_image = 22;
+
+  // style path
+  optional string style_path = 23;
 }

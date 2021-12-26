@@ -1,11 +1,37 @@
 import math
 import os
+import re
 
 from PyQt5 import QtWidgets, QtCore, QtGui, QtWebEngineWidgets, QtWebChannel
+
 from ..Components.effect_snow import EffectSkyWidget
 from ..Components import attribute, pipe, port, draw, todo, effect_background, markdown_edit
-from ..Model.Stylesheets import stylesheet
 from ..GraphicsView.view import View
+
+
+class RuntimeStylesheets():
+
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Stylesheets/cute_style.qss"))
+
+    def __init__(self, mainwindow) -> None:
+        self.main = mainwindow
+        self.load_stylesheet(self.path)
+    
+    def load_stylesheet(self, stylesheet_path=""):
+        """
+        load stylesheet into app.
+
+        Args:
+            stylesheet_path: path of stylesheet file.
+
+        """
+        try:
+            with open(stylesheet_path, 'r', encoding='utf-8') as qss_file:
+                style = qss_file.read()
+            self.main.app.setStyleSheet(style)
+
+        except Exception:
+            pass
 
 
 class SceneList(QtWidgets.QTreeWidget):
@@ -15,7 +41,6 @@ class SceneList(QtWidgets.QTreeWidget):
     
     def contextMenuEvent(self, a0: QtGui.QContextMenuEvent) -> None:
         context_menu = QtWidgets.QMenu(self)
-        context_menu.setStyleSheet(stylesheet.STYLE_QMENU)
         delete_scene = context_menu.addAction(QtCore.QCoreApplication.translate("SceneList", "delete this scene"))
         delete_scene.setIcon(QtGui.QIcon(
                 os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/sidebar_delete.png"))))
@@ -34,7 +59,6 @@ class FileView(QtWidgets.QTreeView):
 
     def contextMenuEvent(self, a0: QtGui.QContextMenuEvent) -> None:
         context_menu = QtWidgets.QMenu(self)
-        context_menu.setStyleSheet(stylesheet.STYLE_QMENU)
         create_dir = context_menu.addAction(QtCore.QCoreApplication.translate("FileView", "create new dir"))
         create_dir.setIcon(QtGui.QIcon(
             os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/file_view_create.png"))))
@@ -49,7 +73,7 @@ class FileView(QtWidgets.QTreeView):
             else:
                 self.mainwindow.file_model.remove(self.currentIndex())
         elif action == create_dir:
-            self.mainwindow.file_model.mkdir(self.currentIndex(), QtCore.QCoreApplication.translate("FileView", "new dir"))
+            self.mainwindow.file_model.mkdir(self.currentIndex(), "new dir")
         
 
 class NoteWindow(QtWidgets.QMainWindow):
@@ -83,16 +107,13 @@ class NoteWindow(QtWidgets.QMainWindow):
             (QtWidgets.QDesktopWidget().screenGeometry().width() - self.geometry().width()) // 2,
             (QtWidgets.QDesktopWidget().screenGeometry().height() - self.geometry().height()) // 2
         )
-        self.setStyleSheet(stylesheet.STYLE_QMAINWIDNOW)
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
         # Tool bar
         self.toolbar = QtWidgets.QToolBar()
         self.toolbar.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
-        self.toolbar.setStyleSheet(stylesheet.STYLE_QTOOLBAR)
         self.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolbar)
         self.tab_widget = QtWidgets.QTabWidget()
-        self.tab_widget.setStyleSheet(stylesheet.STYLE_QTABWIDGET)
         self.toolbar.addWidget(self.tab_widget)
         self.toolbar.setVisible(False)
 
@@ -110,37 +131,28 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.file_view.setSortingEnabled(True)
         self.file_view.resize(self.file_view.screen().availableGeometry().size() / 2)
         self.file_view.setColumnWidth(0, self.file_view.width() / 3)
-        self.tab_widget.addTab(self.file_view, QtCore.QCoreApplication.translate("NoteWindow", "work dir"))
+        self.tab_widget.addTab(self.file_view, QtCore.QCoreApplication.translate("NoteWindow", "Work Dir"))
 
         # Scene list widget
-        self.scene_thumbnails = QtWidgets.QWidget()
-        self.scene_thumbnails.setStyleSheet(stylesheet.STYLE_SCENE_THUMBNAILS)
-        self.scene_thumbnails_layout = QtWidgets.QVBoxLayout()
-        self.scene_thumbnails_layout.setContentsMargins(5, 5, 5, 5)
-        self.scene_thumbnails.setLayout(self.scene_thumbnails_layout)
-
-        self.scene_list_scroll = QtWidgets.QScrollArea(self.scene_thumbnails)
+        self.scene_list_scroll = QtWidgets.QScrollArea(self)
         self.scene_list_scroll.setWidgetResizable(True)
         self.scene_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scene_list_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scene_list_scroll.setStyleSheet(stylesheet.STYLE_VSCROLLBAR + stylesheet.STYLE_HSCROLLBAR)
-        self.scene_thumbnails_layout.addWidget(self.scene_list_scroll)
 
         self.scene_list = SceneList(self)
+        self.scene_list.setObjectName("scene_list")
         self.scene_list.setSortingEnabled(True)
         self.scene_list.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        self.scene_list.setStyleSheet(stylesheet.STYLE_QTREEWIDGET)
         self.scene_list.setAlternatingRowColors(True)
         self.scene_list.setHeaderLabel(QtCore.QCoreApplication.translate("NoteWindow", "Scene List"))
         self.scene_list.setIndentation(8)
         self.scene_list_scroll.setWidget(self.scene_list)
-        self.tab_widget.addTab(self.scene_thumbnails, QtCore.QCoreApplication.translate("NoteWindow", "Scene"))
+        self.tab_widget.addTab(self.scene_list_scroll, QtCore.QCoreApplication.translate("NoteWindow", "Scene"))
 
         # Style list widget
-        self.style_list_scroll = QtWidgets.QScrollArea(self.scene_thumbnails)
+        self.style_list_scroll = QtWidgets.QScrollArea(self)
         self.style_list_scroll.setWidgetResizable(True)
         self.style_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.style_list_scroll.setStyleSheet(stylesheet.STYLE_HSCROLLBAR + stylesheet.STYLE_VSCROLLBAR)
 
         self.style_list = QtWidgets.QWidget()
         self.style_list_layout = QtWidgets.QGridLayout()
@@ -152,7 +164,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_switch_combox = QtWidgets.QComboBox()
         self.style_switch_combox.addItems((QtCore.QCoreApplication.translate("NoteWindow", "All Scene"), QtCore.QCoreApplication.translate("NoteWindow", "Current Scene"), QtCore.QCoreApplication.translate("NoteWindow", "Selected Items")))
         self.style_list_layout.addWidget(self.style_switch_combox, 0, 0, 1, -1)
-        self.style_switch_combox.setStyleSheet(stylesheet.STYLE_QCOMBOBOX)
         #   Attribute widgets
         #       Color and font
         self.attribute_style_font = None
@@ -164,12 +175,19 @@ class NoteWindow(QtWidgets.QMainWindow):
         #       Label Widgets
         #           init
         self.attribute_style_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Attribute Widgets"))
+        self.attribute_style_label.setObjectName("title_label")
         self.attribute_style_font_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Font"))
+        self.attribute_style_font_label.setObjectName("font_label")
         self.attribute_style_font_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Font Color"))
+        self.attribute_style_font_color_label.setObjectName("color_label")
         self.attribute_style_background_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Background Color"))
+        self.attribute_style_background_color_label.setObjectName("color_label")
         self.attribute_style_selected_background_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Selected Background Color"))
+        self.attribute_style_selected_background_color_label.setObjectName("color_label")
         self.attribute_style_border_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Border Color"))
+        self.attribute_style_border_color_label.setObjectName("color_label")
         self.attribute_style_selected_border_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Selected Border Color"))
+        self.attribute_style_selected_border_color_label.setObjectName("color_label")
         #           added
         self.style_list_layout.addWidget(self.attribute_style_label, 1, 0, 1, -1)
         self.style_list_layout.addWidget(self.attribute_style_font_label, 2, 1, 1, 1)
@@ -178,14 +196,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.attribute_style_selected_background_color_label, 5, 1, 1, 1)
         self.style_list_layout.addWidget(self.attribute_style_border_color_label, 6, 1, 1, 1)
         self.style_list_layout.addWidget(self.attribute_style_selected_border_color_label, 7, 1, 1, 1)
-        #           stylesheet
-        self.attribute_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.attribute_style_font_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.attribute_style_font_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.attribute_style_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.attribute_style_selected_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.attribute_style_border_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.attribute_style_selected_border_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         #       Pushbutton Widgets
         #           init
         self.attribute_style_font_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Font"))
@@ -202,13 +212,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.attribute_style_selected_background_color_button, 5, 0, 1, 1)
         self.style_list_layout.addWidget(self.attribute_style_border_color_button, 6, 0, 1, 1)
         self.style_list_layout.addWidget(self.attribute_style_selected_border_color_button, 7, 0, 1, 1)
-        #           stylesheet
-        self.attribute_style_font_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.attribute_style_font_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.attribute_style_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.attribute_style_selected_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.attribute_style_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.attribute_style_selected_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         #   Logic widgets
         #       Color
@@ -219,22 +222,21 @@ class NoteWindow(QtWidgets.QMainWindow):
         #       label widgets
         #           init
         self.logic_style_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Logic Widgets"))
+        self.logic_style_label.setObjectName("title_label")
         self.logic_style_background_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Background Color"))
+        self.logic_style_background_color_label.setObjectName("color_label")
         self.logic_style_selected_background_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Selected Background Color"))
+        self.logic_style_selected_background_color_label.setObjectName("color_label")
         self.logic_style_border_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Border Color"))
+        self.logic_style_border_color_label.setObjectName("color_label")
         self.logic_style_selected_border_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Selected Border Color"))
+        self.logic_style_selected_border_color_label.setObjectName("color_label")
         #           added
         self.style_list_layout.addWidget(self.logic_style_label, 8, 0, 1, -1)
         self.style_list_layout.addWidget(self.logic_style_background_color_label, 9, 1)
         self.style_list_layout.addWidget(self.logic_style_selected_background_color_label, 10, 1)
         self.style_list_layout.addWidget(self.logic_style_border_color_label, 11, 1)
         self.style_list_layout.addWidget(self.logic_style_selected_border_color_label, 12, 1)
-        #           stylesheet
-        self.logic_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.logic_style_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.logic_style_selected_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.logic_style_border_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.logic_style_selected_border_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         #       button widgets
         #           init
         self.logic_style_background_color_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Background Color"))
@@ -246,11 +248,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.logic_style_selected_background_color_button, 10, 0)
         self.style_list_layout.addWidget(self.logic_style_border_color_button, 11, 0)
         self.style_list_layout.addWidget(self.logic_style_selected_border_color_button, 12, 0)
-        #           stylesheet
-        self.logic_style_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.logic_style_selected_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.logic_style_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.logic_style_selected_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         #   Pipe widgets
         #       Color and width
@@ -262,11 +259,17 @@ class NoteWindow(QtWidgets.QMainWindow):
         #       Label widgets
         #           init
         self.pipe_style_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Pipe Widgets"))
+        self.pipe_style_label.setObjectName("title_label")
         self.pipe_style_width_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Width"))
+        self.pipe_style_width_label.setObjectName("font_label")
         self.pipe_style_background_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Background Color"))
+        self.pipe_style_background_color_label.setObjectName("color_label")
         self.pipe_style_selected_background_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Selected Background Color"))
+        self.pipe_style_selected_background_color_label.setObjectName("color_label")
         self.pipe_style_font_type_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Font Type"))
+        self.pipe_style_font_type_label.setObjectName("font_label")
         self.pipe_style_font_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Font Color"))
+        self.pipe_style_font_color_label.setObjectName("color_label")
         #           added
         self.style_list_layout.addWidget(self.pipe_style_label, 13, 0, 1, -1)
         self.style_list_layout.addWidget(self.pipe_style_width_label, 14, 1)
@@ -274,13 +277,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.pipe_style_selected_background_color_label, 16, 1)
         self.style_list_layout.addWidget(self.pipe_style_font_type_label, 17, 1)
         self.style_list_layout.addWidget(self.pipe_style_font_color_label, 18, 1)
-        #           stylesheet
-        self.pipe_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.pipe_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.pipe_style_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.pipe_style_selected_background_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.pipe_style_font_type_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.pipe_style_font_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         #       Pushbutton widgets
         #           init
         self.pipe_style_width_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Width"))
@@ -294,12 +290,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.pipe_style_selected_background_color_button, 16, 0)
         self.style_list_layout.addWidget(self.pipe_style_font_type_button, 17, 0)
         self.style_list_layout.addWidget(self.pipe_style_font_color_button, 18, 0)
-        #           stylesheet
-        self.pipe_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.pipe_style_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.pipe_style_selected_background_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.pipe_style_font_type_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.pipe_style_font_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         #   Port Widgets
         #       Width and Color
@@ -313,13 +303,21 @@ class NoteWindow(QtWidgets.QMainWindow):
         #       Label widgets
         #           init
         self.port_style_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Port Widgets"))
+        self.port_style_label.setObjectName("title_label")
         self.port_style_width_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Width"))
+        self.port_style_width_label.setObjectName("font_label")
         self.port_style_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Background Color"))
+        self.port_style_color_label.setObjectName("color_label")
         self.port_style_border_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Border Color"))
+        self.port_style_border_color_label.setObjectName("color_label")
         self.port_style_hovered_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Hovered Background Color"))
+        self.port_style_hovered_color_label.setObjectName("color_label")
         self.port_style_hovered_border_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Hovered Border Color"))
+        self.port_style_hovered_border_color_label.setObjectName("color_label")
         self.port_style_activated_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Activated Background Color"))
+        self.port_style_activated_color_label.setObjectName("color_label")
         self.port_style_activated_border_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Activated Border Color"))
+        self.port_style_activated_border_color_label.setObjectName("color_label")
         #           added
         self.style_list_layout.addWidget(self.port_style_label, 19, 0, 1, -1)
         self.style_list_layout.addWidget(self.port_style_width_label, 20, 1)
@@ -329,15 +327,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.port_style_hovered_border_color_label, 24, 1)
         self.style_list_layout.addWidget(self.port_style_activated_color_label, 25, 1)
         self.style_list_layout.addWidget(self.port_style_activated_border_color_label, 26, 1)
-        #           stylesheet
-        self.port_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.port_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.port_style_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.port_style_border_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.port_style_hovered_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.port_style_hovered_border_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.port_style_activated_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
-        self.port_style_activated_border_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         #       Pushbutton widgets
         #           init
         self.port_style_width_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Width"))
@@ -355,29 +344,20 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.port_style_hovered_border_color_button, 24, 0)
         self.style_list_layout.addWidget(self.port_style_activated_color_button, 25, 0)
         self.style_list_layout.addWidget(self.port_style_activated_border_color_button, 26, 0)
-        #           stylesheet
-        self.port_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.port_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.port_style_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.port_style_hovered_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.port_style_hovered_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.port_style_activated_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.port_style_activated_border_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         #   Container widgets
         #       Label widgets
         #           init
         self.draw_style_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Draw Widgets"))
+        self.draw_style_label.setObjectName("title_label")
         self.draw_style_width_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Width"))
+        self.draw_style_width_label.setObjectName("font_label")
         self.draw_style_color_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Color"))
+        self.draw_style_color_label.setObjectName("color_label")
         #           added
         self.style_list_layout.addWidget(self.draw_style_label, 27, 0, 1, -1)
         self.style_list_layout.addWidget(self.draw_style_width_label, 28, 1)
         self.style_list_layout.addWidget(self.draw_style_color_label, 29, 1)
-        #           stylesheet
-        self.draw_style_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.draw_style_width_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.draw_style_color_label.setStyleSheet(stylesheet.STYLE_QLABEL_CHANGED)
         #       Pushbutton widgets
         #           init
         self.draw_style_width_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Width"))
@@ -385,29 +365,26 @@ class NoteWindow(QtWidgets.QMainWindow):
         #           added
         self.style_list_layout.addWidget(self.draw_style_width_button, 28, 0)
         self.style_list_layout.addWidget(self.draw_style_color_button, 29, 0)
-        #           stylesheet
-        self.draw_style_width_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
-        self.draw_style_color_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
         self.draw_init_flag = True
 
         # Background image
         #       widgets
         self.background_image_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Background Image"))
+        self.background_image_label.setObjectName("title_label")
         self.background_image_path_label = QtWidgets.QLabel()
+        self.background_image_path_label.setObjectName("font_label")
         self.background_image_path_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Image"))
         #       added
         self.style_list_layout.addWidget(self.background_image_label, 30, 0, 1, -1)
         self.style_list_layout.addWidget(self.background_image_path_label, 31, 1)
         self.style_list_layout.addWidget(self.background_image_path_button, 31, 0)
-        #       stylesheet
-        self.background_image_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.background_image_path_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.background_image_path_button.setStyleSheet(stylesheet.STYLE_QPUSHBUTTON)
 
         # Text editor
         #       widgets
         self.text_editor_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Text Editor(All scene)"))
+        self.text_editor_label.setObjectName("title_label")
         self.text_editor_length_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Set Fixed Width Or Not"))
+        self.text_editor_length_label.setObjectName("font_label")
         self.text_editor_length_box = QtWidgets.QDoubleSpinBox()
         self.text_editor_length_box.setRange(-1, math.inf)
         self.text_editor_length_box.setSingleStep(100)
@@ -416,12 +393,21 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_layout.addWidget(self.text_editor_label, 32, 0, 1, -1)
         self.style_list_layout.addWidget(self.text_editor_length_box, 33, 0)
         self.style_list_layout.addWidget(self.text_editor_length_label, 33, 1)
-        #       stylesheet
-        self.text_editor_label.setStyleSheet(stylesheet.STYLE_QLABEL_TITLE)
-        self.text_editor_length_label.setStyleSheet(stylesheet.STYLE_QLABEL_COMMON)
-        self.text_editor_length_box.setStyleSheet(stylesheet.STYLE_QDOUBLESPINBOX)
         #       slot
         self.text_editor_length_box.valueChanged.connect(self.text_width_changed)
+
+        # stylesheet
+        self.runtime_style = RuntimeStylesheets(self)
+        #   widgets
+        self.stylesheet_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Window Stylesheet"))
+        self.stylesheet_label.setObjectName("title_label")
+        self.stylesheet_button = QtWidgets.QPushButton(QtCore.QCoreApplication.translate("NoteWindow", "Change Window Style"))
+        self.stylesheet_path_label = QtWidgets.QLabel()
+        self.stylesheet_path_label.setObjectName("font_label")
+        #   added
+        self.style_list_layout.addWidget(self.stylesheet_label, 34, 0, 1, -1)
+        self.style_list_layout.addWidget(self.stylesheet_button, 35, 0)
+        self.style_list_layout.addWidget(self.stylesheet_path_label, 35, 1)
 
         #   Slots Controller
         self.style_switch_combox.currentIndexChanged.connect(self.init_style)
@@ -445,7 +431,6 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         # thumbnails
         self.thumbnails = QtWidgets.QLabel(self.view_widget)
-        self.thumbnails.setStyleSheet(stylesheet.STYLE_QLABEL_THUMBNAILS)
         self.thumbnails.setGeometry(0, 0, 300, 300)
         self.thumbnails.hide()
         self.time_id = 0
@@ -453,7 +438,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         # markdown
         #   tool bar
         self.markdown_toolbar = QtWidgets.QToolBar()
-        self.markdown_toolbar.setStyleSheet(stylesheet.STYLE_QTOOLBAR)
         self.addToolBar(QtCore.Qt.RightToolBarArea, self.markdown_toolbar)
 
         #   web engine
@@ -474,7 +458,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         #       slots
         self.markdown_document.text_changed_signal.connect(self.view_widget.save_markdown)
         #       show
-        self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/vditor/markdown.html"))))
+        self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Vditor/markdown.html"))))
 
     def time_update(self):
         """
@@ -495,8 +479,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         
         super().closeEvent(a0)
 
-    @staticmethod
-    def color_label_changed(label, color):
+    def color_label_changed(self, label: QtWidgets.QLabel, color):
         """
         Change the colorful label.
 
@@ -506,18 +489,8 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         """
         if color:
-            color_style = '''
-             QLabel {
-                background-color: #%s;
-                border-style: outset;
-                border-width: 1px;
-                border-radius: 10px;
-                border-color: beige;
-                font: bold 12px italic large;
-                padding: 6px;
-             }
-             ''' % str(hex(color.rgba()))[2:]
-            label.setStyleSheet(color_style)
+            label.setStyleSheet(f"QLabel{{background-color:#{str(hex(color.rgba()))[2:]};}}")
+           
 
     @staticmethod
     def font_label_changed(label: QtWidgets.QLabel, font: QtGui.QFont):
@@ -1183,37 +1156,45 @@ class NoteWindow(QtWidgets.QMainWindow):
                 draw.Draw.pen_width = width
                 self.width_label_changed(self.draw_style_width_label, width)
     
-    def path_changed(self, current_index):
+    def path_changed(self, current_index=0, window_style=False):
         """
         Update background image path.
 
         """
+        if not window_style:
+            filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                "Select background image", "./",
+                                                                "Svg background image (*.svg)")
+            if filename and ok:
+                    if current_index == 0:
+                        effect_background.EffectBackground.name = os.path.abspath(filename)
+                        # sub view
+                        for sub_view in self.view_widget.children_view.values():
+                            if not sub_view.sub_view_widget_view.current_scene.background_image_flag:
+                                sub_view.sub_view_widget_view.current_scene.background_image.change_svg(os.path.abspath(filename))
+                        # scene
+                        iterator = QtWidgets.QTreeWidgetItemIterator(self.scene_list)
+                        while iterator.value():
+                            scene_flag = iterator.value()
+                            iterator += 1
+                            scene = scene_flag.data(0, QtCore.Qt.ToolTipRole)
+                            if not scene.background_image_flag:
+                                scene.background_image.change_svg(os.path.abspath(filename))
 
-        filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                            "Select background image", "./",
-                                                            "Svg background image (*.svg)")
-        if filename and ok:
-            if current_index == 0:
-                effect_background.EffectBackground.name = os.path.abspath(filename)
-                # sub view
-                for sub_view in self.view_widget.children_view.values():
-                    if not sub_view.sub_view_widget_view.current_scene.background_image_flag:
-                        sub_view.sub_view_widget_view.current_scene.background_image.change_svg(os.path.abspath(filename))
-                # scene
-                iterator = QtWidgets.QTreeWidgetItemIterator(self.scene_list)
-                while iterator.value():
-                    scene_flag = iterator.value()
-                    iterator += 1
-                    scene = scene_flag.data(0, QtCore.Qt.ToolTipRole)
-                    if not scene.background_image_flag:
-                        scene.background_image.change_svg(os.path.abspath(filename))
+                    elif current_index == 1:
+                        self.view_widget.current_scene.background_image_flag = True
+                        self.view_widget.current_scene.background_image.name = os.path.abspath(filename)
+                        self.view_widget.current_scene.background_image.change_svg(os.path.abspath(filename))
 
-            elif current_index == 1:
-                self.view_widget.current_scene.background_image_flag = True
-                self.view_widget.current_scene.background_image.name = os.path.abspath(filename)
-                self.view_widget.current_scene.background_image.change_svg(os.path.abspath(filename))
-
-            self.background_image_path_label.setText(os.path.basename(filename))
+                    self.background_image_path_label.setText(os.path.basename(filename))
+        else:
+            filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                "Select qss", "./",
+                                                                "qss stylesheet (*.qss)")
+            if filename and ok:
+                self.runtime_style.path = os.path.abspath(filename)
+                self.stylesheet_path_label.setText(os.path.basename(filename))
+                self.runtime_style.load_stylesheet(os.path.abspath(filename))
 
 
     def init_attribute(self, current_index):
@@ -1716,6 +1697,19 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.background_image_path_button.disconnect()
         self.background_image_path_button.clicked.connect(lambda x: self.path_changed(current_index))
 
+    def init_window_style(self):
+        """
+        init window stylesheet
+
+        """
+
+        # change current parameters
+        self.stylesheet_path_label.setText(os.path.basename(self.runtime_style.path))
+        self.runtime_style.load_stylesheet(self.runtime_style.path)
+        # slot
+        self.stylesheet_button.disconnect()
+        self.stylesheet_button.clicked.connect(lambda x: self.path_changed(window_style=True))
+        
     def init_draw(self):
         """
         init draw widget style label.
@@ -1761,6 +1755,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.init_port(current_index)
         self.init_draw()
         self.init_background(current_index)
+        self.init_window_style()
 
     def redirect_last_scene(self):
         self.scene_list.clearSelection()
