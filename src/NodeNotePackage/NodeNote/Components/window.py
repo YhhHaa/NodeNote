@@ -31,6 +31,7 @@ class FileView(QtWidgets.QTreeView):
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent)
         self.mainwindow = parent
+        self.clicked.connect(self.load_new_file)
 
     def contextMenuEvent(self, a0: QtGui.QContextMenuEvent) -> None:
         context_menu = QtWidgets.QMenu(self)
@@ -57,7 +58,11 @@ class FileView(QtWidgets.QTreeView):
                 self.mainwindow.load_window.new_note_file(self.mainwindow.file_model.filePath(self.currentIndex()))
             else:
                  self.mainwindow.load_window.new_note_file(self.mainwindow.file_model.filePath(self.currentIndex().parent()))
-        
+    
+    def load_new_file(self, model_index: QtCore.QModelIndex):
+        if not self.mainwindow.file_model.isDir(model_index) and self.mainwindow.file_model.fileName(model_index).endswith(".note"):
+            self.mainwindow.load_window.load_from_file(self.mainwindow.file_model.filePath(model_index))
+
 
 class NoteWindow(QtWidgets.QMainWindow):
     """

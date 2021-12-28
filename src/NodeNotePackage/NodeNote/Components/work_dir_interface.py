@@ -343,20 +343,16 @@ class WorkDirInterface(QtWidgets.QWidget):
             with open(os.path.join(path, "NodeNote_" + str(int(time.time())) + ".note"), "wb") as f:
                 f.write(view_serialization.SerializeToString())  
 
-        # write path into last path file
-        file_path = os.path.relpath(os.path.join(os.path.join(constants.work_dir, "Notes"), "NodeNote_" + str(int(time.time())) + ".note"), constants.work_dir)
-        with open(os.path.join(constants.work_dir, ".NODENOTE"), "r", encoding="utf-8") as f:
-            meta_data = json.load(f)
-        with open(os.path.join(constants.work_dir, ".NODENOTE"), "w", encoding="utf-8") as f:
-            meta_data["last_file"] = file_path
-            json.dump(meta_data, f, indent=4)
-        
         # load
+        if not path:
+            file_path = os.path.relpath(os.path.join(os.path.join(constants.work_dir, "Notes"), "NodeNote_" + str(int(time.time())) + ".note"), constants.work_dir)
+        else:
+            file_path = os.path.relpath(os.path.join(path, "NodeNote_" + str(int(time.time())) + ".note"), constants.work_dir)
         self.load_from_file(os.path.join(constants.work_dir, file_path))
     
     def load_from_file(self, path=None):
         """
-        Load .note file.
+        Load .note file and save last file.
 
         Args:
             path: absolute path
@@ -374,6 +370,13 @@ class WorkDirInterface(QtWidgets.QWidget):
             self.window.view_widget.deserialize(view_serialization, {}, self.window.view_widget, True)
             self.window.setWindowTitle(path + "-Life")
             self.current_file = path
+        
+        # save into last opened file
+        with open(os.path.join(constants.work_dir, ".NODENOTE"), "r", encoding="utf-8") as f:
+            meta_data = json.load(f)
+        with open(os.path.join(constants.work_dir, ".NODENOTE"), "w", encoding="utf-8") as f:
+            meta_data["last_file"] = os.path.relpath(path, constants.work_dir)
+            json.dump(meta_data, f, indent=4)
     
     def save_to_file(self, path=None):
         """
