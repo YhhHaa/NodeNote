@@ -40,6 +40,9 @@ class FileView(QtWidgets.QTreeView):
         delete_dir_file = context_menu.addAction(QtCore.QCoreApplication.translate("FileView", "delete file"))
         delete_dir_file.setIcon(QtGui.QIcon(
             os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/file_view_delete.png"))))
+        create_new_note = context_menu.addAction(QtCore.QCoreApplication.translate("FileView", "create new note"))
+        create_new_note.setIcon(QtGui.QIcon(
+            os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/create_new_note.png"))))
         
         action = context_menu.exec_(a0.globalPos())
         if action == delete_dir_file:
@@ -49,6 +52,11 @@ class FileView(QtWidgets.QTreeView):
                 self.mainwindow.file_model.remove(self.currentIndex())
         elif action == create_dir:
             self.mainwindow.file_model.mkdir(self.currentIndex(), "new dir")
+        elif action == create_new_note:
+            if self.mainwindow.file_model.isDir(self.currentIndex()):
+                self.mainwindow.load_window.new_note_file(self.mainwindow.file_model.filePath(self.currentIndex()))
+            else:
+                 self.mainwindow.load_window.new_note_file(self.mainwindow.file_model.filePath(self.currentIndex().parent()))
         
 
 class NoteWindow(QtWidgets.QMainWindow):

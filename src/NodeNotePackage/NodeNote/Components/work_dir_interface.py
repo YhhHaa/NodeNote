@@ -272,12 +272,12 @@ class WorkDirInterface(QtWidgets.QWidget):
         splash.showMessage(QtCore.QCoreApplication.translate("NoteWindow", "loading"), QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom, QtCore.Qt.white)
         QtWidgets.qApp.processEvents()
 
-    def new_note_file(self):
+    def new_note_file(self, path):
         """
         Create a new note file in path.
 
         Args:
-            path: usual work dir.
+            path: usual work_dir/Notes.
 
         Return:
             path: absloute path.
@@ -336,15 +336,22 @@ class WorkDirInterface(QtWidgets.QWidget):
         # flowing image
         view_serialization.flowing_flag = constants.view_flowing_flag
 
-        with open(os.path.join(os.path.join(constants.work_dir, "Notes"), "NodeNote_" + str(int(time.time())) + ".note"), "wb") as f:
-            f.write(view_serialization.SerializeToString())  
+        if not path:
+            with open(os.path.join(os.path.join(constants.work_dir, "Notes"), "NodeNote_" + str(int(time.time())) + ".note"), "wb") as f:
+                f.write(view_serialization.SerializeToString())  
+        else:
+            with open(os.path.join(path, "NodeNote_" + str(int(time.time())) + ".note"), "wb") as f:
+                f.write(view_serialization.SerializeToString())  
 
+        # write path into last path file
         file_path = os.path.relpath(os.path.join(os.path.join(constants.work_dir, "Notes"), "NodeNote_" + str(int(time.time())) + ".note"), constants.work_dir)
         with open(os.path.join(constants.work_dir, ".NODENOTE"), "r", encoding="utf-8") as f:
             meta_data = json.load(f)
         with open(os.path.join(constants.work_dir, ".NODENOTE"), "w", encoding="utf-8") as f:
             meta_data["last_file"] = file_path
             json.dump(meta_data, f, indent=4)
+        
+        # load
         self.load_from_file(os.path.join(constants.work_dir, file_path))
     
     def load_from_file(self, path=None):
@@ -356,6 +363,11 @@ class WorkDirInterface(QtWidgets.QWidget):
 
         """
 
+        # save last file
+        if self.current_file:
+            self.save_to_file(self.current_file)
+        
+        # load new file
         with open(path, "rb") as file:
             view_serialization = serialize_pb2.ViewSerialization()
             view_serialization.ParseFromString(file.read())
