@@ -187,6 +187,9 @@ class WorkDirInterface(QtWidgets.QWidget):
                 if not os.path.exists(os.path.join(work_dir, "Resources/Vditor")):
                     shutil.copytree(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Vditor")),
                                     os.path.join(work_dir, "Resources/Vditor"))
+                #   create Notes which stores .note file
+                if not os.path.exists(os.path.join(work_dir, "Notes")):
+                    os.mkdir(os.path.join(work_dir, "Notes"))
 
                 #   create last work dir
                 last_work_dirs = {"dirs": []}
@@ -239,18 +242,31 @@ class WorkDirInterface(QtWidgets.QWidget):
     def load_data(self, splash: QtWidgets.QSplashScreen):
         """
         Load the filename while loading splash screen.
+        - has last note file
+        - has other file
+        - no file
 
         Args:
             splash: The splash screen.
 
         """
 
-        # if no file, create new .note file and load it.
+        # load last file
         with open(os.path.join(constants.work_dir, ".NODENOTE"), "r", encoding="utf-8") as f:
             meta_data = json.load(f)
             if meta_data["last_file"]:
-                self.load_from_file(os.path.join(constants.work_dir, meta_data["last_file"]))
-                return
+                if os.path.exists(os.path.join(constants.work_dir, meta_data["last_file"])):
+                    self.load_from_file(os.path.join(constants.work_dir, meta_data["last_file"]))
+                    return
+        
+        # reverse dir to find a accessable .note file
+        sub_dirs = os.walk(os.path.join(constants.work_dir, "Notes"))
+        for root, _, file_name in sub_dirs:
+            for file in file_name:
+                if file.endswith(".note"):
+                    self.load_from_file(os.path.join(root, file))
+                    return
+
         self.new_note_file()
         
         splash.showMessage(QtCore.QCoreApplication.translate("NoteWindow", "loading"), QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom, QtCore.Qt.white)
@@ -320,10 +336,10 @@ class WorkDirInterface(QtWidgets.QWidget):
         # flowing image
         view_serialization.flowing_flag = constants.view_flowing_flag
 
-        with open(os.path.join(constants.work_dir, "NodeNote_" + str(int(time.time())) + ".note"), "wb") as f:
+        with open(os.path.join(os.path.join(constants.work_dir, "Notes"), "NodeNote_" + str(int(time.time())) + ".note"), "wb") as f:
             f.write(view_serialization.SerializeToString())  
 
-        file_path = os.path.relpath(os.path.join(constants.work_dir, "NodeNote_" + str(int(time.time())) + ".note"), constants.work_dir)
+        file_path = os.path.relpath(os.path.join(os.path.join(constants.work_dir, "Notes"), "NodeNote_" + str(int(time.time())) + ".note"), constants.work_dir)
         with open(os.path.join(constants.work_dir, ".NODENOTE"), "r", encoding="utf-8") as f:
             meta_data = json.load(f)
         with open(os.path.join(constants.work_dir, ".NODENOTE"), "w", encoding="utf-8") as f:
