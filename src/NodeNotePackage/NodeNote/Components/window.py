@@ -1,37 +1,12 @@
 import math
 import os
-import re
 
 from PyQt5 import QtWidgets, QtCore, QtGui, QtWebEngineWidgets, QtWebChannel
 
 from ..Components.effect_snow import EffectSkyWidget
 from ..Components import attribute, pipe, port, draw, todo, effect_background, markdown_edit
 from ..GraphicsView.view import View
-
-
-class RuntimeStylesheets():
-
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Stylesheets/cute_style.qss"))
-
-    def __init__(self, mainwindow) -> None:
-        self.main = mainwindow
-        self.load_stylesheet(self.path)
-    
-    def load_stylesheet(self, stylesheet_path=""):
-        """
-        load stylesheet into app.
-
-        Args:
-            stylesheet_path: path of stylesheet file.
-
-        """
-        try:
-            with open(stylesheet_path, 'r', encoding='utf-8') as qss_file:
-                style = qss_file.read()
-            self.main.app.setStyleSheet(style)
-
-        except Exception:
-            pass
+from ..Model import constants
 
 
 class SceneList(QtWidgets.QTreeWidget):
@@ -43,7 +18,7 @@ class SceneList(QtWidgets.QTreeWidget):
         context_menu = QtWidgets.QMenu(self)
         delete_scene = context_menu.addAction(QtCore.QCoreApplication.translate("SceneList", "delete this scene"))
         delete_scene.setIcon(QtGui.QIcon(
-                os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/sidebar_delete.png"))))
+                os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/sidebar_delete.png"))))
 
         action = context_menu.exec_(a0.globalPos())
         if action == delete_scene and len(self.selectedItems()) >= 1:
@@ -61,10 +36,10 @@ class FileView(QtWidgets.QTreeView):
         context_menu = QtWidgets.QMenu(self)
         create_dir = context_menu.addAction(QtCore.QCoreApplication.translate("FileView", "create new dir"))
         create_dir.setIcon(QtGui.QIcon(
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/file_view_create.png"))))
+            os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/file_view_create.png"))))
         delete_dir_file = context_menu.addAction(QtCore.QCoreApplication.translate("FileView", "delete file"))
         delete_dir_file.setIcon(QtGui.QIcon(
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/file_view_delete.png"))))
+            os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/file_view_delete.png"))))
         
         action = context_menu.exec_(a0.globalPos())
         if action == delete_dir_file:
@@ -84,7 +59,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
     """
 
-    def __init__(self, argv, app=None, trans=None):
+    def __init__(self, argv, app=None, load_window=None):
         """
         Create sidebar and view manager.
         Args:
@@ -96,11 +71,11 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.argv = argv
         self.app = app
         self.app._window = self
-        self.trans = None
+        self.load_window = load_window
 
         #   Window Init
-        self.setWindowIcon(QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                                    '../Resources/cloudy.png'))))  # set icon
+        self.setWindowIcon(QtGui.QIcon(os.path.abspath(os.path.join(constants.work_dir,
+                                                                    'Resources/Images/cloudy.png'))))  # set icon
         self.setWindowTitle("My Beautiful life")  # set title
         self.resize(1200, 1000)  # set size
         self.move(  # set geometry
@@ -124,7 +99,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         #   view
         self.file_view = FileView(self)
         self.file_view.setModel(self.file_model)
-        self.file_view.setRootIndex(self.file_model.setRootPath("./"))
+        self.file_view.setRootIndex(self.file_model.setRootPath(constants.work_dir))
         #       layout
         self.file_view.setAnimated(False)
         self.file_view.setIndentation(20)
@@ -397,7 +372,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.text_editor_length_box.valueChanged.connect(self.text_width_changed)
 
         # stylesheet
-        self.runtime_style = RuntimeStylesheets(self)
+        self.runtime_style = self.load_window.runtime_style
         #   widgets
         self.stylesheet_label = QtWidgets.QLabel(QtCore.QCoreApplication.translate("NoteWindow", "Window Stylesheet"))
         self.stylesheet_label.setObjectName("title_label")
@@ -423,11 +398,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.layout.addWidget(self.view_widget)
         self.central_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setCentralWidget(self.central_widget)
-
-        # time clock
-        self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.time_update)
-        self.timer.start(180000)
 
         # thumbnails
         self.thumbnails = QtWidgets.QLabel(self.view_widget)
@@ -458,26 +428,14 @@ class NoteWindow(QtWidgets.QMainWindow):
         #       slots
         self.markdown_document.text_changed_signal.connect(self.view_widget.save_markdown)
         #       show
-        self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Vditor/markdown.html"))))
-
-    def time_update(self):
-        """
-        Auto save file.
-
-        """
-
-        if self.view_widget.filename:
-            self.view_widget.save_to_file()
+        self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(constants.work_dir, "Resources/Vditor/markdown.html"))))
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        if self.view_widget.filename:
-            todo.Todo.close_flag = True
-            self.view_widget.save_to_file()
 
         self.view_widget.run_thumbnails.killTimer(self.time_id) 
         self.view_widget.run_thumbnails.exit(0)
         
-        super().closeEvent(a0)
+        self.load_window.closeEvent(a0)
 
     def color_label_changed(self, label: QtWidgets.QLabel, color):
         """
@@ -1810,18 +1768,3 @@ class NoteWindow(QtWidgets.QMainWindow):
         # if a0.key() == QtCore.Qt.Key_Delete and len(self.scene_list.selectedItems()) == 1:
         #     self.view_widget.delete_sub_scene(self.scene_list.selectedItems()[0])
         super(NoteWindow, self).keyPressEvent(a0)
-
-    def load_data(self, splash: QtWidgets.QSplashScreen):
-        """
-        Load the filename while loading splash screen.
-
-        Args:
-            splash: The splash screen.
-
-        """
-
-        if self.view_widget.filename:
-            self.view_widget.load_from_file()
-            self.view_widget.first_open = False
-        splash.showMessage(QtCore.QCoreApplication.translate("NoteWindow", "loading"), QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom, QtCore.Qt.white)
-        QtWidgets.qApp.processEvents()

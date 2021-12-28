@@ -33,8 +33,8 @@ class Canvas(QtGui.QPixmap):
 
 class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
     z_value = constants.Z_VAL_CONTAINERS
-    color = QtGui.QColor(QtCore.Qt.red)
-    pen_width = 10
+    color = constants.draw_color
+    pen_width = constants.draw_pen_width
 
     def __init__(self):
         """
@@ -106,8 +106,8 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.eraser_flag = True
 
             # Change eraser cursor
-            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                                      '../Resources/eraser.png'))).scaled(20, 20)
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
+                                                                      'Resources/Images/eraser.png'))).scaled(20, 20)
             cursor = QtGui.QCursor(cursor_style, 10, 10)
             QtWidgets.QApplication.setOverrideCursor(cursor)
 
@@ -117,8 +117,8 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.eraser_flag = False
 
             # Change draw cursor
-            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                                      '../Resources/point.png'))).scaled(10, 10)
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
+                                                                      'Resources/Images/point.png'))).scaled(10, 10)
             cursor = QtGui.QCursor(cursor_style, 5, 5)
             QtWidgets.QApplication.setOverrideCursor(cursor)
 

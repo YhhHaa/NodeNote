@@ -125,9 +125,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         self.proxy_widget = proxy_widget
         super(View, self).__init__(parent)
         if self.root_flag:
-            self.line_flag = False
+            self.line_flag = constants.view_line_flag
             self.copy_attribute_widget = dict()
-        self.undo_flag = False
+        self.undo_flag = constants.view_undo_flag
         # BASIC SETTINGS
         self.setViewportUpdateMode(QtWidgets.QGraphicsView.FullViewportUpdate)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
@@ -241,11 +241,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         # thumbnails
         self.run_thumbnails = DisplayThumbnailsThread(self)
-        # self.run_thumbnails.start()
-        # self.startTimer(100, timerType=QtCore.Qt.VeryCoarseTimer)
 
         # flowing image
-        self.flowing_flag = True
+        self.flowing_flag = constants.view_flowing_flag
 
         # markdown database
         if self.root_flag:
@@ -546,7 +544,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.current_scene = at_scene
             self.current_scene_flag = at_scene.sub_scene_flag
             self.current_scene_flag.setSelected(True)
-            
+
             self.background_image = at_scene.background_image
             self.cutline = at_scene.cutline
             self.setScene(at_scene)
@@ -1342,12 +1340,12 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             pic = QtGui.QPixmap(self.current_scene.sceneRect().width(), self.current_scene.sceneRect().height())
             painter = QtGui.QPainter(pic)
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
-            self.current_scene.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                    "../Resources/scene_background.png")))
+            self.current_scene.draw_image = QtGui.QImage(os.path.abspath(os.path.join(constants.work_dir,
+                                                    "Resources/Images/scene_background.png")))
             self.current_scene.removeItem(self.background_image)
             self.current_scene.render(painter)
-            self.current_scene.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                    "../Resources/common_background_image.png")))
+            self.current_scene.draw_image = QtGui.QImage(os.path.abspath(os.path.join(constants.work_dir,
+                                                    "Resources/Images/common_background_image.png")))
             self.current_scene.addItem(self.background_image)
             painter.end()
             name, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Save Image", "./"+str(time.time())+".png", "Image type(*.png *.jpg)")
@@ -1431,8 +1429,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if a0.type() == QtCore.QEvent.TabletEnterProximity:
             self.mouse_effect = False
             self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
-            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                      '../Resources/point.png'))).scaled(10,
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
+                                                      'Resources/Images/point.png'))).scaled(10,
                                                                                         10)
             cursor = QtGui.QCursor(cursor_style, 5, 5)
             QtWidgets.QApplication.setOverrideCursor(cursor)
@@ -1556,6 +1554,30 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.key() == QtCore.Qt.Key_T and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.paste_item()
                 return
+            if event.key() == QtCore.Qt.Key_F3:
+                self.expand("left")
+                return
+            if event.key() == QtCore.Qt.Key_F4:
+                self.expand("right")
+                return
+            if event.key() == QtCore.Qt.Key_F5:
+                self.expand("top")
+                return
+            if event.key() == QtCore.Qt.Key_F6:
+                self.expand("bottom")
+                return
+            if event.key() == QtCore.Qt.Key_F7:
+                self.narrow("left")
+                return
+            if event.key() == QtCore.Qt.Key_F8:
+                self.narrow("right")
+                return
+            if event.key() == QtCore.Qt.Key_F9:
+                self.narrow("top")
+                return
+            if event.key() == QtCore.Qt.Key_F10:
+                self.narrow("bottom")
+                return
         if self.mode == constants.MODE_PIPE_DRAG and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.drag_pipe_release(None)
             self.mode = constants.MODE_NOOP
@@ -1590,6 +1612,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_O and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             self.load_from_file()
             return
+        if event.key() == QtCore.Qt.Key_O and int(event.modifiers()) & QtCore.Qt.AltModifier:
+            self.open_from_dir()
+            return
         if event.key() == QtCore.Qt.Key_P and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
                 int(event.modifiers()) & QtCore.Qt.AltModifier:
             self.print_item(part="Scene")
@@ -1610,30 +1635,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_F2 and self.root_flag:
             self.undo_flag = not self.undo_flag
             return
-        if event.key() == QtCore.Qt.Key_F3 and self.root_flag:
-            self.expand("left")
-            return
-        if event.key() == QtCore.Qt.Key_F4 and self.root_flag:
-            self.expand("right")
-            return
-        if event.key() == QtCore.Qt.Key_F5 and self.root_flag:
-            self.expand("top")
-            return
-        if event.key() == QtCore.Qt.Key_F6 and self.root_flag:
-            self.expand("bottom")
-            return
-        if event.key() == QtCore.Qt.Key_F7 and self.root_flag:
-            self.narrow("left")
-            return
-        if event.key() == QtCore.Qt.Key_F8 and self.root_flag:
-            self.narrow("right")
-            return
-        if event.key() == QtCore.Qt.Key_F9 and self.root_flag:
-            self.narrow("top")
-            return
-        if event.key() == QtCore.Qt.Key_F10 and self.root_flag:
-            self.narrow("bottom")
-            return
         if event.key() == QtCore.Qt.Key_F11:
             self.change_flowing_image(True)
             return
@@ -1653,23 +1654,22 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             context_menu = QtWidgets.QMenu(self)
             # context list
             create_attribute_widget = context_menu.addAction(QtCore.QCoreApplication.translate("View", "create attribute widget"))
-            create_attribute_widget.setIcon(QtGui.QIcon(
-                os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Attribute Widget.png"))))
+            create_attribute_widget.setIcon(QtGui.QIcon(os.path.join(constants.work_dir, "Resources/Images/Attribute Widget.png")))
             create_truth_widget = context_menu.addAction(QtCore.QCoreApplication.translate("View", "create truth widget"))
             create_truth_widget.setIcon(
-                (QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                          "../Resources/Truth Widget.png")))))
+                (QtGui.QIcon(os.path.abspath(os.path.join(constants.work_dir,
+                                          "Resources/Images/Truth Widget.png")))))
             if self.root_flag:
                 create_canvas_widget = context_menu.addAction(QtCore.QCoreApplication.translate("View", "create canvas widget"))
                 create_canvas_widget.setIcon(
-                    QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/draw_widget.png"))))
+                    QtGui.QIcon(os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/draw_widget.png"))))
             change_background_image = context_menu.addAction(QtCore.QCoreApplication.translate("View", "change background image"))
             change_background_image.setIcon(QtGui.QIcon(
-                os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Change Background Image.png"))))
+                os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/Change Background Image.png"))))
             change_snow_image = context_menu.addAction(QtCore.QCoreApplication.translate("View", "change flowing image"))
             change_snow_image.setIcon(
-                QtGui.QIcon(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                         "../Resources/Change flowing.png"))))
+                QtGui.QIcon(os.path.abspath(os.path.join(constants.work_dir,
+                                         "Resources/Images/Change flowing.png"))))
 
             action = context_menu.exec_(self.mapToGlobal(event.pos()))
             if action == create_attribute_widget:
@@ -1771,70 +1771,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 if constants.DEBUG_MARKDOWN:
                     print(f"4 View emit change flag to show new text {new_item.markdown_text}")
 
-    def save_to_file(self):
-        """
-        Save .note file.
-
-        """
-
-        def _save_to_file(file_name, protobuf_data):
-            with open(file_name, 'wb') as file:
-                file.write(protobuf_data)
-
-        if self.root_flag:
-            attribute.AttributeWidget.export_sub_scene_flag = True
-
-            if not self.filename:
-                filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                     "Save serialization note file", "./",
-                                                                     "note (*.note)")
-                if filename and ok:
-                    self.filename = filename
-                    self.first_open = False
-
-                    self.connect_markdown_base()
-
-            if self.filename:
-                _save_to_file(self.filename, self.serialize())
-                self.mainwindow.setWindowTitle(self.filename)
-
-    def load_from_file(self):
-        """
-        Load .note file.
-
-
-        """
-
-        if self.root_flag:
-            if len(self.mainwindow.argv) == 2:
-                with open(self.filename, "rb") as file:
-                    view_serialization = serialize_pb2.ViewSerialization()
-                    view_serialization.ParseFromString(file.read())
-                    self.deserialize(view_serialization, {}, self, True)
-                    self.mainwindow.setWindowTitle(self.filename + "-Life")
-
-                    self.close_markdown_base()
-                    self.connect_markdown_base()
-
-            else:
-                filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                     "Open serialization json file", "./",
-                                                                     "note (*.note)")
-                if filename and ok:
-                    
-                    if self.filename:
-                        self.save_to_file()
-
-                    with open(filename, "rb") as file:
-                        view_serialization = serialize_pb2.ViewSerialization()
-                        view_serialization.ParseFromString(file.read())
-                        self.deserialize(view_serialization, {}, self, True)
-                        self.filename = filename
-                        self.mainwindow.setWindowTitle(filename + "-Life")
-
-                        self.close_markdown_base()
-                        self.connect_markdown_base()
-
     def serialize(self, view_serialization=None, export_current_scene=False):
         """
         Serialization.
@@ -1859,7 +1795,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if self.image_path:
             view_serialization.image_path = self.image_path
         
-        view_serialization.style_path = self.mainwindow.runtime_style.path
+        view_serialization.style_path = self.mainwindow.load_window.runtime_style.path
 
         # attribute widget ui
         view_serialization.all_attr_font_family = attribute.InputTextField.font.family()

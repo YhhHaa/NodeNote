@@ -1,4 +1,4 @@
-import os
+from ..Model import constants
 
 from PyQt5 import QtWidgets, QtCore, QtGui, QtSvg
 
@@ -8,8 +8,7 @@ __all__ = ["EffectBackground"]
 
 class EffectBackground(QtSvg.QGraphicsSvgItem):
 
-    name = os.path.abspath((os.path.join(os.path.dirname(__file__),
-                                                        "../Resources/background_tree.svg")))
+    name = constants.background_image_path
                                                         
     def __init__(self, view, parent=None):
         """

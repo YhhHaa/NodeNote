@@ -1,3 +1,8 @@
+/* this is work dir interface */
+QWidget#work_dir_interface{
+    background-color: #E0EEB3;
+}
+
 /* this is the mainwindow */
 QMainWindow {
     background-color: #b1000f;
@@ -93,7 +98,7 @@ QToolBar{
     spacing: 3px;
 }
 QToolBar::handle { /* moved image */
-    image: url("src/NodeNotePackage/NodeNote/Resources/left_bar_drag.png");
+    image: url("src/NodeNotePackage/NodeNote/Resources/Images/left_bar_drag.png");
     spacing: 3px;
 }
 
@@ -203,27 +208,27 @@ QTreeView::branch:open:has-children:!has-siblings, QTreeWidget::branch:open:has-
         background: #949D6F;
 }
 QTreeView::branch:has-siblings:!adjoins-item, QTreeWidget::branch:has-siblings:!adjoins-item {
-    border-image: url("src/NodeNotePackage/NodeNote/Resources/stylesheet-vline.png") 0;
+    border-image: url("src/NodeNotePackage/NodeNote/Resources/Images/stylesheet-vline.png") 0;
 }
 
 QTreeView::branch:has-siblings:adjoins-item , QTreeWidget::branch:has-siblings:adjoins-item {
-    border-image: url("src/NodeNotePackage/NodeNote/Resources/stylesheet-branch-more.png") 0;
+    border-image: url("src/NodeNotePackage/NodeNote/Resources/Images/stylesheet-branch-more.png") 0;
 }
 
 QTreeView::branch:!has-children:!has-siblings:adjoins-item , QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-    border-image: url("src/NodeNotePackage/NodeNote/Resources/stylesheet-branch-end.png") 0;
+    border-image: url("src/NodeNotePackage/NodeNote/Resources/Images/stylesheet-branch-end.png") 0;
 }
 
 QTreeView::branch:has-children:!has-siblings:closed, QTreeWidget::branch:has-children:!has-siblings:closed,
 QTreeView::branch:closed:has-children:has-siblings, QTreeWidget::branch:closed:has-children:has-siblings {
         border-image: none;
-        image: url("src/NodeNotePackage/NodeNote/Resources/stylesheet-branch-closed.png");
+        image: url("src/NodeNotePackage/NodeNote/Resources/Images/stylesheet-branch-closed.png");
 }
 
 QTreeView::branch:open:has-children:!has-siblings, QTreeWidget::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings, QTreeWidget::branch:open:has-children:has-siblings  {
         border-image: none;
-        image: url("src/NodeNotePackage/NodeNote/Resources/stylesheet-branch-open.png");
+        image: url("src/NodeNotePackage/NodeNote/Resources/Images/stylesheet-branch-open.png");
 }
 
 
@@ -261,7 +266,7 @@ QComboBox::drop-down {
     width: 20px;
 }
 QComboBox::down-arrow {
-    image: url("src/NodeNotePackage/NodeNote/Resources/down_arrow.png");
+    image: url("src/NodeNotePackage/NodeNote/Resources/Images/down_arrow.png");
 }
 QComboBox::down-arrow:on {
     top: 1px;
@@ -367,13 +372,13 @@ QDoubleSpinBox {
 }
 QDoubleSpinBox::up-button {subcontrol-origin:border;
     subcontrol-position:right;
-    image: url("src/NodeNotePackage/NodeNote/Resources/spin_up.png");
+    image: url("src/NodeNotePackage/NodeNote/Resources/Images/spin_up.png");
     width: 16px;
     height: 16px;       
 }
 QDoubleSpinBox::down-button{subcontrol-origin:border;
     subcontrol-position:left;
-    border-image: url("src/NodeNotePackage/NodeNote/Resources/spin_down.png");
+    border-image: url("src/NodeNotePackage/NodeNote/Resources/Images/spin_down.png");
     width: 16px;
     height: 16px;
 }

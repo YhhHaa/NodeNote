@@ -20,12 +20,12 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         - Text.
     """
 
-    width = 2
-    color = QtGui.QColor(225, 192, 241, 255)
-    selected_color = QtGui.QColor(0, 153, 121, 255)
-    font = QtWidgets.QApplication([]).font()
+    width = constants.pipe_width
+    color = constants.pipe_color
+    selected_color = constants.pipe_selected_color
+    font = constants.pipe_font
     font.setPointSize(6)
-    font_color = QtGui.QColor(0, 0, 0, 255)
+    font_color = constants.pipe_font_color
 
     def __init__(self, start_port=None, end_port=None, node=None):
         """
@@ -400,7 +400,7 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         painter.drawPath(self.path())
 
         # ARROW
-        image = QtGui.QPixmap(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/arrow.png")))
+        image = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/arrow.png")))
         image_rectf = QtCore.QRectF(image.rect().x(), image.rect().y(), image.rect().width(), image.rect().height())
         target_rectf = QtCore.QRectF(0, 0, 0, 0)
         if self.start_flag == constants.OUTPUT_NODE_START or (self.start_flag == constants.INPUT_NODE_START and

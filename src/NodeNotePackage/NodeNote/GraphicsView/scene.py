@@ -39,7 +39,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.history = history.History(self.view)
 
         # background image
-        self.background_image_flag = False
+        self.background_image_flag = constants.scene_background_image_flag
         self.background_image = effect_background.EffectBackground(self.view)
         self.background_image.resize(self.view.size().width(), self.view.size().width())
         self.background_image.setPos(self.view.mapToScene(0, 0).x(), self.view.mapToScene(0, 0).y())
@@ -92,8 +92,8 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
         self.port_style_activated_color = None
         self.port_style_activated_border_color = None
         #   =================================================
-        self.draw_image = QtGui.QImage(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                    "../Resources/common_background_image.png")))
+        self.draw_image = QtGui.QImage(os.path.abspath(os.path.join(constants.work_dir,
+                                                    "Resources/Images/common_background_image.png")))
 
         # show markdown text
         self.focusItemChanged.connect(self.change_markdown)

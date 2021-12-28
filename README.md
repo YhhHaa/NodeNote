@@ -220,14 +220,17 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Without `Assets` folder, the draw widget can't save to file.
 - [x] Saving raises exception when you are dragging pipe.
 - [x] Search and redirect to last scene.
+- [x] Press `Detele` characters in text box.
+- [ ] 场景内无法扩大
 ## Function:
-- [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).
-- [x] Export current scene to .note file.
+- [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).(输入法有时失去焦点)
+- [x] Export current scene to .note file. ## 场景id修改
 - [x] Open with nodenote.
 - [x] Set default background image.
 - [x] Delete sub scene at sidebar and change selection.
 - [ ] Show and hide special tag node.
-- [ ] 文件版本管理
+- [ ] Init directory.
+- [ ] 文件版本管理, 一开始生成打开工作区
 - [ ] 导出pdf矢量
 ## Changes:
 - [x] Change UI.

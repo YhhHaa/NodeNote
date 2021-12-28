@@ -2,7 +2,7 @@ import random
 import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets, sip
-from ..Model.constants import DEBUG_EFFECT_SNOW
+from ..Model import constants
 
 
 class EffectSkyWidget(QtWidgets.QWidget):
@@ -32,7 +32,7 @@ class EffectSkyWidget(QtWidgets.QWidget):
         """
 
         # DEBUG
-        if DEBUG_EFFECT_SNOW:
+        if constants.DEBUG_EFFECT_SNOW:
             print("1-Debug:    snow_create function running")
         # create snow widget and its path
         snow_widget = SnowWidget(self)
@@ -56,7 +56,7 @@ class EffectSkyWidget(QtWidgets.QWidget):
         """
 
         # DEBUG
-        if DEBUG_EFFECT_SNOW:
+        if constants.DEBUG_EFFECT_SNOW:
             print("2-Debug:    snow_falling function running")
         # pos and size
         start_x = random.randint(0, int(self.width()))
@@ -98,12 +98,12 @@ class EffectSkyWidget(QtWidgets.QWidget):
         sip.delete(snow_widget)
         self.index -= 1
         self.path_list.remove(path_group)
-        if DEBUG_EFFECT_SNOW:
+        if constants.DEBUG_EFFECT_SNOW:
             print("3-Debug:    delete snow widget successfully")
 
 
 class SnowWidget(QtWidgets.QWidget):
-    image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../Resources/flower.png'))
+    image_path = os.path.abspath(os.path.join(constants.work_dir, 'Resources/Images/flower.png'))
 
     def __init__(self, parent=None):
         """
