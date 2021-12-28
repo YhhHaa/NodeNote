@@ -304,7 +304,6 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         self.mouseMoveEvent = self.node.mouseMoveEvent
         # DOCUMNET SETTINGS
         self.document().setMetaInformation(QtGui.QTextDocument.DocumentUrl, os.path.join(constants.work_dir, "Assets") + "\\")
-        print(self.document().MetaInformation(QtGui.QTextDocument.DocumentUrl))
         self.setDefaultTextColor(self.font_color)
         self.document().setIndentWidth(4)
         self.document().setDefaultFont(self.font)

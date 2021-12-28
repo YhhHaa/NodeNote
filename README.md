@@ -221,7 +221,8 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Saving raises exception when you are dragging pipe.
 - [x] Search and redirect to last scene.
 - [x] Press `Detele` characters in text box.
-- [ ] 场景内无法扩大
+- [x] Can't change scene size in sub view.
+- [ ] 相对路径
 ## Function:
 - [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).(输入法有时失去焦点)
 - [x] Export current scene to .note file. ## 场景id修改
@@ -229,8 +230,8 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Set default background image.
 - [x] Delete sub scene at sidebar and change selection.
 - [ ] Show and hide special tag node.
-- [ ] Init directory.
-- [ ] 文件版本管理, 一开始生成打开工作区
+- [x] Init directory.
+- [x] Backup .note
 - [ ] 导出pdf矢量
 ## Changes:
 - [x] Change UI.

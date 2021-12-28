@@ -104,10 +104,6 @@ class History:
         self.view.delete_widgets(QtGui.QKeyEvent(QtGui.QKeyEvent.KeyPress, QtCore.Qt.Key_Delete, QtCore.Qt.NoModifier),
                                  history_flag=True)
 
-        # Delete scene list
-        for i in reversed(range(self.view.current_scene.sub_scene_flag.childCount())):
-            self.view.current_scene.sub_scene_flag.removeChild(self.view.current_scene.sub_scene_flag.child(i))
-
         # Serialization
         self.view.current_scene.deserialize(history_stamp['snapshot'], hashmap={}, view=self.view, flag=True)
         self.view.current_scene.deserialize(history_stamp['snapshot'], hashmap={}, view=self.view, flag=False)

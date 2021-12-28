@@ -1881,7 +1881,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         
         if data.HasField("style_path"):
             self.mainwindow.runtime_style.path = data.style_path
-            print(data.style_path)
 
         # set root scene
         if self.root_flag:
