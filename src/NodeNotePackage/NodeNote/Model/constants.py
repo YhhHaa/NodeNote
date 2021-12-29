@@ -42,7 +42,8 @@ port_activated_border_color = QtGui.QColor(107, 166, 193, 255)
 draw_color = QtGui.QColor(QtCore.Qt.red)
 draw_pen_width = 10
 # background image
-background_image_path = os.path.abspath(os.path.join(work_dir, "Resources/Images/background_tree.svg"))
+background_image_path = "Resources/Images/background_tree.svg"
+flowing_image = 'Resources/Images/flower.png'
 # view flag
 view_line_flag = True
 view_undo_flag = True
@@ -50,7 +51,7 @@ view_flowing_flag = True
 # scene flag
 scene_background_image_flag = False
 # style
-style_path = os.path.abspath(os.path.join(work_dir, "Resources/Stylesheets/cute_style.qss"))
+style_path = "Resources/Stylesheets/cute_style.qss"
 
 # === DEBUG ===
 DEBUG_EFFECT_SNOW = False
@@ -133,9 +134,5 @@ def init_path(path):
 
     """
     global work_dir
-    global background_image_path
-    global style_path
 
     work_dir = path
-    background_image_path = os.path.abspath(os.path.join(work_dir, "Resources/Images/background_tree.svg"))
-    style_path = os.path.abspath(os.path.join(work_dir, "Resources/Stylesheets/cute_style.qss"))

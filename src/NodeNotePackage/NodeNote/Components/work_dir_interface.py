@@ -3,6 +3,7 @@ import time
 import shutil
 import sys
 import json
+import traceback
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -31,12 +32,12 @@ class RuntimeStylesheets():
         load stylesheet into app.
 
         Args:
-            stylesheet_path: path of stylesheet file.
+            stylesheet_path: relative path of stylesheet file.
 
         """
 
         try:
-            with open(stylesheet_path, 'r', encoding='utf-8') as qss_file:
+            with open(os.path.join(constants.work_dir, stylesheet_path), 'r', encoding='utf-8') as qss_file:
                 style = qss_file.read()
             self.app.setStyleSheet(style)
 
@@ -212,7 +213,9 @@ class WorkDirInterface(QtWidgets.QWidget):
                     json.dump(last_work_dirs, f, indent=4, sort_keys=True)
                 
             except Exception as e:
-                QtWidgets.QErrorMessage(self).showMessage(f"Wrong:\n{e}")
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                QtWidgets.QErrorMessage(self).showMessage("Error:\n"+ f"{e}" + f"{exc_type}, {fname}, {exc_tb.tb_lineno}")
             
             # load mainwindow
             self.load_mainwindow()
@@ -236,8 +239,7 @@ class WorkDirInterface(QtWidgets.QWidget):
             splash.deleteLater()
         except Exception as e:
             self.show()
-            QtWidgets.QErrorMessage(self).showMessage(f"Wrong:\n{e}")
-
+            QtWidgets.QErrorMessage(self).showMessage(f"{traceback.format_exc()}")
     
     def load_data(self, splash: QtWidgets.QSplashScreen):
         """
@@ -272,7 +274,7 @@ class WorkDirInterface(QtWidgets.QWidget):
         splash.showMessage(QtCore.QCoreApplication.translate("NoteWindow", "loading"), QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom, QtCore.Qt.white)
         QtWidgets.qApp.processEvents()
 
-    def new_note_file(self, path):
+    def new_note_file(self, path=""):
         """
         Create a new note file in path.
 

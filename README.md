@@ -222,7 +222,6 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Search and redirect to last scene.
 - [x] Press `Detele` characters in text box.
 - [x] Can't change scene size in sub view.
-- [ ] 相对路径
 ## Function:
 - [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).(输入法有时失去焦点)
 - [x] Export current scene to .note file. ## 场景id修改

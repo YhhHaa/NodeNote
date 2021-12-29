@@ -103,7 +103,7 @@ class EffectSkyWidget(QtWidgets.QWidget):
 
 
 class SnowWidget(QtWidgets.QWidget):
-    image_path = os.path.abspath(os.path.join(constants.work_dir, 'Resources/Images/flower.png'))
+    image_path = constants.flowing_image
 
     def __init__(self, parent=None):
         """
@@ -120,7 +120,7 @@ class SnowWidget(QtWidgets.QWidget):
         Change the flowing image.
 
         Args:
-            path: The flowing image path.
+            path: relative path of The flowing image path.
 
         """
 
@@ -135,6 +135,7 @@ class SnowWidget(QtWidgets.QWidget):
             event: QPaintevent.
 
         """
-
+        
+        super().paintEvent(event)
         painter = QtGui.QPainter(self)
-        painter.drawPixmap(self.rect(), QtGui.QPixmap(self.image_path), QtCore.QRect())
+        painter.drawPixmap(self.rect(), QtGui.QPixmap(os.path.join(constants.work_dir, self.image_path)), QtCore.QRect())

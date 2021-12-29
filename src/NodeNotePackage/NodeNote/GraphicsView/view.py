@@ -313,7 +313,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         """
 
-        image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select svg", "", "*.svg")
+        image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select svg", constants.work_dir, "*.svg")
         if image_name != "":
             self.current_scene.background_image_flag = True
             self.background_image.change_svg(os.path.abspath(image_name))
@@ -325,9 +325,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         """
         if not close:
-            image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select png", "", "*.png")
+            image_name, image_type = QtWidgets.QFileDialog.getOpenFileName(self, "select png", constants.work_dir, "*.png")
             if image_name != "":
-                image_name = os.path.abspath(image_name)
+                image_name = os.path.relpath(image_name, constants.work_dir)
                 self.image_path = image_name
                 effect_snow.SnowWidget.image_path = image_name
         else:

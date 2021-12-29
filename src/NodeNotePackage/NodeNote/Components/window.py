@@ -1134,15 +1134,15 @@ class NoteWindow(QtWidgets.QMainWindow):
         """
         if not window_style:
             filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                "Select background image", "./",
+                                                                "Select background image", constants.work_dir,
                                                                 "Svg background image (*.svg)")
             if filename and ok:
                     if current_index == 0:
-                        effect_background.EffectBackground.name = os.path.abspath(filename)
+                        effect_background.EffectBackground.name = os.path.relpath(filename, constants.work_dir)
                         # sub view
                         for sub_view in self.view_widget.children_view.values():
                             if not sub_view.sub_view_widget_view.current_scene.background_image_flag:
-                                sub_view.sub_view_widget_view.current_scene.background_image.change_svg(os.path.abspath(filename))
+                                sub_view.sub_view_widget_view.current_scene.background_image.change_svg(os.path.relpath(filename, constants.work_dir))
                         # scene
                         iterator = QtWidgets.QTreeWidgetItemIterator(self.scene_list)
                         while iterator.value():
@@ -1150,23 +1150,22 @@ class NoteWindow(QtWidgets.QMainWindow):
                             iterator += 1
                             scene = scene_flag.data(0, QtCore.Qt.ToolTipRole)
                             if not scene.background_image_flag:
-                                scene.background_image.change_svg(os.path.abspath(filename))
+                                scene.background_image.change_svg(os.path.relpath(filename, constants.work_dir))
 
                     elif current_index == 1:
                         self.view_widget.current_scene.background_image_flag = True
-                        self.view_widget.current_scene.background_image.name = os.path.abspath(filename)
-                        self.view_widget.current_scene.background_image.change_svg(os.path.abspath(filename))
+                        self.view_widget.current_scene.background_image.name = os.path.relpath(filename, constants.work_dir)
+                        self.view_widget.current_scene.background_image.change_svg(os.path.relpath(filename, constants.work_dir))
 
                     self.background_image_path_label.setText(os.path.basename(filename))
         else:
             filename, ok = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                "Select qss", "./",
+                                                                "Select qss", constants.work_dir,
                                                                 "qss stylesheet (*.qss)")
             if filename and ok:
-                self.runtime_style.path = os.path.abspath(filename)
+                self.runtime_style.path = os.path.relpath(filename, constants.work_dir)
                 self.stylesheet_path_label.setText(os.path.basename(filename))
-                self.runtime_style.load_stylesheet(os.path.abspath(filename))
-
+                self.runtime_style.load_stylesheet(self.runtime_style.path)
 
     def init_attribute(self, current_index):
         """
@@ -1661,9 +1660,9 @@ class NoteWindow(QtWidgets.QMainWindow):
         """
 
         if current_index == 0:
-            self.background_image_path_label.setText(os.path.basename(effect_background.EffectBackground.name))
+            self.background_image_path_label.setText(os.path.basename(os.path.join(constants.work_dir, effect_background.EffectBackground.name)))
         elif current_index == 1:
-            self.background_image_path_label.setText(os.path.basename(self.view_widget.current_scene.background_image.name))
+            self.background_image_path_label.setText(os.path.basename(os.path.join(constants.work_dir, self.view_widget.current_scene.background_image.name)))
 
         self.background_image_path_button.disconnect()
         self.background_image_path_button.clicked.connect(lambda x: self.path_changed(current_index))
@@ -1675,7 +1674,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         """
 
         # change current parameters
-        self.stylesheet_path_label.setText(os.path.basename(self.runtime_style.path))
+        self.stylesheet_path_label.setText(os.path.basename(os.path.join(constants.work_dir, self.runtime_style.path)))
         self.runtime_style.load_stylesheet(self.runtime_style.path)
         # slot
         self.stylesheet_button.disconnect()

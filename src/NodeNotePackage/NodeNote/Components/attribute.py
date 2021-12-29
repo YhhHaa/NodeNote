@@ -2,6 +2,7 @@
 attribute.py - Create many components which can be used in the scene.
 """
 
+from posixpath import relpath
 import re
 import os
 import io
@@ -858,16 +859,13 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             str_latex = cursor.selection().toPlainText()
             if str_latex.startswith("$") and str_latex.endswith("$") and str_latex.count("$") == 2:
                 image = self.latex_formula(str_latex)
-                image_folder = "Assets"
-                if not os.path.exists(image_folder):
-                    os.makedirs(image_folder)
-                image_name = os.path.join(image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
+                if not os.path.exists(os.path.join(constants.work_dir, "Assets")):
+                    os.makedirs(os.path.join(constants.work_dir, "Assets"))
+                image_name = os.path.join(os.path.join(constants.work_dir, "Assets"), time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
                 image.save(image_name, quality=50)
                 cursor.clearSelection()
                 cursor.insertText("\n")
-                image_format = QtGui.QTextImageFormat()
-                image_format.setName(image_name)
-                cursor.insertImage(image_format)
+                cursor.insertImage(image_name)
                 self.editing_state = False
         elif font_type == "Clear":
             cursor.setCharFormat(text_format)
@@ -941,12 +939,9 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
             image = QtGui.QImage(mime_data.imageData())
             if not os.path.exists(os.path.join(constants.work_dir, "Assets")):
                 os.makedirs(os.path.join(constants.work_dir, "Assets"))
-            image_folder = os.path.join(constants.work_dir, "Assets")
-            image_name = os.path.join(image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
+            image_name = os.path.join(os.path.join(constants.work_dir, "Assets"), time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
             image.save(image_name, quality=50)
-            image_format = QtGui.QTextImageFormat()
-            image_format.setName(time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
-            cursor.insertImage(image_format)
+            cursor.insertImage(image_name)
         elif mime_data.hasUrls():
             for u in mime_data.urls():
                 file_ext = os.path.splitext(str(u.toLocalFile()))[1].lower()
@@ -961,13 +956,10 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                     if url[second_index + 1: first_index] != "Assets":
                         if not os.path.exists(os.path.join(constants.work_dir, "Assets")):
                             os.makedirs(os.path.join(constants.work_dir, "Assets"))
-                        image_folder = os.path.join(constants.work_dir, "Assets")
                         image_name = os.path.join(
-                            image_folder, time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
+                            os.path.join(constants.work_dir, "Assets"), time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
                         image.save(image_name, quality=50)
-                    image_format = QtGui.QTextImageFormat()
-                    image_format.setName(image_name)
-                    cursor.insertImage(image_format)
+                    cursor.insertImage(image_name)
                 else:
                     text = mime_data.text().replace('\t', '    ')
                     cursor.insertText(text)
@@ -3768,6 +3760,13 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         attr_serialization.mouse_flag = self.mouse_flag
         attr_serialization.mouse_text_width = self.attribute_widget.label_item.textWidth()
 
+    @staticmethod
+    def sub_function(get_str):
+        '<img src="(.+?)"(.*?)>'
+        attr = get_str.group(2)
+        rel_path = os.path.join(os.path.join(constants.work_dir, "Assets"), os.path.basename(get_str.group(1)))
+        return '<img src="%s"%s>' % (rel_path, attr)
+
     def deserialize(self, data, hashmap: dict, view=None, flag=True):
         if flag:
             # added into current scene and view
@@ -3778,7 +3777,12 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
             hashmap[data.attr_id] = self
             # geometry and contents
             self.setGeometry(data.position[0], data.position[1], data.size[0], data.size[1])
-            self.attribute_widget.label_item.setHtml(data.contents)
+
+            html_data = data.contents
+            if html_data.find(r'<img src=') != -1:
+                html_data = re.sub(r'<img src="(.+?)"(.*?)>',self.sub_function , html_data)
+
+            self.attribute_widget.label_item.setHtml(html_data)
             # ports
             self.true_input_port.deserialize(data.attr_port[0], hashmap, view, flag=True)
             self.false_input_port.deserialize(data.attr_port[1], hashmap, view, flag=True)
