@@ -3655,6 +3655,9 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
 
         self.scene().view.mainwindow.markdown_view.set_id(send_id)
 
+        # set selected
+        self.setSelected(False)
+
         return super().focusOutEvent(event)
 
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:

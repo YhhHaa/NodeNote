@@ -223,7 +223,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Press `Detele` characters in text box.
 - [x] Can't change scene size in sub view.
 ## Function:
-- [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).(输入法有时失去焦点)(失去焦点时清空内容)
+- [x] Support markdown: Use `https://github.com/nhn/tui.editor`(MIT LICENSE).
 - [x] Export current scene to .note file.
 - [x] Open with nodenote.
 - [x] Set default background image.
