@@ -425,7 +425,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         #   web engine
         #       view
-        self.markdown_view = QtWebEngineWidgets.QWebEngineView()
+        self.markdown_view = markdown_edit.MarkdownView(self)
         self.markdown_view.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.markdown_view.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.markdown_toolbar.addWidget(self.markdown_view)
@@ -439,9 +439,16 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.markdown_chanel.registerObject("saveSignal", self.markdown_document)
         self.markdown_page.setWebChannel(self.markdown_chanel)
         #       slots
-        self.markdown_document.text_changed_signal.connect(self.view_widget.save_markdown)
+        self.markdown_document.save_text_signal.connect(self.load_window.save_markdown)
         #       show
         self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(constants.work_dir, "Resources/Vditor/markdown.html"))))
+        self.markdown_view.focusProxy().installEventFilter(self)
+
+    def eventFilter(self, a0: 'QtCore.QObject', a1: 'QtCore.QEvent') -> bool:
+        if a0 is self.markdown_view.focusProxy() and a1.type() == QtCore.QEvent.FocusOut:
+            self.markdown_document.return_text(self.markdown_view.dict_id)
+
+        return super().eventFilter(a0, a1)
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
 

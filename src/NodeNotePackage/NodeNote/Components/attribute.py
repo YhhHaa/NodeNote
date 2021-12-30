@@ -1153,7 +1153,6 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
                 offset += proxy.scene().view.mapFromScene(proxy.scenePos())
                 return subview_in_root(proxy.scene().view.proxy_widget, offset)
 
-
         # remove from past scene and added into root scene
         if not self.scene().view.root_flag:
             self.past_scene = self.node.scene()
@@ -2780,7 +2779,6 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         if flag == "attr":
             subwidget = AttributeWidget()
             self.scene().view.attribute_widgets.append(subwidget)
-            self.scene().view.mainwindow.view_widget.mark_attr_dict[subwidget.id] = subwidget
         elif flag == "file":
             subwidget = AttributeFile(self)
         elif flag == "view":
@@ -3616,6 +3614,48 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
                 self.scene().history.store_history("Attribute Widget Size Changed")
         else:
             super(AttributeWidget, self).mouseReleaseEvent(event)
+    
+    def focusInEvent(self, event: QtGui.QFocusEvent) -> None:
+        """
+        change markdown whenever focus of attribute widget changed.
+
+
+        """
+
+        send_id = dict()
+
+        # data
+        send_id["old_focus_item"] = self.id
+        send_id["new_focus_item"] = self.id
+
+        # send data to js
+        if constants.DEBUG_MARKDOWN:
+            print(f"Read 1.foucusInEvent->{send_id}")
+
+        self.scene().view.mainwindow.load_window.show_markdown(send_id)
+
+        return super().focusInEvent(event)
+    
+    def focusOutEvent(self, event: QtGui.QFocusEvent) -> None:
+        """
+        change markdown whenever focus of attribute widget changed.
+
+
+        """
+
+        send_id = dict()
+
+        # data
+        send_id["old_focus_item"] = self.id
+        send_id["new_focus_item"] = self.id
+
+        # send data to js
+        if constants.DEBUG_MARKDOWN:
+            print(f"Write 1.focusOutEvent->{send_id}")
+
+        self.scene().view.mainwindow.markdown_view.set_id(send_id)
+
+        return super().focusOutEvent(event)
 
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
         if self.context_flag:

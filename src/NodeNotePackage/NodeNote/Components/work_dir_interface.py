@@ -4,6 +4,7 @@ import shutil
 import sys
 import json
 import traceback
+import sqlite3
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -104,6 +105,9 @@ class WorkDirInterface(QtWidgets.QWidget):
         self.timer.timeout.connect(self.auto_save)
         self.timer.start(180000)
         self.current_file = ""
+
+        # database
+        self.database_connect = None
     
     def delete_last_dir(self, model_index: QtCore.QModelIndex):
         # get path
@@ -170,6 +174,19 @@ class WorkDirInterface(QtWidgets.QWidget):
                 #   create Documents which stores markdown documents.
                 if not os.path.exists(os.path.join(work_dir, "Documents")):
                     os.mkdir(os.path.join(work_dir, "Documents"))
+                #   create database to store markdown text.
+                if self.database_connect:
+                    self.database_connect.commit()
+                    self.database_connect.close()
+                self.database_connect = sqlite3.connect(os.path.join(os.path.join(constants.work_dir, "Documents"), "markdown.db"))
+                database_cursor = self.database_connect.cursor()
+                database_cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS markdown (
+                        id INT PRIMARY KEY NOT NULL,
+                        markdown_text TEXT);
+                ''')
+                database_cursor.close()
+                self.database_connect.commit()
                 #   create History which stores .note file of history versions.
                 if not os.path.exists(os.path.join(work_dir, "History")):
                     os.mkdir(os.path.join(work_dir, "History"))
@@ -401,6 +418,60 @@ class WorkDirInterface(QtWidgets.QWidget):
         except Exception as e:
             QtWidgets.QErrorMessage(self).showMessage(f"Wrong:\n{e}")
     
+    def save_markdown(self, dict_id: dict, mark_text: str):
+        """
+        Save last attr markdown text and load next attr markdown text
+
+        Args:
+            dict_id: {last_attr_id, new_attr_id}.
+            mark_text: markdown text from html.
+
+        """
+
+        old_item_id = dict_id.get("old_focus_item")
+
+        if self.database_connect and old_item_id != 0:
+            # save last attr markdown text
+            if mark_text:
+                # save database
+                database_cursor = self.database_connect.cursor()
+                database_cursor.execute(f'''
+                    replace into markdown (id, markdown_text) values (?,?)
+                ''', (old_item_id, mark_text))
+                database_cursor.close()
+                self.database_connect.commit()
+
+                # save file
+                with open(os.path.join(constants.work_dir, os.path.join("Documents", f"{old_item_id}.md")), 
+                            "w", encoding="utf-8") as f:
+                    f.write(mark_text)
+
+                if constants.DEBUG_MARKDOWN:
+                    print(f"Write 3.save_markdown {mark_text}")
+                
+
+    def show_markdown(self, dict_id: dict):
+        new_item_id = dict_id.get("new_focus_item")
+        print(new_item_id, self.database_connect)
+        if self.database_connect and new_item_id != 0:
+            database_cursor = self.database_connect.cursor()
+            markdown_line = database_cursor.execute('''
+                SELECT markdown_text
+                from markdown
+                where id=?
+            ''', (new_item_id,)).fetchone()
+            if markdown_line:
+                markdown_text = markdown_line[0]
+            else:
+                markdown_text = ""
+            database_cursor.close()
+            self.database_connect.commit()
+
+            self.window.markdown_document.change_js_markdown_signal.emit(markdown_text)
+
+            if constants.DEBUG_MARKDOWN:
+                print(f"Read 2.show_markdown->{markdown_text}")
+
     def auto_save(self):
         """
         Save .note and backup .note

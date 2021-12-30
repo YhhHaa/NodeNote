@@ -1,10 +1,20 @@
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtWebEngineWidgets, QtGui
 
 from ..Model.constants import DEBUG_MARKDOWN
 
 
+class MarkdownView(QtWebEngineWidgets.QWebEngineView):
+    def __init__(self, mainwindow, parent=None) -> None:
+        super().__init__(parent=parent)
+        self.mainwindow = mainwindow
+        self.dict_id = dict()
+
+    def set_id(self, dict_id):
+        self.dict_id = dict_id
+
+
 class MarkdownDocument(QtCore.QObject):
-    text_changed_signal = QtCore.pyqtSignal(dict, str)
+    save_text_signal = QtCore.pyqtSignal(dict, str)
     change_js_markdown_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, page, parent=None) -> None:
@@ -12,9 +22,7 @@ class MarkdownDocument(QtCore.QObject):
         self.page = page
 
     @QtCore.pyqtSlot(dict)
-    def emit_save_flag(self, dict_id):
-        if DEBUG_MARKDOWN:
-            print(f"2 MarkdownDocument told js to return dict_id:{dict_id} and markdown text.")
+    def return_text(self, dict_id):
         self.page.runJavaScript(f"returnText({dict_id});")
     
     @QtCore.pyqtSlot("QJsonObject", str)
@@ -23,6 +31,6 @@ class MarkdownDocument(QtCore.QObject):
         dict_id["new_focus_item"] = int(dict_id["new_focus_item"].toDouble())
 
         if DEBUG_MARKDOWN:
-            print(f"3 MarkdownDocument receive dict_id{dict_id} and {text} from js and send them to view")
+            print(f"Write 2.show_text->{dict_id}, {text}")
 
-        self.text_changed_signal.emit(dict_id, text)
+        self.save_text_signal.emit(dict_id, text)
