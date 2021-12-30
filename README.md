@@ -223,7 +223,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Press `Detele` characters in text box.
 - [x] Can't change scene size in sub view.
 ## Function:
-- [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).(输入法有时失去焦点)(子视图的赋值问题)
+- [ ] Support markdown: Use `https://github.com/pandao/editor.md`(MIT LICENSE).(输入法有时失去焦点)(失去焦点时清空内容)
 - [x] Export current scene to .note file.
 - [x] Open with nodenote.
 - [x] Set default background image.
@@ -231,7 +231,7 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [ ] Show and hide special tag node.
 - [x] Init directory.
 - [x] Backup .note
-- [ ] 导出pdf矢量
+- [ ] 导出矢量图
 ## Changes:
 - [x] Change UI.
 - [x] Delete Draw widget of sub view which not works.

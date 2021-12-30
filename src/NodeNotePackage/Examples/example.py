@@ -24,7 +24,7 @@ from PyQt5.QtCore import qInstallMessageHandler, QTranslator, QLocale
 
 def message_output(msg_type, context, msg):
     try:
-        if msg_type >= 1:
+        if msg_type >= 2:
             with open("exception_log.txt", "a", encoding="utf-8") as log:
                 log.write(f"{msg}, type: {msg_type} at {time.asctime(time.localtime(time.time()))}\n")
     except Exception as e:

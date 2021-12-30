@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ch">
+<meta charset="utf-8">
+<head>
+
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+
+        #editor {
+            height: 100%;
+        }
+    </style>
+    <!-- css -->
+    <link rel="stylesheet" href="./toastui_editor.css">
+    <!-- chart -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css" />
+    <!-- code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight.min.css"/>
+    <!-- color -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css"/>
+    <!-- table -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-table-merged-cell/latest/toastui-editor-plugin-table-merged-cell.min.css"/>
+    <!-- latex -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+
+    <!-- js -->
+    <!-- Qt -->
+    <script src="./qwebchannel.js"></script>
+    <!-- Editor -->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <!-- Editor's Plugin -->
+    <!-- Chart -->
+    <script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
+    <!-- Code -->
+    <script src="https://uicdn.toast.com/editor-plugin-chart/latest/toastui-editor-plugin-chart.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+    <!-- Color Picker -->
+    <script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+    <!-- Table -->
+    <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/latest/toastui-editor-plugin-table-merged-cell.min.js"></script>
+    <!-- Uml -->
+    <script src="https://uicdn.toast.com/editor-plugin-uml/latest/toastui-editor-plugin-uml.min.js"></script>
+    <!-- Latex -->
+    <script src="https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"></script>
+
+</head>
+
+<body>
+    <div id="editor"></div>
+
+    <script>
+        const { Editor } = toastui;
+        const { chart } = Editor.plugin;
+        const { codeSyntaxHighlight} = Editor.plugin;
+        const { colorSyntax } = Editor.plugin;
+        const { tableMergedCell } = Editor.plugin;
+        const { uml } = Editor.plugin;
+
+        function latexPlugin() {
+            const toHTMLRenderers = {
+                latex(node) {
+                    const generator =  new latexjs.HtmlGenerator({ hyphenate: false });
+                    const { body } = latexjs.parse(node.literal, { generator }).htmlDocument();
+
+                    return [
+                        { type: 'openTag', tagName: 'div', outerNewLine: true },
+                        { type: 'html', content: body.innerHTML },
+                        { type: 'closeTag', tagName: 'div', outerNewLine: true }
+                    ];
+                },
+            }
+
+            return { toHTMLRenderers }
+        }
+
+
+        const editor = new Editor({
+            el: document.querySelector('#editor'),
+            height: '100%',
+            initialEditType: 'markdown',
+            previewStyle: 'tab',
+            plugins: [chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml, latexPlugin],
+        });
+
+    </script>
+
+    <script>
+        // channel between qt and js
+        new QWebChannel(qt.webChannelTransport, function (channel) {
+            window.saveSignal = channel.objects.saveSignal;
+            window.saveSignal.change_js_markdown_signal.connect(function (receive_markdown) {
+                editor.setMarkdown(receive_markdown, true);
+            });
+        })
+
+        function returnText (receive_id) {
+            window.saveSignal.save_text(receive_id, editor.getMarkdown());
+        }
+
+    </script>
+</body>

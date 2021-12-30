@@ -27,10 +27,11 @@ class MarkdownDocument(QtCore.QObject):
     
     @QtCore.pyqtSlot("QJsonObject", str)
     def save_text(self, dict_id: "QtCore.QJsonObject", text: str):
-        dict_id["old_focus_item"] = int(dict_id["old_focus_item"].toDouble())
-        dict_id["new_focus_item"] = int(dict_id["new_focus_item"].toDouble())
+        if "old_focus_item" in dict_id.keys() and "new_focus_item" in dict_id.keys():
+            dict_id["old_focus_item"] = int(dict_id["old_focus_item"].toDouble())
+            dict_id["new_focus_item"] = int(dict_id["new_focus_item"].toDouble())
 
-        if DEBUG_MARKDOWN:
-            print(f"Write 2.show_text->{dict_id}, {text}")
+            if DEBUG_MARKDOWN:
+                print(f"Write 2.show_text->{dict_id}, {text}")
 
-        self.save_text_signal.emit(dict_id, text)
+            self.save_text_signal.emit(dict_id, text)

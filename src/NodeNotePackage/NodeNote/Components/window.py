@@ -441,7 +441,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         #       slots
         self.markdown_document.save_text_signal.connect(self.load_window.save_markdown)
         #       show
-        self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(constants.work_dir, "Resources/Vditor/markdown.html"))))
+        self.markdown_view.load(QtCore.QUrl.fromLocalFile(os.path.abspath(os.path.join(constants.work_dir, "Resources/Editor/markdown.html"))))
         self.markdown_view.focusProxy().installEventFilter(self)
 
     def eventFilter(self, a0: 'QtCore.QObject', a1: 'QtCore.QEvent') -> bool:

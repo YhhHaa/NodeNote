@@ -202,9 +202,9 @@ class WorkDirInterface(QtWidgets.QWidget):
                     shutil.copytree(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Images")),
                                     os.path.join(work_dir, "Resources/Images"))
                 #       create Vditor
-                if not os.path.exists(os.path.join(work_dir, "Resources/Vditor")):
-                    shutil.copytree(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Vditor")),
-                                    os.path.join(work_dir, "Resources/Vditor"))
+                if not os.path.exists(os.path.join(work_dir, "Resources/Editor")):
+                    shutil.copytree(os.path.abspath(os.path.join(os.path.dirname(__file__), "../Resources/Editor")),
+                                    os.path.join(work_dir, "Resources/Editor"))
                 #   create Notes which stores .note file
                 if not os.path.exists(os.path.join(work_dir, "Notes")):
                     os.mkdir(os.path.join(work_dir, "Notes"))
