@@ -238,4 +238,4 @@ If you meet any problems or want to give a valuable suggestion, please email to 
 - [x] Multi languages.
 - [x] Different stylesheet interface.
 - [ ] Rewrite undo&&redo logic.
-- [ ] Show MIT License.
+- [x] Show MIT License.

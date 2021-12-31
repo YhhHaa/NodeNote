@@ -3,20 +3,6 @@
 <meta charset="utf-8">
 <head>
 
-    <style>
-        * {
-            margin: 0px;
-            padding: 0px;
-        }
-        
-        html, body {
-            height: 100%;
-        }
-
-        #editor {
-            height: 100%;
-        }
-    </style>
     <!-- css -->
     <link rel="stylesheet" href="./toastui_editor.css">
     <!-- chart -->
@@ -31,6 +17,59 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-table-merged-cell/latest/toastui-editor-plugin-table-merged-cell.min.css"/>
     <!-- latex -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+
+    
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            border: 0px;
+        }
+        
+        html, body {
+            border: 0px;
+            height: 100%;
+        }
+
+        #editor {
+            border: 0px;
+            height: 100%;
+
+        }
+
+        .ProseMirror {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #editor > * {
+            border: 0px;
+        }
+
+        ::-webkit-scrollbar {
+            width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+            height: 1px;
+            }
+        ::-webkit-scrollbar-thumb {
+            border-radius   : 10px;
+            background-color: skyblue;
+            background-image: -webkit-linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+        );
+        }
+        ::-webkit-scrollbar-track {
+            box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+            background   : #ededed;
+            border-radius: 10px;
+        }
+
+    </style>
 
     <!-- js -->
     <!-- Qt -->
@@ -89,8 +128,20 @@
             height: '100%',
             initialEditType: 'markdown',
             previewStyle: 'tab',
+            placeholder: "Please enter text <by tui.editor with MIT License>",
+            toolbarItems: [
+                [],
+                [],
+                [],
+                ['table'],
+                [],
+            ],
             plugins: [chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml, latexPlugin],
         });
+
+        WYSIWYG = document.getElementsByClassName("toastui-editor-mode-switch");
+        WYSIWYG[0].parentNode.removeChild(WYSIWYG[0]);
+        WYSIWYG[0].parentNode.removeChild(WYSIWYG[0]);
 
     </script>
 

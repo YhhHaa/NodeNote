@@ -122,6 +122,9 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.tab_widget.addTab(self.file_view, QtCore.QCoreApplication.translate("NoteWindow", "Work Dir"))
 
         # Scene list widget
+        self.scene_markdown_layout = QtWidgets.QSplitter(self)
+        # self.scene_markdown_layout.setOrientation(QtCore.Qt.Vertical)
+
         self.scene_list_scroll = QtWidgets.QScrollArea(self)
         self.scene_list_scroll.setWidgetResizable(True)
         self.scene_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -135,7 +138,9 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_list.setHeaderLabel(QtCore.QCoreApplication.translate("NoteWindow", "Scene List"))
         self.scene_list.setIndentation(8)
         self.scene_list_scroll.setWidget(self.scene_list)
-        self.tab_widget.addTab(self.scene_list_scroll, QtCore.QCoreApplication.translate("NoteWindow", "Scene"))
+
+        self.scene_markdown_layout.addWidget(self.scene_list_scroll)
+        self.tab_widget.addTab(self.scene_markdown_layout, QtCore.QCoreApplication.translate("NoteWindow", "Scene"))
 
         # Style list widget
         self.style_list_scroll = QtWidgets.QScrollArea(self)
@@ -143,6 +148,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.style_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
         self.style_list = QtWidgets.QWidget()
+        self.style_list.setMinimumSize(0, 0)
         self.style_list_layout = QtWidgets.QGridLayout()
         self.style_list_scroll.setWidget(self.style_list)
         self.style_list.setLayout(self.style_list_layout)
@@ -402,15 +408,18 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.init_style(current_index=self.style_switch_combox.currentIndex())
 
         # Widget Init
-        self.central_widget = QtWidgets.QWidget()  # central widget
+        self.central_widget = QtWidgets.QSplitter(self)  # central widget
+        self.central_widget.setOrientation(QtCore.Qt.Vertical)
         self.view_widget = View(self, self.central_widget)  # view widget
         self.scene_list.itemClicked.connect(self.view_widget.change_current_scene)
-        self.layout = QtWidgets.QVBoxLayout(self.central_widget)  # layout contains two widgets
-        self.sky_widget = EffectSkyWidget(self.view_widget, self.central_widget)  # snow falling widget
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.addWidget(self.view_widget)
-        self.central_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        # self.layout = QtWidgets.QVBoxLayout(self.central_widget)  # layout contains two widgets
+        self.sky_widget = EffectSkyWidget(self.view_widget)  # snow falling widget
+        # self.layout.setContentsMargins(0, 0, 0, 0)
+        # self.layout.addWidget(self.view_widget)
+        # self.central_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setCentralWidget(self.central_widget)
+        self.central_widget.addWidget(self.toolbar)
+        self.central_widget.addWidget(self.view_widget)
 
         # thumbnails
         self.thumbnails = QtWidgets.QLabel(self.view_widget)
@@ -420,15 +429,18 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         # markdown
         #   tool bar
-        self.markdown_toolbar = QtWidgets.QToolBar()
-        self.addToolBar(QtCore.Qt.RightToolBarArea, self.markdown_toolbar)
+        # self.markdown_toolbar = QtWidgets.QToolBar()
+        # self.addToolBar(QtCore.Qt.RightToolBarArea, self.markdown_toolbar)
 
         #   web engine
         #       view
         self.markdown_view = markdown_edit.MarkdownView(self)
-        self.markdown_view.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.markdown_view.setMinimumSize(0, 0)
+        self.markdown_view.resize(300, 600)
+        self.scene_markdown_layout.addWidget(self.markdown_view)
+        # self.markdown_view.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
         self.markdown_view.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
-        self.markdown_toolbar.addWidget(self.markdown_view)
+        # self.markdown_toolbar.addWidget(self.markdown_view)
         #       page
         self.markdown_page = QtWebEngineWidgets.QWebEnginePage()
         self.markdown_view.setPage(self.markdown_page)
@@ -1787,6 +1799,26 @@ class NoteWindow(QtWidgets.QMainWindow):
             else:
                 self.toolbar.setVisible(True)
             return
-        # if a0.key() == QtCore.Qt.Key_Delete and len(self.scene_list.selectedItems()) == 1:
-        #     self.view_widget.delete_sub_scene(self.scene_list.selectedItems()[0])
+        if a0.key() == QtCore.Qt.Key_G and int(a0.modifiers()) & QtCore.Qt.AltModifier:
+            if self.central_widget.orientation() == QtCore.Qt.Vertical:
+                self.central_widget.setOrientation(QtCore.Qt.Horizontal)
+                self.scene_markdown_layout.setOrientation(QtCore.Qt.Vertical)
+
+                self.central_widget.addWidget(self.view_widget)
+                self.central_widget.addWidget(self.toolbar)
+
+                self.markdown_view.resize(300, 600)
+                self.toolbar.resize(300, self.toolbar.height())
+
+            else:
+                self.central_widget.setOrientation(QtCore.Qt.Vertical)
+                self.scene_markdown_layout.setOrientation(QtCore.Qt.Horizontal)
+
+                self.central_widget.addWidget(self.toolbar)
+                self.central_widget.addWidget(self.view_widget)
+
+                self.markdown_view.resize(600, 300)
+                self.toolbar.resize(self.toolbar.width(), 300)
+
+            return
         super(NoteWindow, self).keyPressEvent(a0)
