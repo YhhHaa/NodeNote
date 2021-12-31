@@ -240,7 +240,7 @@ class WorkDirInterface(QtWidgets.QWidget):
     def load_mainwindow(self):
         # slash
         splash = QtWidgets.QSplashScreen(QtGui.QPixmap(os.path.join(constants.work_dir,
-                                                    "Resources/Images/splash.jpg")))
+                                                    "Resources/Images/logo.png")))
         splash.showMessage(QtCore.QCoreApplication.translate("WorkDirInterface", "start loading"), QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom, QtCore.Qt.white)
         splash.setFont(QtGui.QFont("New York Large", 10))
         splash.show()

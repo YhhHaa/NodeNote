@@ -33,7 +33,7 @@ exe = EXE(pyz,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None , icon='src\\NodeNotePackage\\NodeNote\\Resources\\rainbow.ico')
+          entitlements_file=None , icon='src\\NodeNotePackage\\NodeNote\\Resources\\Images\\rainbow.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

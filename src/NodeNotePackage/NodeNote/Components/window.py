@@ -1803,12 +1803,13 @@ class NoteWindow(QtWidgets.QMainWindow):
             if self.central_widget.orientation() == QtCore.Qt.Vertical:
                 self.central_widget.setOrientation(QtCore.Qt.Horizontal)
                 self.scene_markdown_layout.setOrientation(QtCore.Qt.Vertical)
-
-                self.central_widget.addWidget(self.view_widget)
+                
                 self.central_widget.addWidget(self.toolbar)
+                self.central_widget.addWidget(self.view_widget)
 
-                self.markdown_view.resize(300, 600)
+                self.toolbar.setMinimumSize(0, 0)
                 self.toolbar.resize(300, self.toolbar.height())
+                self.markdown_view.resize(300, 600)
 
             else:
                 self.central_widget.setOrientation(QtCore.Qt.Vertical)
