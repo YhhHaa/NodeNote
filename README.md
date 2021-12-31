@@ -3,7 +3,7 @@
         <img src="https://github-readme-stats.vercel.app/api?username=yetao0806&show_icons=true&theme=gruvbox_light">
     </div>
     <a href="https://github.com/yetao0806/">
-        <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License" />
+        <img src="https://img.shields.io/badge/license-MPL2.0-yellow" alt="MPL 2.0 License" />
     </a>
     <a href="https://github.com/yetao0806/">
         <img src="https://img.shields.io/badge/author-YeTao-lightgrey" alt="YeTao">
