@@ -1122,6 +1122,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 if constants.DEBUG_DRAW_PIPE:
                     print("delete drag pipe case 1")
                 self.remove_drag_pipe(self.item, self.drag_pipe)
+
+                self.magic()
                 self.item = None
         elif not isinstance(item, port.Port):
             if constants.DEBUG_DRAW_PIPE:
@@ -1602,15 +1604,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_Y and int(event.modifiers()) & QtCore.Qt.ControlModifier:
             if not event.isAccepted():
                 self.current_scene.history.redo()
-            return
-        if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.ControlModifier:
-            self.save_to_file()
-            return
-        if event.key() == QtCore.Qt.Key_O and int(event.modifiers()) & QtCore.Qt.ControlModifier:
-            self.load_from_file()
-            return
-        if event.key() == QtCore.Qt.Key_O and int(event.modifiers()) & QtCore.Qt.AltModifier:
-            self.open_from_dir()
             return
         if event.key() == QtCore.Qt.Key_P and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
                 int(event.modifiers()) & QtCore.Qt.AltModifier:
