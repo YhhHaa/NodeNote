@@ -123,7 +123,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         # Scene list widget
         self.scene_markdown_layout = QtWidgets.QSplitter(self)
-        # self.scene_markdown_layout.setOrientation(QtCore.Qt.Vertical)
+        self.scene_markdown_layout.setOrientation(QtCore.Qt.Vertical)
 
         self.scene_list_scroll = QtWidgets.QScrollArea(self)
         self.scene_list_scroll.setWidgetResizable(True)
@@ -409,7 +409,7 @@ class NoteWindow(QtWidgets.QMainWindow):
 
         # Widget Init
         self.central_widget = QtWidgets.QSplitter()  # central widget
-        self.central_widget.setOrientation(QtCore.Qt.Vertical)
+        self.central_widget.setOrientation(QtCore.Qt.Horizontal)
         self.view_widget = View(self, self.central_widget)  # view widget
         self.scene_list.itemClicked.connect(self.view_widget.change_current_scene)
         # self.layout = QtWidgets.QVBoxLayout(self.central_widget)  # layout contains two widgets

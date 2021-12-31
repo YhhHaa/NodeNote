@@ -1389,7 +1389,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if include:
                 attribute.AttributeWidget.export_sub_scene_flag = True
                 filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                    "Export current scene including sub scene to note file", "./"+".note",
+                                                                    "Export current scene including sub scene to note file", os.path.join(constants.work_dir, ".note"),
                                                                     "note (*.note)")
                 if filename and ok:
                     with open(filename, 'wb') as file:
@@ -1398,7 +1398,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 attribute.AttributeWidget.export_sub_scene_flag = False
 
                 filename, ok = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        "Export current scene not including sub scene to note file", "./"+".note",
+                                                                        "Export current scene not including sub scene to note file", os.path.join(constants.work_dir, ".note"),
                                                                         "note (*.note)")
                 if filename and ok:
                     with open(filename, 'wb') as file:

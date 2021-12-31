@@ -753,12 +753,15 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         if hyperlink.isdigit():
             for item in self.scene().view.mainwindow.view_widget.attribute_widgets:
                 if item.id == int(hyperlink):
+                    self.scene().view.mainwindow.scene_list.clearSelection()
+
                     at_scene = item.scene()
                     self.scene().view.mainwindow.view_widget.last_scene = self.scene().view.mainwindow.view_widget.current_scene
                     self.scene().view.mainwindow.view_widget.last_scene_flag = self.scene().view.mainwindow.view_widget.current_scene_flag
 
                     self.scene().view.mainwindow.view_widget.current_scene = at_scene
                     self.scene().view.mainwindow.view_widget.current_scene_flag = at_scene.sub_scene_flag
+                    self.scene().view.mainwindow.view_widget.current_scene_flag.setSelected(True)
                     self.scene().view.mainwindow.view_widget.background_image = at_scene.background_image
                     self.scene().view.mainwindow.view_widget.cutline = at_scene.cutline
                     self.scene().view.mainwindow.view_widget.setScene(at_scene)
@@ -2252,7 +2255,7 @@ class AttributeFile(BaseWidget, serializable.Serializable):
         self.image.setAutoFillBackground(True)
         palette = self.image.palette()
         palette.setBrush(QtGui.QPalette.Window, QtGui.QBrush(
-            QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir, "../Resources/Images/video.png"))).scaled(
+            QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir, "Resources/Images/video.png"))).scaled(
                 self.image.size().width(),
                 self.image.size().height(),
                 QtCore.Qt.IgnoreAspectRatio,
@@ -2284,7 +2287,7 @@ class AttributeFile(BaseWidget, serializable.Serializable):
         self.setLayout(self.layout)
 
         # store
-        self.image_url = os.path.abspath(os.path.join(constants.work_dir, r"../Resources/Images/video.png"))
+        self.image_url = os.path.abspath(os.path.join(constants.work_dir, r"/Resources/Images/video.png"))
 
         # layout
         self.item_row = 0
@@ -2387,7 +2390,7 @@ class NoneWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
         super(NoneWidget, self).__init__(parent)
         self.parent_item = parent
         self.pixmap = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
-                                                                 "../Resources/Images/blank.png")))
+                                                                 "Resources/Images/blank.png")))
 
         self.setZValue(constants.Z_VAL_NODE)
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsSelectable)
@@ -3654,9 +3657,6 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
             print(f"Write 1.focusOutEvent->{send_id}")
 
         self.scene().view.mainwindow.markdown_view.set_id(send_id)
-
-        # set selected
-        self.setSelected(False)
 
         return super().focusOutEvent(event)
 

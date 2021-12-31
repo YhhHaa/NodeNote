@@ -452,7 +452,6 @@ class WorkDirInterface(QtWidgets.QWidget):
 
     def show_markdown(self, dict_id: dict):
         new_item_id = dict_id.get("new_focus_item")
-        print(new_item_id, self.database_connect)
         if self.database_connect and new_item_id != 0:
             database_cursor = self.database_connect.cursor()
             markdown_line = database_cursor.execute('''
