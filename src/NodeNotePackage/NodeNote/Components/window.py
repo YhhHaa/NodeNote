@@ -457,11 +457,12 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.markdown_view.focusProxy().installEventFilter(self)
 
     def eventFilter(self, a0: 'QtCore.QObject', a1: 'QtCore.QEvent') -> bool:
-        if a0 is self.markdown_view.focusProxy() and a1.type() == QtCore.QEvent.FocusOut:
-            self.markdown_document.return_text(self.markdown_view.dict_id)
-        
-        if a0 is self.markdown_view.focusProxy() and a1.type() == QtCore.QEvent.FocusIn:
-            self.view_widget.focusOutEvent(QtGui.QFocusEvent(QtCore.QEvent.FocusOut))
+        if hasattr(self, "markdown_view"):
+            if a0 is self.markdown_view.focusProxy() and a1.type() == QtCore.QEvent.FocusOut:
+                self.markdown_document.return_text(self.markdown_view.dict_id)
+            
+            if a0 is self.markdown_view.focusProxy() and a1.type() == QtCore.QEvent.FocusIn:
+                self.view_widget.focusOutEvent(QtGui.QFocusEvent(QtCore.QEvent.FocusOut))
 
         return super().eventFilter(a0, a1)
 

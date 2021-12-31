@@ -391,6 +391,9 @@ class WorkDirInterface(QtWidgets.QWidget):
             self.current_file = path
         
         # save into last opened file
+        if not os.path.exists(os.path.join(constants.work_dir, ".NODENOTE")):
+            with open(os.path.join(constants.work_dir, ".NODENOTE"), "w", encoding="utf-8") as f:
+                json.dump({"create_dir_time": time.time(), "last_file": ""}, f, indent=4)
         with open(os.path.join(constants.work_dir, ".NODENOTE"), "r", encoding="utf-8") as f:
             meta_data = json.load(f)
         with open(os.path.join(constants.work_dir, ".NODENOTE"), "w", encoding="utf-8") as f:
