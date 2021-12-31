@@ -150,7 +150,7 @@
 - 创建子场景后, 会在侧边栏的目录中生成你的索引, 您可以通过索引找到相应的子场景
   - 可以通过`Alt+Z`返回上一次的场景
   - 可以通过`Alt+X`返回父场景
-  - 
+  
 ## 2. `属性控件`与其他`属性控件`跨越场景的超链接跳转
 ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/V_2_31_1520211231121418.png)
 ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/V_2_31_1520211231121505.png)
