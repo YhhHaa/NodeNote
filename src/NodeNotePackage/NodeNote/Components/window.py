@@ -408,12 +408,12 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.init_style(current_index=self.style_switch_combox.currentIndex())
 
         # Widget Init
-        self.central_widget = QtWidgets.QSplitter(self)  # central widget
+        self.central_widget = QtWidgets.QSplitter()  # central widget
         self.central_widget.setOrientation(QtCore.Qt.Vertical)
         self.view_widget = View(self, self.central_widget)  # view widget
         self.scene_list.itemClicked.connect(self.view_widget.change_current_scene)
         # self.layout = QtWidgets.QVBoxLayout(self.central_widget)  # layout contains two widgets
-        self.sky_widget = EffectSkyWidget(self.view_widget)  # snow falling widget
+        self.sky_widget = EffectSkyWidget(self.view_widget, self.view_widget)  # snow falling widget
         # self.layout.setContentsMargins(0, 0, 0, 0)
         # self.layout.addWidget(self.view_widget)
         # self.central_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
