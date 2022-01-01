@@ -283,3 +283,192 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
         self.canvas_item.path = data.path
         self.canvas_item.load_from_path(self.canvas_item.path)
         self.update()
+
+
+class SideDraw(QtWidgets.QWidget):
+    color = constants.draw_color
+    pen_width = constants.draw_pen_width
+
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+
+
+        # Focus setting
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+
+        # Size settings
+        self.minimum_size = 50
+        self.width = self.width()
+        self.height = self.height()
+
+        # Draw style and point
+        self.device_down = False
+        self.last_point = {'pos': QtCore.QPointF(),
+                           'pressure': 0.0,
+                           'rotation': 0.0}
+
+        self.eraser_color = QtCore.Qt.transparent
+        self.brush = QtGui.QBrush(self.color)
+        self.pen = QtGui.QPen(self.brush, 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+
+        # Create canvas
+        self.canvas_item = Canvas(self.width, self.height, QtCore.Qt.darkYellow)
+        self.eraser_flag = False
+        self.eraser_rect = QtCore.QSize(10, 10)
+    
+    def pressure_to_width(self, pressure: float):
+        """
+        Translate the pen pressure to pen width.
+
+        Args:
+            pressure: The pen pressure.
+
+        Returns:
+
+        """
+        return pressure * self.pen_width
+
+    def update_brush(self, event: QtGui.QTabletEvent):
+        """
+        Update the pen brush according to the tablet event.
+
+        Args:
+            event: QtGui.QTabletEvent
+
+        """
+
+        hue, saturation, value, alpha = self.color.getHsv()
+        # Set alpha channel
+        self.color.setAlphaF(event.pressure())
+        # Set color saturation
+        self.color.setHsv(hue, int(event.pressure() * 255) if int(event.pressure() * 255) > 200 else 200, value, alpha)
+        # Set line width
+        self.pen.setWidthF(self.pressure_to_width(event.pressure()))
+        # Set color
+        if event.pointerType() == QtGui.QTabletEvent.Eraser:
+            self.eraser_flag = True
+
+            # Change eraser cursor
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
+                                                                      'Resources/Images/eraser.png'))).scaled(20, 20)
+            cursor = QtGui.QCursor(cursor_style, 10, 10)
+            QtWidgets.QApplication.setOverrideCursor(cursor)
+
+            # Set eraser width
+            self.pen.setWidthF(10.0)
+        else:
+            self.eraser_flag = False
+
+            # Change draw cursor
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
+                                                                      'Resources/Images/point.png'))).scaled(10, 10)
+            cursor = QtGui.QCursor(cursor_style, 5, 5)
+            QtWidgets.QApplication.setOverrideCursor(cursor)
+
+            # Set draw color
+            self.brush.setColor(self.color)
+            self.pen.setColor(self.color)
+    
+    def paint_pixmap(self, painter: QtGui.QPainter, event: QtGui.QTabletEvent):
+        """
+        Draw pixmap according to the tablet event.
+
+        Args:
+            painter: The draw pen.
+            event: QtGui.QTabletEvent
+
+        """
+
+        # Draw settings
+        max_pen_radius = self.pressure_to_width(1.0)
+        painter.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
+
+        # Draw line
+        painter.setPen(self.pen)
+        painter.drawLine(self.last_point['pos'], event.pos())
+        self.update(QtCore.QRect(self.last_point['pos'],
+                                  event.pos()).
+                    normalized().adjusted(-max_pen_radius, -max_pen_radius, max_pen_radius, max_pen_radius))
+    
+    def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
+        painter = QtGui.QPainter(self)
+        painter.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
+
+        # Draw pixmap
+        painter.drawPixmap(self.rect(), self.canvas_item, self.rect())
+        return super().paintEvent(a0)
+    
+    def tabletEvent(self, event: QtGui.QTabletEvent) -> None:
+        # Change style when the pen almost enter
+        if event.type() == QtCore.QEvent.TabletEnterProximity:
+            cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
+                                                      'Resources/Images/point.png'))).scaled(10,
+                                                                                        10)
+            cursor = QtGui.QCursor(cursor_style, 5, 5)
+            QtWidgets.QApplication.setOverrideCursor(cursor)
+
+        if event.deviceType() == QtGui.QTabletEvent.Stylus:
+
+            if event.type() == QtCore.QEvent.TabletPress:
+                self.device_down = True
+                self.last_point['pos'] = event.pos()
+                self.last_point['pressure'] = event.pressure()
+                self.last_point['rotation'] = event.rotation()
+
+            elif event.type() == QtCore.QEvent.TabletMove:
+                if self.device_down:
+                    # Update draw style
+                    self.update_brush(event)
+
+                    # Draw pixmap
+                    painter = QtGui.QPainter(self.canvas_item)
+                    if self.eraser_flag:
+                        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Clear)
+                    self.paint_pixmap(painter, event)
+
+                    # Store current info
+                    self.last_point['pos'] = event.pos()
+                    self.last_point['pressure'] = event.pressure()
+                    self.last_point['rotation'] = event.rotation()
+
+            elif event.type() == QtCore.QEvent.TabletRelease:
+                if self.device_down and event.buttons() == QtCore.Qt.NoButton:
+                    self.device_down = False
+
+            self.update()
+
+        return super().tabletEvent(event)
+
+    def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+        if a0.key() == QtCore.Qt.Key_W and self.height - 50 > 0:
+            self.height -= 50
+            self.resize(self.width, self.height)
+            self.change_width(self.width, self.height)
+        elif a0.key() == QtCore.Qt.Key_S:
+            self.height += 50
+            self.resize(self.width, self.height)
+            self.change_width(self.width, self.height)
+        elif a0.key() == QtCore.Qt.Key_A and self.width - 50 > 0:
+            self.width -= 50
+            self.resize(self.width, self.height)
+            self.change_width(self.width, self.height)
+        elif a0.key() == QtCore.Qt.Key_D:
+            self.width += 50
+            self.resize(self.width, self.height)
+            self.change_width(self.width, self.height)
+        return super().keyPressEvent(a0)
+
+    def change_width(self, width, height):
+        new_canvas = Canvas(width, height, self.eraser_color)
+        painter = QtGui.QPainter(new_canvas)
+        painter.drawPixmap(QtCore.QRectF(0, 0, self.canvas_item.width(), self.canvas_item.height()),
+                            self.canvas_item,
+                            QtCore.QRectF(0, 0, self.canvas_item.width(), self.canvas_item.height()))
+        sip.delete(self.canvas_item)
+        self.canvas_item = new_canvas
+
+        self.update()
+
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+        self.change_width(a0.size().width(), a0.size().height())
+        return super().resizeEvent(a0)

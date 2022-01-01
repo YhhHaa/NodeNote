@@ -142,6 +142,16 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_markdown_layout.addWidget(self.scene_list_scroll)
         self.tab_widget.addTab(self.scene_markdown_layout, QtCore.QCoreApplication.translate("NoteWindow", "Scene"))
 
+        # draw
+        #   scroll
+        self.draw_scroll = QtWidgets.QScrollArea(self)
+        self.draw_scroll.setWidgetResizable(True)
+        self.draw_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.draw_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.side_draw = draw.SideDraw(self)
+        self.draw_scroll.setWidget(self.side_draw)
+        self.tab_widget.addTab(self.draw_scroll, QtCore.QCoreApplication.translate("NoteWindow", "Draw"))
+
         # Style list widget
         self.style_list_scroll = QtWidgets.QScrollArea(self)
         self.style_list_scroll.setWidgetResizable(True)
@@ -412,11 +422,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.central_widget.setOrientation(QtCore.Qt.Horizontal)
         self.view_widget = View(self, self.central_widget)  # view widget
         self.scene_list.itemClicked.connect(self.view_widget.change_current_scene)
-        # self.layout = QtWidgets.QVBoxLayout(self.central_widget)  # layout contains two widgets
         self.sky_widget = EffectSkyWidget(self.view_widget, self.view_widget)  # snow falling widget
-        # self.layout.setContentsMargins(0, 0, 0, 0)
-        # self.layout.addWidget(self.view_widget)
-        # self.central_widget.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self.setCentralWidget(self.central_widget)
         self.central_widget.addWidget(self.toolbar)
         self.central_widget.addWidget(self.view_widget)

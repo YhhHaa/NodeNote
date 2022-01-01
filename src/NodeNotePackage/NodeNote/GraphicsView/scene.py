@@ -209,7 +209,7 @@ class Scene(QtWidgets.QGraphicsScene, serializable.Serializable):
             scene_serialization.scene_attr_style_border_color = self.attribute_style_border_color.rgba()
         if self.attribute_style_selected_border_color:
             scene_serialization.scene_attr_style_selected_border_color = \
-                self.self.attribute_style_selected_border_color.rgba()
+                self.attribute_style_selected_border_color.rgba()
 
         # logic widget ui
         if self.logic_style_background_color:

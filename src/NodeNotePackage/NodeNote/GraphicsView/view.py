@@ -670,7 +670,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         last_widget.remove_next_logic(item)
                     self.remove_logic_widget(item)
                 elif isinstance(item, pipe.Pipe):
-                    if item in self.current_scene.items():
+                    if item in self.current_scene.items() and item.start_port and item.end_port:
                         self.delete_pipe(item)
                 elif isinstance(item, draw.Draw):
                     self.current_scene.removeItem(item)
@@ -689,7 +689,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             # Restore scene.
             self.magic()
 
-    def delete_pipe(self, item):
+    def delete_pipe(self, item: pipe.Pipe):
         """
         Delete selected pipes.
 
@@ -1681,7 +1681,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 current_item.node.context_flag = True
                 current_item.node.contextMenuEvent(event)
         elif isinstance(current_item, (attribute.SubConstituteWidget, attribute.SimpleTextField)):
-            if self.root_flag:
+            if self.root_flag and not isinstance(current_item.parentItem(), pipe.Pipe):
                 current_item.parentItem().context_flag = True
                 current_item.parentItem().contextMenuEvent(event)
         elif isinstance(current_item, ProxyView):
