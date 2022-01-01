@@ -25,10 +25,26 @@ class Canvas(QtGui.QPixmap):
         self.path = ""
 
     def save_to_path(self, path) -> bool:
-        return self.save(path)
+        """
+        Save image
+
+        Args:
+            path: rel path with work dir
+
+        """
+
+        return self.save(os.path.join(constants.work_dir, path))
 
     def load_from_path(self, path) -> bool:
-        return self.load(path)
+        """
+        Load image
+
+        Args:
+            path: rel path with work dir
+
+        """
+
+        return self.load(os.path.join(constants.work_dir, path))
 
 
 class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
@@ -239,10 +255,10 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
     def serialize(self, draw_serialization=None):
         # Path
         if not self.canvas_item.path:
-            if not os.path.exists("Assets"):
-                os.makedirs("Assets")
-            self.canvas_item.path = os.path.join("Assets",
-                                                 time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
+            if not os.path.exists(os.path.join(constants.work_dir, "Assets")):
+                os.makedirs(os.path.join(constants.work_dir, "Assets"))
+            self.canvas_item.path = os.path.relpath(os.path.join(os.path.join(constants.work_dir, "Assets"),
+                                                 time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png'), constants.work_dir)
         self.canvas_item.save_to_path(self.canvas_item.path)
         draw_serialization.path = self.canvas_item.path
 
