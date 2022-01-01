@@ -1809,8 +1809,8 @@ class NoteWindow(QtWidgets.QMainWindow):
                 self.central_widget.addWidget(self.view_widget)
 
                 self.toolbar.setMinimumSize(0, 0)
-                self.toolbar.resize(300, self.toolbar.height())
                 self.markdown_view.resize(300, 600)
+                self.toolbar.resize(300, self.toolbar.height())
 
             else:
                 self.central_widget.setOrientation(QtCore.Qt.Vertical)
