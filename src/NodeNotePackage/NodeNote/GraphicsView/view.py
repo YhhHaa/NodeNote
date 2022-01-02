@@ -410,13 +410,24 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.search_widget.setVisible(False)
 
             for item_id in self.text_format:
+                # clear format in root view
                 for item in self.attribute_widgets:
                     if item.id == item_id:
-                        cursor = item.attribute_widget.label_item.textCursor()
-                        for text_format in self.text_format[item_id]:
-                            cursor.setPosition(text_format[0])
-                            cursor.movePosition(QtGui.QTextCursor.EndOfWord, 1)
-                            cursor.setCharFormat(text_format[1])
+                        if item.attribute_widget.label_item:
+                            cursor = item.attribute_widget.label_item.textCursor()
+                            for text_format in self.text_format[item_id]:
+                                cursor.setPosition(text_format[0])
+                                cursor.movePosition(QtGui.QTextCursor.EndOfWord, 1)
+                                cursor.setCharFormat(text_format[1])
+                # clear format in sub view
+                for sub_view in self.children_view.values():
+                    for item in sub_view.sub_view_widget_view.attribute_widgets:
+                        if item.id == item_id:
+                            cursor = item.attribute_widget.label_item.textCursor()
+                            for text_format in self.text_format[item_id]:
+                                cursor.setPosition(text_format[0])
+                                cursor.movePosition(QtGui.QTextCursor.EndOfWord, 1)
+                                cursor.setCharFormat(text_format[1])
 
             self.search_list = list()
             self.search_position = -1
@@ -450,9 +461,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         if search_text:
             for item in self.attribute_widgets:
-                from ..Components.sub_view import ProxyView
-                from ..Components.todo import Todo
-                if not isinstance(item, (ProxyView, Todo)):
+                if isinstance(item, attribute.AttributeWidget):
+
+                    # search in node.
                     text = item.attribute_widget.label_item.toPlainText()
                     cursor = item.attribute_widget.label_item.textCursor()
 
@@ -480,6 +491,37 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                         self.search_list.append(item)
                     self.search_result = False
 
+                    # search in sub view                  
+                    for sub_view_widget in self.children_view.values():
+                        for item in sub_view_widget.sub_view_widget_view.attribute_widgets:
+                            if isinstance(item, attribute.AttributeWidget):
+                                text = item.attribute_widget.label_item.toPlainText()
+                                cursor = item.attribute_widget.label_item.textCursor()
+
+                                text_format = QtGui.QTextCharFormat()
+                                text_format.setBackground(QtGui.QBrush(QtGui.QColor(255, 153, 153, 200)))
+
+                                regex = QtCore.QRegExp(search_text)
+                                pos = 0
+                                index = regex.indexIn(text, pos)
+                                while index != -1:
+                                    cursor.setPosition(index)
+                                    cursor.movePosition(QtGui.QTextCursor.EndOfWord, 1)
+                                    last_format = cursor.charFormat()
+                                    cursor.mergeCharFormat(text_format)
+
+                                    if item.id not in self.text_format:
+                                        self.text_format[item.id] = list()
+                                        self.text_format[item.id].append((index, last_format))
+
+                                    pos = index + regex.matchedLength()
+                                    index = regex.indexIn(text, pos)
+                                    self.search_result = True
+
+                                if self.search_result and item not in self.search_list:
+                                    self.search_list.append(item)
+                                self.search_result = False
+
                 self.next_search(label_widget)
 
                 if not self.search_list:
@@ -506,18 +548,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
             at_scene = self.search_list[self.search_position].scene()
 
-            self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
-            self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
-
-            self.current_scene = at_scene
-            self.current_scene_flag = at_scene.sub_scene_flag
-            self.current_scene_flag.setSelected(True)
-
-            self.background_image = at_scene.background_image
-            self.cutline = at_scene.cutline
-            self.setScene(at_scene)
-            self.centerOn(self.search_list[self.search_position])
-            label_widget.setText("Result %d/%d" % (self.search_position + 1, len(self.search_list)))
+            self.search_item(at_scene, label_widget)
 
     def last_search(self, label_widget):
         """
@@ -536,18 +567,59 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.search_position = 0
 
             at_scene = self.search_list[self.search_position].scene()
-
+            
+            self.search_item(at_scene, label_widget)
+            
+    
+    def search_item(self, at_scene, label_widget):
+        # if not sub view
+        if at_scene.view.root_flag:
             self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
             self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
 
             self.current_scene = at_scene
-            self.current_scene_flag = at_scene.sub_scene_flag
-            self.current_scene_flag.setSelected(True)
+
+            iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
+            while iterator.value():
+                scene_flag = iterator.value()
+                iterator += 1
+                if scene_flag.data(0, QtCore.Qt.ToolTipRole).id == at_scene.id:
+                    self.current_scene_flag = scene_flag
+                    scene_flag.setSelected(True)
+                    break
 
             self.background_image = at_scene.background_image
             self.cutline = at_scene.cutline
             self.setScene(at_scene)
             self.centerOn(self.search_list[self.search_position])
+            label_widget.setText("Result %d/%d" % (self.search_position + 1, len(self.search_list)))
+        # if sub view
+        else:
+            # 1. set last scene
+            self.mainwindow.view_widget.last_scene = self.mainwindow.view_widget.current_scene
+            self.mainwindow.view_widget.last_scene_flag = self.mainwindow.view_widget.current_scene_flag
+
+            # 2. set current scene
+            self.current_scene = at_scene.view.proxy_widget.scene()
+
+            # 3. set scene flag selected
+            iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
+            while iterator.value():
+                scene_flag = iterator.value()
+                iterator += 1
+                if scene_flag.data(0, QtCore.Qt.ToolTipRole).id == self.current_scene.id:
+                    self.current_scene_flag = scene_flag
+                    scene_flag.setSelected(True)
+                    break
+            
+            # 4. change item
+            self.background_image = self.current_scene.background_image
+            self.cutline = self.current_scene.cutline
+            self.setScene(self.current_scene)
+
+            # 5. focus on item
+            self.centerOn(at_scene.view.proxy_widget)
+            at_scene.view.centerOn(self.search_list[self.search_position])
             label_widget.setText("Result %d/%d" % (self.search_position + 1, len(self.search_list)))
 
     def delete_connections(self, item):
@@ -1594,7 +1666,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 (event.key() == QtCore.Qt.Key_Minus and event.modifiers() & QtCore.Qt.ControlModifier):
             self.change_scale(event)
             return
-        if event.key() == QtCore.Qt.Key_F and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+        if event.key() == QtCore.Qt.Key_F and int(event.modifiers()) & QtCore.Qt.ControlModifier and self.root_flag:
             self.search_text()
             return
         if event.key() == QtCore.Qt.Key_Z and int(event.modifiers()) & QtCore.Qt.ControlModifier:
