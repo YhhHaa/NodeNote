@@ -4,7 +4,7 @@ import os
 from PyQt5 import QtWidgets, QtCore, QtGui, QtWebEngineWidgets, QtWebChannel
 
 from ..Components.effect_snow import EffectSkyWidget
-from ..Components import attribute, pipe, port, draw, todo, effect_background, markdown_edit
+from ..Components import attribute, pipe, port, draw, effect_background, markdown_edit
 from ..GraphicsView.view import View
 from ..Model import constants
 
@@ -130,7 +130,7 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.scene_list_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scene_list_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
-        self.scene_list = SceneList(self)
+        self.scene_list = SceneList(self, self)
         self.scene_list.setObjectName("scene_list")
         self.scene_list.setSortingEnabled(True)
         self.scene_list.sortByColumn(0, QtCore.Qt.AscendingOrder)
@@ -434,19 +434,13 @@ class NoteWindow(QtWidgets.QMainWindow):
         self.time_id = 0
 
         # markdown
-        #   tool bar
-        # self.markdown_toolbar = QtWidgets.QToolBar()
-        # self.addToolBar(QtCore.Qt.RightToolBarArea, self.markdown_toolbar)
-
         #   web engine
         #       view
         self.markdown_view = markdown_edit.MarkdownView(self)
         self.markdown_view.setMinimumSize(0, 0)
         self.markdown_view.resize(300, 600)
         self.scene_markdown_layout.addWidget(self.markdown_view)
-        # self.markdown_view.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
         self.markdown_view.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
-        # self.markdown_toolbar.addWidget(self.markdown_view)
         #       page
         self.markdown_page = QtWebEngineWidgets.QWebEnginePage()
         self.markdown_view.setPage(self.markdown_page)
