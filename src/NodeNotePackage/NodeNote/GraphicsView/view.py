@@ -287,6 +287,52 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         elif narrow_flag == "bottom":
             self.current_scene.scene_rect = self.current_scene.scene_rect.adjusted(0, 0, 0, -200)
             self.current_scene.setSceneRect(self.current_scene.scene_rect)
+    
+    def align(self, align_flag: str):
+        """
+        align selected widgets.
+
+        Args:
+            align_flag: align direction.
+
+        """
+
+        # get seletced items.
+        selected_widgets = []
+        for item in self.current_scene.selectedItems():
+            if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget)) and item.parentItem() == None:
+                selected_widgets.append(item)
+
+        # align widgets.
+        if len(selected_widgets) >= 2:
+            selected_geo = [[item.scenePos(), item.size()] for item in selected_widgets]
+
+            if align_flag == "left":
+                left_x = min([geo[0].x() for geo in selected_geo])
+
+                for item in selected_widgets:
+                    item.setPos(left_x, item.scenePos().y())
+
+            elif align_flag == "right":
+                right_x = max([geo[0].x() + geo[1].width() for geo in selected_geo])
+
+                for item in selected_widgets:
+                    item.setPos(right_x - item.size().width(), item.scenePos().y())
+
+            elif align_flag == "up":
+                up_y = min([geo[0].y() for geo in selected_geo])
+
+                for item in selected_widgets:
+                    item.setPos(item.scenePos().x(), up_y)
+
+            elif align_flag == "down":
+                down_y = max([geo[0].y() + geo[1].height() for geo in selected_geo])
+
+                for item in selected_widgets:
+                    item.setPos(item.scenePos().x(), down_y - item.size().height())
+            
+            if self.undo_flag:
+                self.current_scene.history.store_history("change alignment.")
 
     def set_leftbtn_beauty(self, event):
         """
@@ -1648,6 +1694,19 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.key() == QtCore.Qt.Key_F10:
                 self.narrow("bottom")
                 return
+            if event.key() == QtCore.Qt.Key_Left and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+                self.align("left")
+                return
+            if event.key() == QtCore.Qt.Key_Right and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+                self.align("right")
+                return
+            if event.key() == QtCore.Qt.Key_Up and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+                self.align("up")
+                return
+            if event.key() == QtCore.Qt.Key_Down and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+                self.align("down")
+                return
+
         if self.mode == constants.MODE_PIPE_DRAG and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
             self.drag_pipe_release(None)
             self.mode = constants.MODE_NOOP
