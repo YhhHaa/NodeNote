@@ -1026,6 +1026,10 @@ class NoteWindow(QtWidgets.QMainWindow):
             if color:
                 draw.Draw.color = color
                 self.color_label_changed(self.draw_style_color_label, color)
+        
+        for child_view in self.view_widget.children_view.values():
+            for item in child_view.sub_view_widget_view.current_scene.items():
+                item.update()
 
     def font_changed(self, widget_type, current_index):
         """

@@ -2600,17 +2600,27 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         self.markdown_saved_flag = False
 
     def paint(self, painter, option, widget=None) -> None:
-        painter.save()
 
         # color and width init
         if self.scene().attribute_style_background_color and not self.color_flag:
             self.color = self.scene().attribute_style_background_color
+        elif not self.color_flag:
+            self.color = AttributeWidget.color
+
         if self.scene().attribute_style_selected_background_color and not self.selected_color_flag:
             self.selected_color = self.scene().attribute_style_selected_background_color
+        elif not self.selected_color_flag:
+            self.selected_color = AttributeWidget.selected_color
+
         if self.scene().attribute_style_border_color and not self.border_flag:
             self.border_color = self.scene().attribute_style_border_color
+        elif not self.border_flag:
+            self.border_color = AttributeWidget.border_color
+        
         if self.scene().attribute_style_selected_border_color and not self.selected_border_flag:
             self.selected_border_color = self.scene().attribute_style_selected_border_color
+        elif not self.selected_border_flag:
+            self.selected_border_color = AttributeWidget.selected_border_color
 
         # draw border
         bg_border = 1.0
@@ -2647,8 +2657,6 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         painter.setPen(pen if not self.colliding_co else
                        QtGui.QPen(QtGui.QColor(230, 0, 0, 100), 2))
         painter.drawPath(path)
-
-        painter.restore()
 
     def text_change_node_shape(self):
         """
