@@ -21,25 +21,14 @@ class EffectCutline(QtWidgets.QGraphicsItem):
 
     def boundingRect(self) -> QtCore.QRectF:
         if self.line_points:
-            left_x = float("+inf")
-            up_y = float("+inf")
-            right_x = float("-inf")
-            down_y = float("-inf")
-
-            for point in self.line_points:
-                if point.x() <= left_x:
-                    left_x = point.x()
-                if point.y() <= up_y:
-                    up_y = point.y()
-                if point.x() >= right_x:
-                    right_x = point.y()
-                if point.y() >= down_y:
-                    down_y = point.y()
-
-            return QtCore.QRectF(QtCore.QPointF(left_x, up_y), QtCore.QPointF(right_x, down_y))
-
+            x__min_point = min([point.x() for point in self.line_points])
+            y__min_point = min([point.y() for point in self.line_points])
+            x__max_point = max([point.x() for point in self.line_points])
+            y__max_point = max([point.y() for point in self.line_points])
+            return QtCore.QRectF(x__min_point, y__min_point, x__max_point - x__min_point, y__max_point - y__min_point)
         else:
-            return QtCore.QRectF(QtCore.QPointF(0, 0), QtCore.QPointF(1, 1))
+            return QtCore.QRectF(0, 0, 1, 1)
+
 
     def paint(self, painter, option, widget=None) -> None:
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
