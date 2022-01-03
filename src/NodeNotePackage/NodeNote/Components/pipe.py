@@ -76,12 +76,20 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         self.ellips_item.hide()
 
         # EDIT
+        self.edit_widget = QtWidgets.QGraphicsWidget(self)
+        self.edit_widget.setFlag(QtWidgets.QGraphicsWidget.ItemSendsGeometryChanges)
+        self.edit_layout = QtWidgets.QGraphicsLinearLayout(QtCore.Qt.Horizontal)
+        self.edit_layout.setContentsMargins(0, 0, 0, 0)
+        self.edit_widget.setLayout(self.edit_layout)
+        self.edit_box = QtWidgets.QGraphicsWidget()
         self.edit = attribute.SimpleTextField("info", self)
+        self.edit_box.setGraphicsItem(self.edit)
+        self.edit_layout.addItem(self.edit_box)
         self.edit.setFont(self.font)
         self.edit.setDefaultTextColor(self.font_color)
         bound_rect_width, bound_rect_height = self.edit.boundingRect().width(), self.edit.boundingRect().height()
-        self.edit.setPos(self.path().pointAtPercent(0.5).x() - (bound_rect_width // 2),
-                         self.path().pointAtPercent(0.5).y() - (bound_rect_height // 2))
+        self.edit_widget.setPos(self.mapToScene(self.path().pointAtPercent(0.5).x() - (bound_rect_width // 2),
+                         self.path().pointAtPercent(0.5).y() - (bound_rect_height // 2)))
 
         # CONTROL
         self.choose_first = True
@@ -324,10 +332,11 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
                 self.font_color = self.scene().pipe_style_font_color
         
         # font
-        if not self.font.family() == self.edit.font().family() or not self.font.pointSize() == self.edit.font().pointSize():
-            self.edit.setFont(self.font)
-        if self.edit.defaultTextColor()!= self.font_color:
-            self.edit.setDefaultTextColor(self.font_color)
+        if self.edit_widget:
+            if not self.font.family() == self.edit.font().family() or not self.font.pointSize() == self.edit.font().pointSize():
+                self.edit.setFont(self.font)
+            if self.edit.defaultTextColor()!= self.font_color:
+                self.edit.setDefaultTextColor(self.font_color)
 
         # DEFAULT PEN
         pen = QtGui.QPen(self.color if not self.isSelected() else self.selected_color)
@@ -413,9 +422,10 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
         painter.drawPixmap(target_rectf, image, image_rectf)
 
         # EDIT
-        bound_rect_width, bound_rect_height = self.edit.boundingRect().width(), self.edit.boundingRect().height()
-        self.edit.setPos(self.path().pointAtPercent(0.5).x() - (bound_rect_width // 2),
-                         self.path().pointAtPercent(0.5).y() - (bound_rect_height // 2))
+        if self.edit_widget:
+            bound_rect_width, bound_rect_height = self.edit.boundingRect().width(), self.edit.boundingRect().height()
+            self.edit_widget.setPos(self.path().pointAtPercent(0.5).x() - (bound_rect_width // 2),
+                            self.path().pointAtPercent(0.5).y() - (bound_rect_height // 2))
 
         # ZVALUE
         if self.start_port and self.end_port:

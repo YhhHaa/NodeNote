@@ -237,7 +237,7 @@ class PythonHighlighter(QtGui.QSyntaxHighlighter):
 
 
 class SimpleTextField(QtWidgets.QGraphicsTextItem):
-    def __init__(self, text, parent):
+    def __init__(self, text, parent=None):
         """
         Simple text field.
 
@@ -247,7 +247,11 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
         """
 
         super(SimpleTextField, self).__init__(text, parent)
+        self.setZValue(constants.Z_VAL_CONTAINERS)
         self.setFlags(QtWidgets.QGraphicsWidget.ItemSendsGeometryChanges | QtWidgets.QGraphicsWidget.ItemIsSelectable)
+
+        self.past_scene = None
+        self.past_parent = parent
 
     def mouseDoubleClickEvent(self, event) -> None:
         super(SimpleTextField, self).mouseDoubleClickEvent(event)
@@ -259,16 +263,60 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
             self.setFocus(QtCore.Qt.MouseFocusReason)
 
     def mousePressEvent(self, event: 'QtWidgets.QGraphicsSceneMouseEvent') -> None:
-        self.parentItem().mousePressEvent(event)
+        if self.parentItem():
+            self.parentItem().mousePressEvent(event)
 
     def focusInEvent(self, event) -> None:
-        self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction)
+
+        def subview_in_root(proxy, offset):
+            if proxy.scene() is root_view.current_scene:
+                return offset + root_view.mapFromScene(proxy.scenePos())
+            else:
+                offset += proxy.scene().view.mapFromScene(proxy.scenePos())
+                return subview_in_root(proxy.scene().view.proxy_widget, offset)
+
+        # remove from past scene and added into root scene
+        if not self.scene().view.root_flag:
+            self.past_scene = self.scene()
+
+            # calculate pos
+            root_view = self.past_scene.view.mainwindow.view_widget
+            node_subview_pos = self.past_scene.view.mapFromScene(self.mapToScene(0, 0))
+            subview_pos = subview_in_root(self.past_scene.view.proxy_widget, QtCore.QPointF(0, 0))
+            node_pos = node_subview_pos + subview_pos
+
+            # remove from past scene
+            self.past_parent.edit_layout.removeAt(0)
+            self.setParentItem(None)
+            self.setParent(None)
+            self.past_scene.removeItem(self)
+
+            # add into root scene
+            root_view.current_scene.addItem(self)
+            self.setPos(root_view.mapToScene(node_pos.x(), node_pos.y()))
+
         super(SimpleTextField, self).focusInEvent(event)
+        self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction)        
 
     def focusOutEvent(self, event: QtGui.QFocusEvent) -> None:
-        self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.textCursor().clearSelection()
         super(SimpleTextField, self).focusOutEvent(event)
+        self.textCursor().clearSelection()
+        self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+
+        if self.past_scene:
+            # added into past scene
+            self.past_scene.addItem(self)
+
+            graphics_widget = QtWidgets.QGraphicsWidget(self.past_parent)
+            graphics_widget.setGraphicsItem(self)
+            self.setParentItem(self.past_parent)
+            self.setPos(QtCore.QPointF(0, 0))
+            self.past_parent.edit_layout.addItem(graphics_widget)
+    
+    def sceneEvent(self, event: QtCore.QEvent) -> bool:
+        if event.type() == QtCore.QEvent.GraphicsSceneContextMenu:
+            return True
+        return super().sceneEvent(event)
 
 
 class InputTextField(QtWidgets.QGraphicsTextItem):
