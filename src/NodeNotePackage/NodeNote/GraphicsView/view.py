@@ -1185,8 +1185,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     output_node.add_next_logic(input_node)
                     input_node.add_last_logic(output_node)
 
-                if input_node.attribute_animation or output_node.attribute_animation:
-                    input_node.start_pipe_animation()
+                if output_node.attribute_animation:
                     output_node.start_pipe_animation()
                 if self.undo_flag:
                     self.current_scene.history.store_history("Create Pipe")

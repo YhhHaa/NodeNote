@@ -1751,23 +1751,19 @@ class LogicWidget(QtWidgets.QGraphicsWidget, serializable.Serializable):
             self.last_logic.remove(widget)
 
     def start_pipe_animation(self):
+        """
+        Only start animation in next widgets and sub widgets.
+
+        """
+
         self.output_port.start_pipes_animation()
-        self.input_port.start_pipes_animation()
         self.attribute_animation = True
 
         for node in self.next_attribute:
             if not node.attribute_animation:
                 node.start_pipe_animation()
 
-        for node in self.last_attribute:
-            if not node.attribute_animation:
-                node.start_pipe_animation()
-
         for logic in self.next_logic:
-            if not logic.attribute_animation:
-                logic.start_pipe_animation()
-
-        for logic in self.last_logic:
             if not logic.attribute_animation:
                 logic.start_pipe_animation()
 
@@ -3296,25 +3292,20 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
         self.sub_scene = None
 
     def start_pipe_animation(self):
+        """"
+        Only start animation in output port and sub widgets.
+
+        """
+
         self.true_output_port.start_pipes_animation()
         self.false_output_port.start_pipes_animation()
-        self.true_input_port.start_pipes_animation()
-        self.false_input_port.start_pipes_animation()
         self.attribute_animation = True
 
         for node in self.next_attribute:
             if not node.attribute_animation:
                 node.start_pipe_animation()
 
-        for node in self.last_attribute:
-            if not node.attribute_animation:
-                node.start_pipe_animation()
-
         for logic in self.next_logic:
-            if not logic.attribute_animation:
-                logic.start_pipe_animation()
-
-        for logic in self.last_logic:
             if not logic.attribute_animation:
                 logic.start_pipe_animation()
 
@@ -3323,17 +3314,15 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
                 sub_node.start_pipe_animation()
 
     def end_pipe_animation(self):
+        """
+        Only end animation in output port and sub widgets.
+        """
+
         self.true_output_port.end_pipes_animation()
         self.false_output_port.end_pipes_animation()
-        self.true_input_port.end_pipes_animation()
-        self.false_input_port.end_pipes_animation()
         self.attribute_animation = False
 
         for node in self.next_attribute:
-            if node.attribute_animation:
-                node.end_pipe_animation()
-
-        for node in self.last_attribute:
             if node.attribute_animation:
                 node.end_pipe_animation()
 
@@ -3341,12 +3330,8 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
             if logic.attribute_animation:
                 logic.end_pipe_animation()
 
-        for logic in self.last_logic:
-            if logic.attribute_animation:
-                logic.end_pipe_animation()
-
         for sub_node in self.attribute_sub_widgets:
-            if isinstance(sub_node, AttributeWidget) and not sub_node.attribute_animation:
+            if isinstance(sub_node, AttributeWidget) and sub_node.attribute_animation:
                 sub_node.end_pipe_animation()
 
     def update_treelist(self):

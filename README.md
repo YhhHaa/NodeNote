@@ -210,6 +210,6 @@
 -[x] 修复了序列化的一个错误
 -[x] 修复线条的编辑框下上文菜单的点击
 -[x] 所有场景的背景色更新sub view内的
--[ ] effect cutline 计算boundingRect()
+-[x] effect cutline 计算boundingRect()
 -[x] 修复搜索的错误
 -[x] 修复还没建立线条就删除的错误
