@@ -909,7 +909,10 @@ class InputTextField(QtWidgets.QGraphicsTextItem):
         elif font_type == "Mathjax":
             str_latex = cursor.selection().toPlainText()
             if str_latex.startswith("$") and str_latex.endswith("$") and str_latex.count("$") == 2:
-                image = self.latex_formula(str_latex)
+                try:
+                    image = self.latex_formula(str_latex)
+                except Exception as e:
+                    return
                 if not os.path.exists(os.path.join(constants.work_dir, "Assets")):
                     os.makedirs(os.path.join(constants.work_dir, "Assets"))
                 image_name = os.path.join(os.path.join(constants.work_dir, "Assets"), time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime()) + '.png')
