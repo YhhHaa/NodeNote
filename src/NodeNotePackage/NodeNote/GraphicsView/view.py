@@ -906,7 +906,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if not item.file_url:
             item.file_url, _ = QtWidgets.QFileDialog.getOpenFileName(self, "select files", "",
                                                                      "any file (*.*)")
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl().fromLocalFile(item.file_url))
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl().fromLocalFile(os.path.join(constants.work_dir, item.file_url)))
         if self.undo_flag:
             self.current_scene.history.store_history("Add File")
 

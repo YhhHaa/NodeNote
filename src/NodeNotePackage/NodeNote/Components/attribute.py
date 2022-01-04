@@ -2331,7 +2331,7 @@ class AttributeFile(BaseWidget, serializable.Serializable):
         self.setLayout(self.layout)
 
         # store
-        self.image_url = os.path.abspath(os.path.join(constants.work_dir, r"/Resources/Images/video.png"))
+        self.image_url = os.path.join(constants.work_dir, "Resources/Images/video.png")
 
         # layout
         self.item_row = 0
