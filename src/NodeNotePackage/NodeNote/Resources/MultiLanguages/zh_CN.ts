@@ -3,52 +3,52 @@
 <context>
     <name>AttributeWidget</name>
     <message>
-        <location filename="../../Components/attribute.py" line="3666"/>
+        <location filename="../../Components/attribute.py" line="3709"/>
         <source>add current-line subwidget</source>
         <translation>当前行添加子属性控件</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3670"/>
+        <location filename="../../Components/attribute.py" line="3713"/>
         <source>add next-line subwidget</source>
         <translation>下一行添加子属性控件</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3674"/>
+        <location filename="../../Components/attribute.py" line="3717"/>
         <source>add current-line file</source>
         <translation>当前行添加文件控件</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3677"/>
+        <location filename="../../Components/attribute.py" line="3720"/>
         <source>add next-line file</source>
         <translation>下一行添加文件控件</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3680"/>
+        <location filename="../../Components/attribute.py" line="3723"/>
         <source>add current-line view</source>
         <translation>当前行添加子视图</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3683"/>
+        <location filename="../../Components/attribute.py" line="3726"/>
         <source>add next-line view</source>
         <translation>下一行添加子视图</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3686"/>
+        <location filename="../../Components/attribute.py" line="3729"/>
         <source>add current-line todo</source>
         <translation>当前行添加todo控件</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3689"/>
+        <location filename="../../Components/attribute.py" line="3732"/>
         <source>add next-line todo</source>
         <translation>下一行添加todo控件</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3692"/>
+        <location filename="../../Components/attribute.py" line="3735"/>
         <source>move up</source>
         <translation>上移</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="3695"/>
+        <location filename="../../Components/attribute.py" line="3738"/>
         <source>move down</source>
         <translation>下移</translation>
     </message>
@@ -56,12 +56,12 @@
 <context>
     <name>BaseWidget</name>
     <message>
-        <location filename="../../Components/attribute.py" line="1521"/>
+        <location filename="../../Components/attribute.py" line="1572"/>
         <source>move up</source>
         <translation>上移</translation>
     </message>
     <message>
-        <location filename="../../Components/attribute.py" line="1524"/>
+        <location filename="../../Components/attribute.py" line="1575"/>
         <source>move down</source>
         <translation>下移</translation>
     </message>
@@ -97,187 +97,187 @@
         <translation>场景</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="156"/>
+        <location filename="../../Components/window.py" line="165"/>
         <source>Style</source>
         <translation>样式</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="159"/>
+        <location filename="../../Components/window.py" line="168"/>
         <source>All Scene</source>
         <translation>所有场景</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="159"/>
+        <location filename="../../Components/window.py" line="168"/>
         <source>Current Scene</source>
         <translation>当前场景</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="159"/>
+        <location filename="../../Components/window.py" line="168"/>
         <source>Selected Items</source>
         <translation>选中部件</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="171"/>
+        <location filename="../../Components/window.py" line="180"/>
         <source>Attribute Widgets</source>
         <translation>属性控件样式</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="173"/>
+        <location filename="../../Components/window.py" line="182"/>
         <source>Font</source>
         <translation>字体</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="265"/>
+        <location filename="../../Components/window.py" line="274"/>
         <source>Font Color</source>
         <translation>字体颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="303"/>
+        <location filename="../../Components/window.py" line="312"/>
         <source>Background Color</source>
         <translation>背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="261"/>
+        <location filename="../../Components/window.py" line="270"/>
         <source>Selected Background Color</source>
         <translation>选中的背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="305"/>
+        <location filename="../../Components/window.py" line="314"/>
         <source>Border Color</source>
         <translation>边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="226"/>
+        <location filename="../../Components/window.py" line="235"/>
         <source>Selected Border Color</source>
         <translation>选中的边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="195"/>
+        <location filename="../../Components/window.py" line="204"/>
         <source>Change Font</source>
         <translation>改变字体</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="280"/>
+        <location filename="../../Components/window.py" line="289"/>
         <source>Change Font Color</source>
         <translation>改变字体颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="327"/>
+        <location filename="../../Components/window.py" line="336"/>
         <source>Change Background Color</source>
         <translation>改变背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="278"/>
+        <location filename="../../Components/window.py" line="287"/>
         <source>Change Selected Background Color</source>
         <translation>改变选中的背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="328"/>
+        <location filename="../../Components/window.py" line="337"/>
         <source>Change Border Color</source>
         <translation>改变边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="239"/>
+        <location filename="../../Components/window.py" line="248"/>
         <source>Change Selected Border Color</source>
         <translation>改变选中的边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="218"/>
+        <location filename="../../Components/window.py" line="227"/>
         <source>Logic Widgets</source>
         <translation>逻辑控件样式</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="255"/>
+        <location filename="../../Components/window.py" line="264"/>
         <source>Pipe Widgets</source>
         <translation>线条部件样式</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="347"/>
+        <location filename="../../Components/window.py" line="356"/>
         <source>Width</source>
         <translation>宽度</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="263"/>
+        <location filename="../../Components/window.py" line="272"/>
         <source>Font Type</source>
         <translation>字体类型</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="357"/>
+        <location filename="../../Components/window.py" line="366"/>
         <source>Change Width</source>
         <translation>改变宽度</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="279"/>
+        <location filename="../../Components/window.py" line="288"/>
         <source>Change Font Type</source>
         <translation>改变字体类型</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="299"/>
+        <location filename="../../Components/window.py" line="308"/>
         <source>Port Widgets</source>
         <translation>端口部件样式</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="307"/>
+        <location filename="../../Components/window.py" line="316"/>
         <source>Hovered Background Color</source>
         <translation>悬停背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="309"/>
+        <location filename="../../Components/window.py" line="318"/>
         <source>Hovered Border Color</source>
         <translation>悬停边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="311"/>
+        <location filename="../../Components/window.py" line="320"/>
         <source>Activated Background Color</source>
         <translation>激活背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="313"/>
+        <location filename="../../Components/window.py" line="322"/>
         <source>Activated Border Color</source>
         <translation>激活边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="329"/>
+        <location filename="../../Components/window.py" line="338"/>
         <source>Change Hovered Background Color</source>
         <translation>改变悬停背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="330"/>
+        <location filename="../../Components/window.py" line="339"/>
         <source>Change Hovered Border Color</source>
         <translation>改变悬停边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="331"/>
+        <location filename="../../Components/window.py" line="340"/>
         <source>Change Activated Background Color</source>
         <translation>改变激活背景颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="332"/>
+        <location filename="../../Components/window.py" line="341"/>
         <source>Change Activated Border Color</source>
         <translation>改变激活边框颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="345"/>
+        <location filename="../../Components/window.py" line="354"/>
         <source>Draw Widgets</source>
         <translation>绘图部件样式</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="349"/>
+        <location filename="../../Components/window.py" line="358"/>
         <source>Color</source>
         <translation>颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="358"/>
+        <location filename="../../Components/window.py" line="367"/>
         <source>Change Color</source>
         <translation>改变颜色</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="378"/>
+        <location filename="../../Components/window.py" line="387"/>
         <source>Text Editor(All scene)</source>
         <translation>文本编辑框(全场景通用)</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="380"/>
+        <location filename="../../Components/window.py" line="389"/>
         <source>Set Fixed Width Or Not</source>
         <translation>是否设置固定宽度</translation>
     </message>
@@ -292,12 +292,12 @@
         <translation>宽度: </translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="366"/>
+        <location filename="../../Components/window.py" line="375"/>
         <source>Background Image</source>
         <translation>背景图片</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="370"/>
+        <location filename="../../Components/window.py" line="379"/>
         <source>Change Image</source>
         <translation>改变图片</translation>
     </message>
@@ -307,14 +307,24 @@
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="396"/>
+        <location filename="../../Components/window.py" line="405"/>
         <source>Window Stylesheet</source>
         <translation>窗口样式</translation>
     </message>
     <message>
-        <location filename="../../Components/window.py" line="398"/>
+        <location filename="../../Components/window.py" line="407"/>
         <source>Change Window Style</source>
         <translation>更改窗口样式</translation>
+    </message>
+    <message>
+        <location filename="../../Components/window.py" line="152"/>
+        <source>Draw</source>
+        <translation>节点绘图</translation>
+    </message>
+    <message>
+        <location filename="../../Components/work_dir_interface.py" line="293"/>
+        <source>loading</source>
+        <translation>载入</translation>
     </message>
 </context>
 <context>
@@ -356,27 +366,27 @@
 <context>
     <name>View</name>
     <message>
-        <location filename="../../GraphicsView/view.py" line="1653"/>
+        <location filename="../../GraphicsView/view.py" line="1776"/>
         <source>create attribute widget</source>
         <translation>创建属性控件</translation>
     </message>
     <message>
-        <location filename="../../GraphicsView/view.py" line="1655"/>
+        <location filename="../../GraphicsView/view.py" line="1778"/>
         <source>create truth widget</source>
         <translation>创建逻辑控件</translation>
     </message>
     <message>
-        <location filename="../../GraphicsView/view.py" line="1660"/>
+        <location filename="../../GraphicsView/view.py" line="1783"/>
         <source>create canvas widget</source>
         <translation>创建画布控件</translation>
     </message>
     <message>
-        <location filename="../../GraphicsView/view.py" line="1663"/>
+        <location filename="../../GraphicsView/view.py" line="1786"/>
         <source>change background image</source>
         <translation>更改背景图片</translation>
     </message>
     <message>
-        <location filename="../../GraphicsView/view.py" line="1666"/>
+        <location filename="../../GraphicsView/view.py" line="1789"/>
         <source>change flowing image</source>
         <translation>更改飘落图片</translation>
     </message>
@@ -384,32 +394,32 @@
 <context>
     <name>WorkDirInterface</name>
     <message>
-        <location filename="../../Components/work_dir_interface.py" line="56"/>
+        <location filename="../../Components/work_dir_interface.py" line="58"/>
         <source>Work dir</source>
         <translation>工作区目录</translation>
     </message>
     <message>
-        <location filename="../../Components/work_dir_interface.py" line="77"/>
+        <location filename="../../Components/work_dir_interface.py" line="79"/>
         <source>Last Dirs</source>
         <translation>上次打开的目录</translation>
     </message>
     <message>
-        <location filename="../../Components/work_dir_interface.py" line="77"/>
+        <location filename="../../Components/work_dir_interface.py" line="79"/>
         <source>Opened Time</source>
         <translation>打开时间</translation>
     </message>
     <message>
-        <location filename="../../Components/work_dir_interface.py" line="90"/>
+        <location filename="../../Components/work_dir_interface.py" line="92"/>
         <source>delete this path</source>
         <translation>删除该目录</translation>
     </message>
     <message>
-        <location filename="../../Components/work_dir_interface.py" line="97"/>
+        <location filename="../../Components/work_dir_interface.py" line="99"/>
         <source>Open work dir</source>
         <translation>打开工作区目录</translation>
     </message>
     <message>
-        <location filename="../../Components/work_dir_interface.py" line="244"/>
+        <location filename="../../Components/work_dir_interface.py" line="246"/>
         <source>start loading</source>
         <translation>开始载入</translation>
     </message>
