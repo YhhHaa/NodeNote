@@ -291,13 +291,14 @@ class SideDraw(QtWidgets.QWidget):
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
-
+        self.mainwindow = parent
 
         # Focus setting
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
         # Size settings
         self.minimum_size = 50
+        self.resize(300, 950)
         self.width = self.width()
         self.height = self.height()
 
@@ -312,9 +313,12 @@ class SideDraw(QtWidgets.QWidget):
         self.pen = QtGui.QPen(self.brush, 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
 
         # Create canvas
-        self.canvas_item = Canvas(self.width, self.height, QtCore.Qt.darkYellow)
+        self.canvas_item = Canvas(self.width, self.height, self.eraser_color)
         self.eraser_flag = False
         self.eraser_rect = QtCore.QSize(10, 10)
+
+        # Database
+        self.dict_id = dict()
     
     def pressure_to_width(self, pressure: float):
         """
@@ -442,23 +446,20 @@ class SideDraw(QtWidgets.QWidget):
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
         if a0.key() == QtCore.Qt.Key_W and self.height - 50 > 0:
             self.height -= 50
-            self.resize(self.width, self.height)
             self.change_width(self.width, self.height)
         elif a0.key() == QtCore.Qt.Key_S:
             self.height += 50
-            self.resize(self.width, self.height)
             self.change_width(self.width, self.height)
         elif a0.key() == QtCore.Qt.Key_A and self.width - 50 > 0:
             self.width -= 50
-            self.resize(self.width, self.height)
             self.change_width(self.width, self.height)
         elif a0.key() == QtCore.Qt.Key_D:
             self.width += 50
-            self.resize(self.width, self.height)
             self.change_width(self.width, self.height)
         return super().keyPressEvent(a0)
 
     def change_width(self, width, height):
+        self.resize(width, height)
         new_canvas = Canvas(width, height, self.eraser_color)
         painter = QtGui.QPainter(new_canvas)
         painter.drawPixmap(QtCore.QRectF(0, 0, self.canvas_item.width(), self.canvas_item.height()),
@@ -468,7 +469,10 @@ class SideDraw(QtWidgets.QWidget):
         self.canvas_item = new_canvas
 
         self.update()
-
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
-        self.change_width(a0.size().width(), a0.size().height())
-        return super().resizeEvent(a0)
+    
+    def set_id(self, dict_id):
+        self.dict_id = dict_id
+    
+    def focusOutEvent(self, a0: QtGui.QFocusEvent) -> None:
+        self.mainwindow.load_window.save_image(self.dict_id, self.canvas_item)
+        return super().focusOutEvent(a0)

@@ -145,7 +145,6 @@ class NoteWindow(QtWidgets.QMainWindow):
         # draw
         #   scroll
         self.draw_scroll = QtWidgets.QScrollArea(self)
-        self.draw_scroll.setWidgetResizable(True)
         self.draw_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.draw_scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.side_draw = draw.SideDraw(self)
@@ -1025,6 +1024,7 @@ class NoteWindow(QtWidgets.QMainWindow):
             color = QtWidgets.QColorDialog.getColor(QtCore.Qt.red, None, "Select Color")
             if color:
                 draw.Draw.color = color
+                draw.SideDraw.color = color
                 self.color_label_changed(self.draw_style_color_label, color)
         
         for child_view in self.view_widget.children_view.values():
@@ -1152,6 +1152,7 @@ class NoteWindow(QtWidgets.QMainWindow):
                                                          "Width", 10.0, 0.1, 50.0, 2, QtCore.Qt.WindowFlags(), 0.2)
             if width and ok:
                 draw.Draw.pen_width = width
+                draw.SideDraw.pen_width = width
                 self.width_label_changed(self.draw_style_width_label, width)
     
     def path_changed(self, current_index=0, window_style=False):

@@ -1987,7 +1987,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         #   draw widget
         draw.Draw.pen_width = data.all_draw_width
+        draw.SideDraw.pen_width = data.all_draw_width
         draw.Draw.color.setRgb(data.all_draw_color)
+        draw.SideDraw.color.setRgb(data.all_draw_color)
 
         #   background image
         if data.HasField("all_background_image"):

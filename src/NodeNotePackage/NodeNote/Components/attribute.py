@@ -3677,6 +3677,7 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
             print(f"Read 1.foucusInEvent->{send_id}")
 
         self.scene().view.mainwindow.load_window.show_markdown(send_id)
+        self.scene().view.mainwindow.load_window.show_image(send_id)
 
         return super().focusInEvent(event)
     
@@ -3698,6 +3699,7 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
             print(f"Write 1.focusOutEvent->{send_id}")
 
         self.scene().view.mainwindow.markdown_view.set_id(send_id)
+        self.scene().view.mainwindow.side_draw.set_id(send_id)
 
         return super().focusOutEvent(event)
 

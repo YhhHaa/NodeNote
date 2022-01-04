@@ -8,6 +8,8 @@ import sqlite3
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
+from NodeNotePackage.NodeNote.Components import draw
+
 from ..Model import constants, serialize_pb2
 from ..Components.window import NoteWindow
 from ..Components.attribute import AttributeWidget
@@ -451,8 +453,22 @@ class WorkDirInterface(QtWidgets.QWidget):
 
                 if constants.DEBUG_MARKDOWN:
                     print(f"Write 3.save_markdown {mark_text}")
-                
+    
+    def save_image(self, dict_id: dict, image: draw.Canvas):
+        """
+        Save attr draw image.
 
+        Args:
+            dict_id: {last_attr_id, new_attr_id}.
+            image: side bar image.
+
+        """
+
+        old_item_id = dict_id.get("old_focus_item")
+
+        # save image into path
+        image.save_to_path(os.path.join("Assets", str(old_item_id) + ".png"))
+                
     def show_markdown(self, dict_id: dict):
         new_item_id = dict_id.get("new_focus_item")
         if self.database_connect and new_item_id != 0:
@@ -473,6 +489,17 @@ class WorkDirInterface(QtWidgets.QWidget):
 
             if constants.DEBUG_MARKDOWN:
                 print(f"Read 2.show_markdown->{markdown_text}")
+    
+    def show_image(self, dict_id: dict):
+        new_item_id = dict_id.get("new_focus_item")
+            
+        if not os.path.exists(os.path.join(constants.work_dir, os.path.join("Assets", str(new_item_id) + ".png"))):
+            self.window.side_draw.canvas_item = draw.Canvas(300, 900, QtCore.Qt.transparent)
+        else:
+            self.window.side_draw.canvas_item.load_from_path(os.path.join("Assets", str(new_item_id) + ".png"))
+
+        self.window.side_draw.change_width(self.window.side_draw.canvas_item.width(), self.window.side_draw.canvas_item.height())
+        self.window.side_draw.update()
 
     def auto_save(self):
         """
@@ -487,4 +514,6 @@ class WorkDirInterface(QtWidgets.QWidget):
         if self.current_file:
             Todo.close_flag = True
             self.save_to_file(self.current_file)
+        self.database_connect.commit()
+        self.database_connect.close()
         return super().closeEvent(a0)
