@@ -41,7 +41,7 @@ if __name__ == '__main__':
     lan = QLocale.language(local)
     trans = QTranslator()
     if lan == QLocale.Chinese:
-        trans.load(os.path.abspath(os.path.join(os.path.dirname(__file__), "../NodeNote/Resources/MultiLanguages/zh_CN")))
+        trans.load("src/NodeNotePackage/NodeNote/Resources/MultiLanguages/zh_CN.qm")
         app.installTranslator(trans)
     
     # work dir interface
