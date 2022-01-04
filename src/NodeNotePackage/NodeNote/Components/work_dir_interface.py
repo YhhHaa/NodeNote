@@ -514,6 +514,7 @@ class WorkDirInterface(QtWidgets.QWidget):
         if self.current_file:
             Todo.close_flag = True
             self.save_to_file(self.current_file)
-        self.database_connect.commit()
-        self.database_connect.close()
+        if self.database_connect:
+            self.database_connect.commit()
+            self.database_connect.close()
         return super().closeEvent(a0)
