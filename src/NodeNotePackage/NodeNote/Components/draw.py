@@ -134,8 +134,8 @@ class Draw(QtWidgets.QGraphicsWidget, serializable.Serializable):
 
             # Change draw cursor
             cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
-                                                                      'Resources/Images/point.png'))).scaled(10, 10)
-            cursor = QtGui.QCursor(cursor_style, 5, 5)
+                                                                      'Resources/Images/point.png'))).scaled(4, 4)
+            cursor = QtGui.QCursor(cursor_style, 2, 2)
             QtWidgets.QApplication.setOverrideCursor(cursor)
 
             # Set draw color
@@ -365,8 +365,8 @@ class SideDraw(QtWidgets.QWidget):
 
             # Change draw cursor
             cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
-                                                                      'Resources/Images/point.png'))).scaled(10, 10)
-            cursor = QtGui.QCursor(cursor_style, 5, 5)
+                                                                      'Resources/Images/point.png'))).scaled(4, 4)
+            cursor = QtGui.QCursor(cursor_style, 2, 2)
             QtWidgets.QApplication.setOverrideCursor(cursor)
 
             # Set draw color
@@ -406,9 +406,9 @@ class SideDraw(QtWidgets.QWidget):
         # Change style when the pen almost enter
         if event.type() == QtCore.QEvent.TabletEnterProximity:
             cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
-                                                      'Resources/Images/point.png'))).scaled(10,
-                                                                                        10)
-            cursor = QtGui.QCursor(cursor_style, 5, 5)
+                                                      'Resources/Images/point.png'))).scaled(4,
+                                                                                        4)
+            cursor = QtGui.QCursor(cursor_style, 2, 2)
             QtWidgets.QApplication.setOverrideCursor(cursor)
 
         if event.deviceType() == QtGui.QTabletEvent.Stylus:

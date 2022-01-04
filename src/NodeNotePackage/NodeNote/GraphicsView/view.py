@@ -1546,9 +1546,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             self.mouse_effect = False
             self.setDragMode(QtWidgets.QGraphicsView.NoDrag)
             cursor_style = QtGui.QPixmap(os.path.abspath(os.path.join(constants.work_dir,
-                                                      'Resources/Images/point.png'))).scaled(10,
-                                                                                        10)
-            cursor = QtGui.QCursor(cursor_style, 5, 5)
+                                                      'Resources/Images/point.png'))).scaled(4,
+                                                                                        4)
+            cursor = QtGui.QCursor(cursor_style, 2, 2)
             QtWidgets.QApplication.setOverrideCursor(cursor)
         
         if isinstance(item, (draw.Canvas, draw.Draw)):
