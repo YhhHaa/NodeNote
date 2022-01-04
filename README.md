@@ -88,6 +88,12 @@
 - 选中小部件后在侧边栏进行编辑, 当退出侧边栏时, 会自动保存`markdown`到数据库以及备份文件中
 - 支持的Markdown类型有: 所有基本`markdown`以及`UML`, `代码块高亮`, `LaTeX`, `绘图` 具体可以移步该项目 >> [tui.editor](https://github.com/nhn/tui.editor)
 - 插入图片请使用相对路径: `../Assets/您的图片`
+
+> 支持的节点无限画布:
+![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/V_2_31_15GIF%202022-1-4%2011-55-05.gif)
+
+- 其样式对应于Draw Widget的样式
+- 您可以通过`W/A/S/D`扩展画布的大小
   
 > 支持的真值
 
