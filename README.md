@@ -77,7 +77,7 @@
 | 左对齐 : `Ctrl+[`  |右对齐 : `Ctrl+]`   | 居中对齐 : `Ctrl+ \ ` |
 | 斜体 : `Ctrl+Q` | 下划线 : `Ctrl+R`  | 删除线: `Ctrl+/` |
 | 增大字体: `Ctrl+G` | 缩小字体: `Ctrl+H` | 改变字体颜色: `Ctrl+N` |
-| 超链接: `Ctrl+M` | 数学公式($MaJax$): `Ctrl+I` | 清空所有格式: `Ctrl + L`|
+| 超链接: `Ctrl+M` | 数学公式[格式参见](https://wizardforcel.gitbooks.io/matplotlib-user-guide/content/4.6.html): `Ctrl+I` | 清空所有格式: `Ctrl + L`|
 | 撤销上一步: `Crtl+Z` | 恢复上一步: `Ctrl+Y` | 创建一个表格: `Ctrl+1` |
 | 增加一行表格: `Ctrl+3` | 增加一列表格 : `Ctrl+2` | 删除一行表格 : `Ctrl+5` |
 | 删除一列表格 : `Ctrl+4` | 选中表格后合并表格行列: `Ctrl+6` | 合并表格后拆分已合并内容: `Ctrl+7` |
