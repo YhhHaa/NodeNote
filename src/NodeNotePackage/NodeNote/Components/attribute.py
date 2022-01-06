@@ -2600,6 +2600,8 @@ class AttributeWidget(BaseWidget, serializable.Serializable):
 
     def paint(self, painter, option, widget=None) -> None:
 
+        painter.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
+
         # color and width init
         if self.scene().attribute_style_background_color and not self.color_flag:
             self.color = self.scene().attribute_style_background_color

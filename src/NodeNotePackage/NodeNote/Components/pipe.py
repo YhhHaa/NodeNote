@@ -318,6 +318,8 @@ class Pipe(QtWidgets.QGraphicsPathItem, serializable.Serializable):
 
         """
 
+        painter.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
+
         # Width and color init
         if self.scene():
             if self.scene().pipe_style_width and not self.width_flag:
