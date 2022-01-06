@@ -376,10 +376,10 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                     item.setPos(item.scenePos().x() - 50, item.scenePos().y())
                     item.update()
                 elif translation_flag == "up" and item.scenePos().y() < self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())).y():
-                    item.setPos(item.scenePos().x(), item.scenePos().y() + 50)
+                    item.setPos(item.scenePos().x(), item.scenePos().y() - 50)
                     item.update()
                 elif translation_flag == "down" and item.scenePos().y() > self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())).y():
-                    item.setPos(item.scenePos().x(), item.scenePos().y() - 50)
+                    item.setPos(item.scenePos().x(), item.scenePos().y() + 50)
                     item.update()
 
     def set_leftbtn_beauty(self, event):
@@ -1762,19 +1762,19 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.key() == QtCore.Qt.Key_3 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
                 self.tanslation_expand("up")
                 return
-            if event.key() == QtCore.Qt.Key_5 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_4 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
                 self.tanslation_expand("down")
                 return
-            if event.key() == QtCore.Qt.Key_6 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_5 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
                 self.tanslation_narrow("left")
                 return
-            if event.key() == QtCore.Qt.Key_7 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_6 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
                 self.tanslation_narrow("right")
                 return
-            if event.key() == QtCore.Qt.Key_8 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_7 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
                 self.tanslation_narrow("up")
                 return
-            if event.key() == QtCore.Qt.Key_9 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_8 and int(event.modifiers()) & QtCore.Qt.ControlModifier:
                 self.tanslation_narrow("down")
                 return
 
