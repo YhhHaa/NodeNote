@@ -1646,7 +1646,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.cutline.update()
 
     def keyPressEvent(self, event) -> None:
-        super(View, self).keyPressEvent(event)
         from ..Components.attribute import InputTextField
         current_item = self.current_scene.itemAt(self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())), QtGui.QTransform())
 
@@ -1670,28 +1669,28 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.key() == QtCore.Qt.Key_T and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.paste_item()
                 return
-            if event.key() == QtCore.Qt.Key_F3:
+            if event.key() == QtCore.Qt.Key_1 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.expand("left")
                 return
-            if event.key() == QtCore.Qt.Key_F4:
+            if event.key() == QtCore.Qt.Key_2 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.expand("right")
                 return
-            if event.key() == QtCore.Qt.Key_F5:
+            if event.key() == QtCore.Qt.Key_3 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.expand("top")
                 return
-            if event.key() == QtCore.Qt.Key_F6:
+            if event.key() == QtCore.Qt.Key_4 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.expand("bottom")
                 return
-            if event.key() == QtCore.Qt.Key_F7:
+            if event.key() == QtCore.Qt.Key_5 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.narrow("left")
                 return
-            if event.key() == QtCore.Qt.Key_F8:
+            if event.key() == QtCore.Qt.Key_6 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.narrow("right")
                 return
-            if event.key() == QtCore.Qt.Key_F9:
+            if event.key() == QtCore.Qt.Key_7 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.narrow("top")
                 return
-            if event.key() == QtCore.Qt.Key_F10:
+            if event.key() == QtCore.Qt.Key_8 and int(event.modifiers()) & QtCore.Qt.AltModifier:
                 self.narrow("bottom")
                 return
             if event.key() == QtCore.Qt.Key_Left and int(event.modifiers()) & QtCore.Qt.ControlModifier:
@@ -1758,6 +1757,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_F11:
             self.change_flowing_image(True)
             return
+        super(View, self).keyPressEvent(event)
 
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
         super(View, self).contextMenuEvent(event)
