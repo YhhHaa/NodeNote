@@ -155,7 +155,7 @@
 - 您可以按`Ctrl+up/down/left/right`实现辅助对齐功能
   ![](https://raw.githubusercontent.com/yetao0806/CloudImage/main/V_2_31_15GIF%202022-1-4%200-02-24.gif)
 
-- 您可以按`Alt+I/J/K/L` 移动当前鼠标位置以上/左/下/右的部件向上/左/下/右移动50px
+- 您可以按`Ctrl+1/2/3/4/5/6/7/8` 移动当前鼠标位置对应左右上下的部件移动50px
 
 
 # 3. 如何使用场景
