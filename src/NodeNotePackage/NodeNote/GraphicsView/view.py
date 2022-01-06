@@ -333,6 +333,30 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             
             if self.undo_flag:
                 self.current_scene.history.store_history("change alignment.")
+    
+    def tanslation(self, translation_flag: str):
+        """
+        tanslate items
+
+        Args:
+            translation_flag: translation direction.
+
+        """
+
+        for item in self.current_scene.items():
+            if isinstance(item, (attribute.AttributeWidget, attribute.LogicWidget, draw.Draw)) and not item.parentItem():
+                if translation_flag == "left" and item.scenePos().x() < self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())).x():
+                    item.setPos(item.scenePos().x() - 50, item.scenePos().y())
+                    item.update()
+                elif translation_flag == "right" and item.scenePos().x() > self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())).x():
+                    item.setPos(item.scenePos().x() + 50, item.scenePos().y())
+                    item.update()
+                elif translation_flag == "up" and item.scenePos().y() < self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())).y():
+                    item.setPos(item.scenePos().x(), item.scenePos().y() - 50)
+                    item.update()
+                elif translation_flag == "down" and item.scenePos().y() > self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())).y():
+                    item.setPos(item.scenePos().x(), item.scenePos().y() + 50)
+                    item.update()
 
     def set_leftbtn_beauty(self, event):
         """
@@ -1704,6 +1728,18 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 return
             if event.key() == QtCore.Qt.Key_Down and int(event.modifiers()) & QtCore.Qt.ControlModifier:
                 self.align("down")
+                return
+            if event.key() == QtCore.Qt.Key_J and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.tanslation("left")
+                return
+            if event.key() == QtCore.Qt.Key_L and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.tanslation("right")
+                return
+            if event.key() == QtCore.Qt.Key_I and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.tanslation("up")
+                return
+            if event.key() == QtCore.Qt.Key_K and int(event.modifiers()) & QtCore.Qt.AltModifier:
+                self.tanslation("down")
                 return
 
         if self.mode == constants.MODE_PIPE_DRAG and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
