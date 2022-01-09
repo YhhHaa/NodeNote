@@ -2096,9 +2096,15 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
 
         # recover current scene
         if self.root_flag:
+            expanded_item = 0
             iterator = QtWidgets.QTreeWidgetItemIterator(self.mainwindow.scene_list)
             while iterator.value():
                 scene_flag = iterator.value()
+
+                if expanded_item < 3:
+                    scene_flag.setExpanded(True)
+                    expanded_item += 1
+                    
                 iterator += 1
                 if scene_flag.data(0, QtCore.Qt.ToolTipRole).id == data.current_scene_id:
                     self.current_scene = scene_flag.data(0, QtCore.Qt.ToolTipRole)
