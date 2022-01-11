@@ -2357,23 +2357,19 @@ class AttributeFile(BaseWidget, serializable.Serializable):
             absolute_path = os.path.join(os.path.join(constants.work_dir, "Assets"), os.path.basename(image_url))
 
             # backup image
-            try:
-                shutil.copyfile(image_url, absolute_path)
+            self.scene().view.mainwindow.load_window.copy_file(image_url, absolute_path)
+            
+            # relative path
+            self.image_url = os.path.relpath(absolute_path, constants.work_dir)
 
-                # relative path
-                self.image_url = os.path.relpath(absolute_path, constants.work_dir)
-
-                palette = self.image.palette()
-                palette.setBrush(QtGui.QPalette.Window, QtGui.QBrush(QtGui.QPixmap(absolute_path).scaled(
-                    self.image.size().width(),
-                    self.image.size().height(),
-                    QtCore.Qt.IgnoreAspectRatio,
-                    QtCore.Qt.SmoothTransformation
-                )))
-                self.image.setPalette(palette)
-
-            except Exception as e:
-                QtWidgets.QErrorMessage(self).showMessage(f"Wrong:\n{e}")
+            palette = self.image.palette()
+            palette.setBrush(QtGui.QPalette.Window, QtGui.QBrush(QtGui.QPixmap(absolute_path).scaled(
+                self.image.size().width(),
+                self.image.size().height(),
+                QtCore.Qt.IgnoreAspectRatio,
+                QtCore.Qt.SmoothTransformation
+            )))
+            self.image.setPalette(palette)
 
     def turn_file(self):
         file_url, _ = QtWidgets.QFileDialog.getOpenFileName(None, "select files", "", "any file (*.*)")
@@ -2381,12 +2377,10 @@ class AttributeFile(BaseWidget, serializable.Serializable):
             absolute_path = os.path.join(os.path.join(constants.work_dir, "Attachments"), os.path.basename(file_url))
 
             # backup image
-            try:
-                shutil.copyfile(file_url, absolute_path)
-                self.image.file_url = os.path.relpath(absolute_path, constants.work_dir)
+            self.scene().view.mainwindow.load_window.copy_file(file_url, absolute_path)
+            
+            self.image.file_url = os.path.relpath(absolute_path, constants.work_dir)
 
-            except Exception as e:
-                QtWidgets.QErrorMessage(self).showMessage(f"Wrong:\n{e}")
 
     def serialize(self, file_serialization=None):
         file_serialization.file_id = self.id

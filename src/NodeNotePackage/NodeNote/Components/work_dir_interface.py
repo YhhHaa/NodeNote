@@ -5,6 +5,7 @@ import sys
 import json
 import traceback
 import sqlite3
+import shutil
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 
@@ -418,10 +419,7 @@ class WorkDirInterface(QtWidgets.QWidget):
         self.window.setWindowTitle(path)
 
         # backup file
-        try:
-            shutil.copyfile(path, os.path.join(constants.work_dir, os.path.join("History", f"{time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time()))}" + "_" + os.path.basename(path))))
-        except Exception as e:
-            QtWidgets.QErrorMessage(self).showMessage(f"Wrong:\n{e}")
+        self.copy_file(path, os.path.join(constants.work_dir, os.path.join("History", f"{time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time()))}" + "_" + os.path.basename(path))))
     
     def save_markdown(self, dict_id: dict, mark_text: str):
         """
@@ -518,3 +516,11 @@ class WorkDirInterface(QtWidgets.QWidget):
             self.database_connect.commit()
             self.database_connect.close()
         return super().closeEvent(a0)
+    
+    def copy_file(self, src_path, des_path):
+        if src_path != des_path:
+            try:
+                shutil.copyfile(src_path, des_path)
+            except Exception as e:
+                QtWidgets.QErrorMessage(self).showMessage(f"Wrong:\n{e}")
+
