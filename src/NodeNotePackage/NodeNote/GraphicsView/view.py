@@ -1699,8 +1699,9 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         from ..Components.attribute import InputTextField
         current_item = self.current_scene.itemAt(self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())), QtGui.QTransform())
 
-        if event.key() == QtCore.Qt.Key_R and int(event.modifiers()) & QtCore.Qt.AltModifier:
+        if event.key() == QtCore.Qt.Key_R and int(event.modifiers()) & QtCore.Qt.AltModifier and not event.isAccepted():
             self.copy_item()
+            event.accept()
             return
 
         if isinstance(current_item, effect_background.EffectBackground):
