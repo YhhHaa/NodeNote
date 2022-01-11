@@ -276,7 +276,7 @@ class SimpleTextField(QtWidgets.QGraphicsTextItem):
                 return subview_in_root(proxy.scene().view.proxy_widget, offset)
 
         # remove from past scene and added into root scene
-        if not self.scene().view.root_flag:
+        if not self.scene().view.root_flag and not isinstance(self.parentItem(), AttributeFile):
             self.past_scene = self.scene()
 
             # calculate pos

@@ -1883,7 +1883,7 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 current_item.node.context_flag = True
                 current_item.node.contextMenuEvent(event)
         elif isinstance(current_item, (attribute.SubConstituteWidget, attribute.SimpleTextField)):
-            if self.root_flag and not isinstance(current_item.parentItem(), pipe.Pipe):
+            if self.root_flag and not isinstance(current_item.parentItem(), (pipe.Pipe, attribute.AttributeFile)):
                 current_item.parentItem().context_flag = True
                 current_item.parentItem().contextMenuEvent(event)
         elif isinstance(current_item, ProxyView):
