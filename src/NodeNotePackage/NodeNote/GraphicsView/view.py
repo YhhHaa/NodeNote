@@ -1694,6 +1694,8 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
                 self.cutline.update()
 
     def keyPressEvent(self, event) -> None:
+        super(View, self).keyPressEvent(event)
+
         from ..Components.attribute import InputTextField
         current_item = self.current_scene.itemAt(self.mapToScene(self.mapFromGlobal(QtGui.QCursor.pos())), QtGui.QTransform())
 
@@ -1798,13 +1800,11 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_F and int(event.modifiers()) & QtCore.Qt.ControlModifier and self.root_flag:
             self.search_text()
             return
-        if event.key() == QtCore.Qt.Key_Z and int(event.modifiers()) & QtCore.Qt.ControlModifier:
-            if not event.isAccepted():
-                self.current_scene.history.undo()
+        if event.key() == QtCore.Qt.Key_Z and int(event.modifiers()) & QtCore.Qt.ControlModifier and not event.isAccepted():
+            self.current_scene.history.undo()
             return
-        if event.key() == QtCore.Qt.Key_Y and int(event.modifiers()) & QtCore.Qt.ControlModifier:
-            if not event.isAccepted():
-                self.current_scene.history.redo()
+        if event.key() == QtCore.Qt.Key_Y and int(event.modifiers()) & QtCore.Qt.ControlModifier and not event.isAccepted():
+            self.current_scene.history.redo()
             return
         if event.key() == QtCore.Qt.Key_P and int(event.modifiers()) & QtCore.Qt.ControlModifier and \
                 int(event.modifiers()) & QtCore.Qt.AltModifier:
@@ -1829,7 +1829,6 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
         if event.key() == QtCore.Qt.Key_F11:
             self.change_flowing_image(True)
             return
-        super(View, self).keyPressEvent(event)
 
     def contextMenuEvent(self, event: 'QtGui.QContextMenuEvent') -> None:
         super(View, self).contextMenuEvent(event)
