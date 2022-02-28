@@ -1,5 +1,4 @@
-/.idea
-/.vscode
+.*
 Assets
 __pycache__
 /dist

@@ -1756,28 +1756,28 @@ class View(QtWidgets.QGraphicsView, serializable.Serializable):
             if event.key() == QtCore.Qt.Key_Down and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.align("down")
                 return
-            if event.key() == QtCore.Qt.Key_1 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_A and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_expand("left")
                 return
-            if event.key() == QtCore.Qt.Key_2 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_D and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_expand("right")
                 return
-            if event.key() == QtCore.Qt.Key_3 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_W and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_expand("up")
                 return
-            if event.key() == QtCore.Qt.Key_4 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_S and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_expand("down")
                 return
-            if event.key() == QtCore.Qt.Key_5 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_J and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_narrow("left")
                 return
-            if event.key() == QtCore.Qt.Key_6 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_L and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_narrow("right")
                 return
-            if event.key() == QtCore.Qt.Key_7 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_I and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_narrow("up")
                 return
-            if event.key() == QtCore.Qt.Key_8 and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
+            if event.key() == QtCore.Qt.Key_K and int(event.modifiers()) & QtCore.Qt.ShiftModifier:
                 self.tanslation_narrow("down")
                 return
 
